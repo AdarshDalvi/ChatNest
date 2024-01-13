@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import AuthForm from './components/AuthForm';
 
-function Home() {
+function AuthScreen() {
     return (
         <main className="flex flex-col h-screen items-center ">
             <div className="fixed z-[-1] top-0 left-0 right-0 h-56 bg-whatsappColor"></div>
@@ -15,11 +15,11 @@ function Home() {
                     className="drop-shadow-xl"
                     priority={true}
                 />
-                <h2 className="my-4 text-center">Sign in to your account</h2>
+
                 <AuthForm />
             </div>
         </main>
     );
 }
 
-export default Home;
+export default AuthScreen;
