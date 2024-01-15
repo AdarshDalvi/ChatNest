@@ -3,11 +3,16 @@ import './globals.css';
 import { Roboto } from 'next/font/google';
 import ToastContext from './context/ToastContext';
 import AuthContext from './context/AuthContext';
-import { getServerSession } from 'next-auth';
 
 export const metadata: Metadata = {
-    title: 'WhatsApp Clone',
-    description: 'WhatsApp Clone created using Next + React',
+    title: 'ChatNest',
+    description: 'ChatNest Messenger App',
+    icons: {
+        icon: {
+            url: '/images/favicon.ico',
+            href: '/images/favicon.ico',
+        },
+    },
 };
 
 const roboto = Roboto({
@@ -17,14 +22,10 @@ const roboto = Roboto({
 });
 
 async function RootLayout({ children }: { children: React.ReactNode }) {
-    const session = await getServerSession();
     return (
         <html lang="en">
-            <head>
-                <link rel="icon" href="/favicon.ico" />
-            </head>
-            <body suppressHydrationWarning={true} className={roboto.className}>
-                <AuthContext session={session}>
+            <body className={roboto.className} suppressHydrationWarning>
+                <AuthContext>
                     <ToastContext />
                     {children}
                 </AuthContext>

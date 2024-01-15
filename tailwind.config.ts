@@ -12,7 +12,7 @@ const config: Config = {
                 whatsappColor: '#00A884',
             },
             screens: {
-                smallMobiles: '400px',
+                smallMobiles: '350px',
                 midPhones: '500px',
             },
         },

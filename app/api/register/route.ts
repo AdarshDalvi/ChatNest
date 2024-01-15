@@ -11,17 +11,30 @@ export async function POST(request: Request) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [{ email: email }, { phone: phone }],
+            },
+        });
+        if (existingUser) {
+            return new NextResponse(
+                'User already exists!,Please choose a different email or phone number.',
+                { status: 409 }
+            );
+        }
+        const provider = 'credentials';
         const user = await prisma.user.create({
             data: {
                 name,
                 email,
                 phone,
                 hashedPassword,
+                provider,
+                emailVerified: new Date(),
             },
         });
         return NextResponse.json(user);
     } catch (error: any) {
-        console.log(error, 'REGISTRATION_ERROR');
         return new NextResponse('Internal Error', { status: 500 });
     }
 }

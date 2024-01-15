@@ -8,6 +8,21 @@ import prisma from '@/app/lib/prismadb';
 
 export const authOptions: AuthOptions = {
     adapter: PrismaAdapter(prisma),
+    session: {
+        strategy: 'jwt',
+    },
+    pages: {
+        signIn: '/error',
+        // error: '/error',
+    },
+    events: {
+        async linkAccount({ user }) {
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { emailVerified: new Date() },
+            });
+        },
+    },
     providers: [
         GithubProvider({
             clientId: process.env.GITHUB_ID as string,
@@ -53,10 +68,18 @@ export const authOptions: AuthOptions = {
             },
         }),
     ],
-    debug: process.env.NODE_ENV === 'development',
-    session: {
-        strategy: 'jwt',
+    callbacks: {
+        async jwt({ token }) {
+            return token;
+        },
+        async session({ session, token }) {
+            if (token.sub && session.user) {
+                session.user.id = token.sub;
+            }
+            return session;
+        },
     },
+    debug: process.env.NODE_ENV === 'development',
     secret: process.env.NEXTAUTH_SECRET,
 };
 

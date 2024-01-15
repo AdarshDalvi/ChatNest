@@ -27,15 +27,22 @@ function Button({
             flex
             gap-2.5
             justify-center
-            py-2.5
+            py-3
             text-[1.2rem]
-            rounded
+            rounded-lg
             text-center`,
                 fullWidth && 'w-full',
                 disabled && 'bg-opacity-50 cursor-default pointer-events-none',
                 iconButton
-                    ? 'text-stone-900 bg-white transition-colors hover:bg-gray-300 ring-1 ring-inset ring-gray-400'
-                    : 'text-white bg-whatsappColor hover:bg-emerald-500'
+                    ? `bg-white 
+                        transition-colors 
+                        duration-300 
+                        shadow-[0px_0px_10px_1px_#00000024] 
+                        hover:bg-gray-200 
+                        hover:border 
+                        hover:border-gray-300 
+                        hover: border-[0.5px]`
+                    : 'text-white bg-black hover:bg-slate-800'
             )}
         >
             {children}
