@@ -5,6 +5,7 @@ import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '@/app/lib/prismadb';
+import { getUserByEmail } from '@/app/actions/getUser';
 
 export const authOptions: AuthOptions = {
     adapter: PrismaAdapter(prisma),
@@ -12,14 +13,14 @@ export const authOptions: AuthOptions = {
         strategy: 'jwt',
     },
     pages: {
+        // signIn: '/auth/login',
         signIn: '/error',
-        // error: '/error',
     },
     events: {
-        async linkAccount({ user }) {
+        async linkAccount({ user, account }) {
             await prisma.user.update({
                 where: { id: user.id },
-                data: { emailVerified: new Date() },
+                data: { emailVerified: new Date(), provider: account.provider },
             });
         },
     },
@@ -52,8 +53,14 @@ export const authOptions: AuthOptions = {
                     },
                 });
 
-                if (!user || !user.hashedPassword) {
+                if (!user) {
                     throw new Error('Account Not Found!');
+                }
+
+                if (!user.hashedPassword) {
+                    throw new Error(
+                        'User logged in via third-party provider (Google or GitHub)'
+                    );
                 }
 
                 const isCorrectPassword = await brcypt.compare(
@@ -69,14 +76,15 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token }) {
-            return token;
-        },
-        async session({ session, token }) {
-            if (token.sub && session.user) {
-                session.user.id = token.sub;
+        async signIn({ user, account }) {
+            const existingUser = await getUserByEmail(
+                user.email || 'notAnEmail'
+            );
+            if (existingUser && existingUser.provider !== account?.provider) {
+                throw new Error('OAuthAccountNotLinked');
+            } else {
+                return true;
             }
-            return session;
         },
     },
     debug: process.env.NODE_ENV === 'development',

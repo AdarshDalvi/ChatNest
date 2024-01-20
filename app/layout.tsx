@@ -3,6 +3,8 @@ import './globals.css';
 import { Roboto } from 'next/font/google';
 import ToastContext from './context/ToastContext';
 import AuthContext from './context/AuthContext';
+import clsx from 'clsx';
+import { ConnversationContextProvider } from './context/ConversationContext';
 
 export const metadata: Metadata = {
     title: 'ChatNest',
@@ -24,10 +26,18 @@ const roboto = Roboto({
 async function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
-            <body className={roboto.className} suppressHydrationWarning>
+            <body
+                className={clsx(
+                    `bg-cyan-950 flex justify-center`,
+                    roboto.className
+                )}
+                suppressHydrationWarning
+            >
                 <AuthContext>
-                    <ToastContext />
-                    {children}
+                    <ConnversationContextProvider>
+                        <ToastContext />
+                        {children}
+                    </ConnversationContextProvider>
                 </AuthContext>
             </body>
         </html>

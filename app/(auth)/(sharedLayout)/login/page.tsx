@@ -5,7 +5,7 @@ import Input from '@/app/components/inputs/Input';
 import PhoneNumberInput from '@/app/components/inputs/PhoneInput';
 import generateSchema from '@/app/components/inputs/Schema';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';

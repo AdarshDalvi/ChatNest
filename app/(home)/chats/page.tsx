@@ -1,3 +1,5 @@
-export default function page() {
-    return <div>nice this is chats</div>;
+import EmptyState from '@/app/components/EmptyState';
+
+export default function Chats() {
+    return <EmptyState />;
 }

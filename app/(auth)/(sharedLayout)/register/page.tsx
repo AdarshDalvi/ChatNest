@@ -31,6 +31,7 @@ export default function page() {
     const router = useRouter();
 
     const handleFormSubmit: SubmitHandler<FieldValues> = async (data) => {
+        setIsFormSubmitted(true);
         try {
             const { status } = await axios.post('/api/register', data);
             if (status === 200) {
@@ -45,7 +46,11 @@ export default function page() {
                 );
                 router.push('/login');
             }
-        } catch (error) {
+            // }
+        } catch (error: any) {
+            if (error.response.status === 409) {
+                return toast.error(error.response.data);
+            }
             toast.error('Something went wrong!');
         } finally {
             setIsFormSubmitted(false);

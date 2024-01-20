@@ -11,14 +11,24 @@ export async function POST(request: Request) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
-        const existingUser = await prisma.user.findFirst({
+        const existingUserByEmail = await prisma.user.findUnique({
             where: {
-                OR: [{ email: email }, { phone: phone }],
+                email: email,
             },
         });
-        if (existingUser) {
+        const existingUserByPhone = await prisma.user.findUnique({
+            where: {
+                phone: phone,
+            },
+        });
+        if (existingUserByEmail) {
             return new NextResponse(
-                'User already exists!,Please choose a different email or phone number.',
+                'Email already in use!,Please choose a different email.',
+                { status: 409 }
+            );
+        } else if (existingUserByPhone) {
+            return new NextResponse(
+                'Phone number already in use!,Please choose a different phone number.',
                 { status: 409 }
             );
         }

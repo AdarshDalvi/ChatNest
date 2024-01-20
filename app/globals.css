@@ -38,3 +38,57 @@ h2 {
     flex: 1;
     margin: auto;
 }
+
+.main-nav-item {
+    color: rgb(203, 203, 203);
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.main-nav-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 2px;
+    width: 0;
+    background-color: white;
+    transition: width 0.5s;
+}
+
+.main-nav-item:hover::before {
+    width: 90%;
+}
+
+.active {
+    border-bottom: 2px solid white;
+    color: white;
+}
+
+.active::before {
+    content: none;
+}
+.active:hover:before {
+    content: none;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #112d4e;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #3f72af;
+    /* border-radius: 5px; */
+}
+/* Handle on hover */
+/* ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+} */

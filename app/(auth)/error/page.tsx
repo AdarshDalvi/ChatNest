@@ -5,14 +5,15 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FiAlertTriangle } from 'react-icons/fi';
 
-export default function page() {
+export default function Error() {
     const searchParams = useSearchParams();
     const urlError =
         searchParams.get('error') === 'OAuthAccountNotLinked'
             ? 'Email already in use with a different provider!'
             : 'Oops Something Went Wrong!';
+
     return (
-        <div className="flex flex-col min-h-screen items-center justify-center text-center bg-gradient-to-b from-cyan-500 to-blue-500">
+        <div className="w-full flex flex-col min-h-screen items-center justify-center text-center bg-gradient-to-b from-cyan-500 to-blue-500">
             <div className="bg-white mx-4 text-black flex flex-col gap-8 p-12 rounded-2xl items-center">
                 <Image
                     src="/logochat.png"

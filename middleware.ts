@@ -30,6 +30,13 @@ export default withAuth(
         if (pathName === '/') {
             return NextResponse.redirect(new URL('/login', req.url));
         }
+
+        if (pathName === '/error') {
+            if (isAuth) {
+                return NextResponse.redirect(new URL('/chats', req.url));
+            }
+            return NextResponse.next();
+        }
     },
     {
         callbacks: {
@@ -40,6 +47,13 @@ export default withAuth(
     }
 );
 
-export const confige = {
-    matcher: ['/', '/login', '/register', '/chats/:path*', '/people/:path*'],
+export const config = {
+    matcher: [
+        '/',
+        '/login',
+        '/register',
+        '/chats/:path*',
+        '/people/:path*',
+        '/error',
+    ],
 };
