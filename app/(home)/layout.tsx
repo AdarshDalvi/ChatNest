@@ -1,6 +1,6 @@
 import React from 'react';
-import LayoutWrapper from './components/LayoutWrapper';
 import { getCurrentUser } from '../actions/getUser';
+import Header from './components/Header';
 
 interface HomePageLayoutProps {
     children: React.ReactNode;
@@ -11,11 +11,11 @@ export default async function HomePageLayout({
 }: HomePageLayoutProps) {
     const currentUser = await getCurrentUser();
     return (
-        <LayoutWrapper
-            currentUser={currentUser!}
-            optionalComponent={<div>this is list</div>}
-        >
-            {children}
-        </LayoutWrapper>
+        <>
+            <main className="relative w-full max-w-[1600px] h-screen text-white md:flex">
+                <Header currentUser={currentUser!} />
+                {children}
+            </main>
+        </>
     );
 }

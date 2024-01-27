@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import './globals.css';
+import './globals.scss';
 import { Roboto } from 'next/font/google';
 import ToastContext from './context/ToastContext';
 import AuthContext from './context/AuthContext';

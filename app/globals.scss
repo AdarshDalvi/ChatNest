@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    min-height: 100vh;
+    h1 {
+        font-size: clamp(2rem, 2rem + 3vw, 3.2rem);
+    }
+
+    h2 {
+        font-size: clamp(1.3rem, 3vw + 1rem, 2.8rem);
+    }
+}
+
+#text-between {
+    display: flex;
+    gap: 8px;
+    font-size: 1.2rem;
+
+    &::before,
+    &::after {
+        content: '';
+        background-color: #c4c4c4;
+        height: 1px;
+        flex: 1;
+        margin: auto;
+    }
+}
+
+.main-nav-item {
+    color: rgb(203, 203, 203);
+    position: relative;
+    padding-bottom: 4px;
+
+    &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 2px;
+        width: 0;
+        background-color: white;
+        transition: width 0.5s;
+    }
+
+    &:hover::before {
+        width: 90%;
+    }
+}
+
+.active {
+    border-bottom: 2px solid white;
+    color: white;
+
+    &::before {
+        content: none;
+    }
+
+    &:hover::before {
+        content: none;
+    }
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+#list-wrapper {
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #1b262c;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #233d5d;
+    }
+}
+
+#chat-input-box {
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: #3c535e;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: #8696a0;
+    }
+}
+
+#emoji-picker {
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #1b262c;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #2c4049;
+    }
+
+    .picker {
+        @media (max-width: 500px) {
+            --epr-emoji-size: 24px;
+            --epr-hover-bg-color: #8696a0;
+        }
+    }
+}

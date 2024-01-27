@@ -9,7 +9,7 @@ export default function EmptyState() {
             h-screen 
             justify-center 
             items-center 
-            bg-[#0F4C75]
+            bg-primary
             font-semibold
             text-2xl
             lg:text-3xl

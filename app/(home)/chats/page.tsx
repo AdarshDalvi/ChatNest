@@ -1,4 +1,4 @@
-import EmptyState from '@/app/components/EmptyState';
+import EmptyState from '@/app/(home)/components/EmptyState';
 
 export default function Chats() {
     return <EmptyState />;
