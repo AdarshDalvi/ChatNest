@@ -20,7 +20,7 @@ const ChatList: React.FC<ChatListProps> = ({ initialChats }) => {
 
     const [chats, setChats] = useState(initialChats);
 
-    const { conversationId, isOpen } = useConversation();
+    const { chatId } = useConversation();
     return (
         <>
             <SearchBox
@@ -31,18 +31,45 @@ const ChatList: React.FC<ChatListProps> = ({ initialChats }) => {
                 placeholder="Search or start a new chat"
             />
             <div
-                className="flex-1 overflow-y-auto  pr-2 "
+                id="list"
+                className="
+                    w-full
+                    pr-2
+                    overflow-y-auto  
+                    flex-1 
+                    flex
+                    flex-col"
                 style={{ scrollbarGutter: 'stable' }}
             >
                 {chats.map((chat, index, chats) => (
                     <ChatCard
                         key={chat.id}
                         chat={chat}
-                        selected={chat.id === conversationId}
+                        selected={chat.id === chatId}
                         lastElement={index === chats.length - 1}
                     />
                 ))}
             </div>
+            {/* <SearchBox
+                id="search-text"
+                register={register}
+                resetField={resetField}
+                watchForm={watch}
+                placeholder="Search or start a new chat"
+            />
+            <div
+                className="w-full flex-1 overflow-y-auto  pr-2 "
+                style={{ scrollbarGutter: 'stable' }}
+            >
+                {chats.map((chat, index, chats) => (
+                    <ChatCard
+                        key={chat.id}
+                        chat={chat}
+                        selected={chat.id === chatId}
+                        lastElement={index === chats.length - 1}
+                    />
+                ))}
+            </div> */}
         </>
     );
 };

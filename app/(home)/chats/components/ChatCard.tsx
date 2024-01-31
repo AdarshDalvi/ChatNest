@@ -11,6 +11,7 @@ import Avatar from '@/app/(home)/components/Avatar';
 import clsx from 'clsx';
 import messageTime from '@/app/lib/messageTime';
 import { FaImage } from 'react-icons/fa6';
+import { format } from 'date-fns';
 
 interface ChatCardProps {
     chat: FullChatType;
@@ -52,7 +53,7 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
         if (lastMessage?.image) {
             return (
                 <div className="flex gap-2 items-center">
-                    <FaImage size={25} />
+                    <FaImage size={14} />
                     <p>Image</p>
                 </div>
             );
@@ -76,26 +77,40 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
             lastElement={lastElement}
         >
             <div className="py-6">
-                <Avatar user={otherUser} status={true} />
+                <Avatar user={otherUser} status={true} size="CARD" />
             </div>
             <div
-                className={clsx(
-                    'flex-1 flex flex-col gap-1 pr-6 justify-center border-t-[0.667px] border-[#2c4049] hover:border-none text-xl midPhones:text-2xl'
-                )}
+                className="
+                    flex-1
+                    min-w-0
+                    flex
+                    flex-col
+                    justify-center
+                    gap-1
+                    pr-6
+                    border-t-[0.667px]
+                    border-cardBorder
+                    hover:border-none
+                    text-xl
+                    midPhones:text-2xl"
             >
-                <div className="flex w-full justify-between">
+                <div className="flex justify-between">
                     <p>{chat.name || otherUser.name}</p>
                     {lastMessage?.createdAt && (
                         <p className="text-lg text-gray-400">
-                            {messageTime(lastMessage.createdAt)}
+                            {format(lastMessage.createdAt, 'p')}
                         </p>
                     )}
                 </div>
                 <div
                     className={clsx(
-                        'text-lg midPhones:text-xl truncate',
+                        `
+                        text-lg 
+                        midPhones:text-xl 
+                        truncate`,
                         hasSeen ? 'text-gray-500' : 'white'
                     )}
+                    style={{ width: 'calc(90%)' }}
                 >
                     {lastMessageText}
                 </div>

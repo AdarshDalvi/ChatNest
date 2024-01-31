@@ -37,7 +37,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, lastElement }) => {
     return (
         <CardWrapper handleClick={handleClick} lastElement={lastElement}>
             <div className="py-6">
-                <Avatar user={user} status={true} />
+                <Avatar user={user} status={true} size="CARD" />
             </div>
             <div className="flex-1 flex flex-col pr-6 justify-center border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
                 <p>{user.name}</p>

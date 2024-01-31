@@ -29,7 +29,7 @@ export default function Header({ currentUser }: HeaderProps) {
     return (
         <header className="absolute top-0 left-0 w-full  md:w-[45%] md:max-w-[480px] flex flex-col  pt-4 bg-primary md:border-borderColor md:border-r">
             <div className="flex items-center mx-[1.6rem]">
-                <Avatar user={currentUser} status={false} />
+                <Avatar user={currentUser} status={false} size="HEADER" />
                 <GoKebabHorizontal className="text-[2.2rem] rotate-90 ml-auto text-white cursor-pointer" />
             </div>
             <nav className="mt-8 relative flex justify-center text-center  text-lg md:text-xl font-medium tracking-wider">

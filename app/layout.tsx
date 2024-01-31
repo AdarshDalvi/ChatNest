@@ -28,10 +28,9 @@ async function RootLayout({ children }: { children: React.ReactNode }) {
         <html lang="en">
             <body
                 className={clsx(
-                    `bg-cyan-950 flex justify-center`,
+                    `bg-cyan-950 flex justify-center w-screen h-screen`,
                     roboto.className
                 )}
-                suppressHydrationWarning
             >
                 <AuthContext>
                     <ConnversationContextProvider>

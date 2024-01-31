@@ -15,6 +15,7 @@ const config: Config = {
                 cardBorder: '#2c4049',
                 searchBoxBg: '#2d3f48',
                 placeHolderColor: '#8696A0',
+                cardHoverColor: '#324d5b',
             },
             screens: {
                 smallMobiles: '350px',
@@ -22,6 +23,15 @@ const config: Config = {
             },
             height: {
                 listHeight: 'calc(100vh - 93.5px)',
+                listHeightSmall: 'calc(100vh - 88.5px)',
+            },
+            maxWidth: {
+                messageBoxWidth: 'calc(100% - 42.5px)',
+                messageBoxWidthSmall: 'calc(100% - 27.5px)',
+            },
+            margin: {
+                listMargin: '93.5px',
+                listMarginSmall: '88.5px',
             },
             backgroundImage: {
                 chatBody: 'url(/chat-bg.png)',

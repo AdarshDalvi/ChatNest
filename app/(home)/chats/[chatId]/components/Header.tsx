@@ -28,7 +28,7 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
             <Link href={'/chats'}>
                 <IoArrowBack className="text-4xl" />
             </Link>
-            <Avatar user={otherUser} status={false} />
+            <Avatar user={otherUser} status={false} size="HEADER" />
             <div className="flex-1 flex flex-col justify-center ml-2">
                 <p className="text-xl midPhones:text-2xl font-medium tracking-wide">
                     {otherUser.name}

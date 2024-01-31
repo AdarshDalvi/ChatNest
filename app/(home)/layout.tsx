@@ -12,7 +12,15 @@ export default async function HomePageLayout({
     const currentUser = await getCurrentUser();
     return (
         <>
-            <main className="relative w-full max-w-[1600px] h-screen text-white md:flex">
+            <main
+                className="
+                    relative
+                    w-full
+                    h-full
+                    max-w-[1600px]
+                    md:flex
+                    "
+            >
                 <Header currentUser={currentUser!} />
                 {children}
             </main>

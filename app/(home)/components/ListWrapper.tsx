@@ -4,8 +4,13 @@ interface ListWrapperProps {
 const ListWrapper: React.FC<ListWrapperProps> = ({ children }) => {
     return (
         <div
-            id="list-wrapper"
-            className="flex flex-col w-full h-listHeight py-4 gap-6"
+            className="
+                h-full 
+                w-full
+                flex 
+                flex-col 
+                py-4 
+                gap-6"
         >
             {children}
         </div>

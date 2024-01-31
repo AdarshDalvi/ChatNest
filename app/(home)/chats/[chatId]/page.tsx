@@ -1,5 +1,5 @@
-import ChatScreenHeader from './components/ChatScreenHeader';
-import ChatScreenBody from './components/ChatScreenBody';
+import ChatScreenHeader from './components/Header';
+import ChatScreenBody from './components/Body';
 import getChatDetailsById from '@/app/actions/getChatDetailsById';
 import getMessages from '@/app/actions/getMessages';
 
@@ -17,19 +17,22 @@ const ChatId = async ({ params }: { params: ChatIdParams }) => {
     return (
         <main
             className="
-            flex
-            flex-col
-            flex-1
-            min-w-[200px]
-            text-black
-            max-md:fixed 
-            max-md:left-0
-            max-md:top-0
-            max-md:w-screen
-            max-md:h-screen"
+                h-screen
+                flex-1
+                bg-red-200
+                flex
+                flex-col
+                min-w-[200px]
+                max-md:fixed
+                max-md:left-0
+                max-md:top-0
+                max-md:w-screen"
         >
             <ChatScreenHeader chat={chatDetails} />
-            <ChatScreenBody />
+            <ChatScreenBody
+                initialMessages={messages}
+                isGroup={chatDetails.isGroup}
+            />
         </main>
     );
 };
