@@ -63,34 +63,3 @@ const ChatScreenBody: React.FC<ChatScreenBodyProps> = ({
 };
 
 export default ChatScreenBody;
-// <div
-//     className="w-full flex flex-col bg-secondary relative"
-//     style={{ height: 'calc(100% - 60px)' }}
-// >
-//     <div className="bg-chatBody bg-fixed h-full w-full opacity-5 absolute left-0 top-0 z-0"></div>
-//     <div
-//         className="
-//             messages
-//             w-full
-//             flex-grow
-//             my-2
-//             flex flex-col px-4 midPhones:px-8 overflow-y-auto
-//             z-20
-//         "
-//     ></div>
-//     <Form />
-// </div>
-
-{
-    /* {messages.map((message, index, messages) => (
-    <MessageBox
-        key={message.id}
-        message={message}
-        previousMessage={
-            index !== 0 ? messages[index - 1] : null
-        }
-        isGroup={isGroup!}
-        isFirstMessage={index === 0}
-    />
-))} */
-}

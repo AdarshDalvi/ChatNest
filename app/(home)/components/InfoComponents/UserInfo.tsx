@@ -6,6 +6,10 @@ import { format } from 'date-fns';
 import { IoTrash } from 'react-icons/io5';
 import { useState } from 'react';
 import clsx from 'clsx';
+import Modal from '../Modal/Modal';
+import useModalDialog from '@/app/hooks/useModalDialog';
+import ConfirmationDialog from '../Modal/ConfirmationDialog';
+import { useRouter } from 'next/navigation';
 
 interface UserInfoProps {
     chat: Conversation & {
@@ -16,8 +20,25 @@ interface UserInfoProps {
 
 const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
     const [isHovering, setIsHovering] = useState(false);
+
+    const { openDialog, modalDialogRef, closeDialog } = useModalDialog();
+    const router = useRouter();
+
+    const confirmDeleteAction = () => {
+        router.push('/chats');
+    };
+
     return (
         <>
+            <Modal ref={modalDialogRef}>
+                <ConfirmationDialog
+                    confirmAction={confirmDeleteAction}
+                    closeModal={() => closeDialog()}
+                    modalHeading="Delete Chat"
+                    modalMessage="Are you sure you want to delete this chat? This action
+                        cannot be undone."
+                />
+            </Modal>
             <div
                 className="w-[30%] max-w-[200px] lg:max-w-[220px] relative rounded-full overflow-hidden cursor-pointer"
                 onMouseEnter={() => setIsHovering(true)}
@@ -33,7 +54,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
 
                 <div
                     className={clsx(
-                        `absolute cursor-pointer justify-center items-center inset-0 rounded-full bg-secondary z-40 bg-opacity-50`,
+                        `absolute cursor-pointer justify-center items-center inset-0 rounded-full bg-secondary z-10 bg-opacity-50`,
                         isHovering ? 'flex' : 'hidden'
                     )}
                 >
@@ -45,7 +66,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
             <p className="text-xl smallMobiles:text-2xl midPhones:text-3xl lg:text-4xl mt-6">
                 {otherUser.name}
             </p>
-            <button className="flex flex-col items-center mt-4 gap-2 hover:opacity-80">
+            <button
+                className="flex flex-col items-center mt-4 gap-2 hover:opacity-80"
+                onClick={() => openDialog()}
+            >
                 <IoTrash className="text-red-500 text-2xl midPhones:text-3xl lg:text-4xl" />
                 <p className="text-sm smallMobiles:text-base midPhones:text-lg lg:text-xl">
                     Delete

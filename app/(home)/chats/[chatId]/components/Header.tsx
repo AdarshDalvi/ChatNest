@@ -3,8 +3,9 @@
 import Avatar from '@/app/(home)/components/Avatar';
 import GroupInfo from '@/app/(home)/components/InfoComponents/GroupInfo';
 import UserInfo from '@/app/(home)/components/InfoComponents/UserInfo';
-import SideModal from '@/app/(home)/components/SideModal/SideModal';
+import SideModal from '@/app/(home)/components/Modal/SideModal';
 import useOtherUser from '@/app/hooks/useOther';
+import stopEventPropagation from '@/app/lib/stopEventPropagation';
 import { Conversation, User } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -43,11 +44,6 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
 
     const handleMenuClick = (event: MouseEvent) => {
         stopEventPropagation(event);
-    };
-
-    const stopEventPropagation = (event: MouseEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
     };
 
     return (

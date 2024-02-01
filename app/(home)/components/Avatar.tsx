@@ -10,8 +10,9 @@ interface AvatarProps {
     user?: User;
     status: boolean;
     size: AvatarSize;
+    onClick?: () => void;
 }
-export default function Avatar({ user, status, size }: AvatarProps) {
+export default function Avatar({ user, status, size, onClick }: AvatarProps) {
     let avatarSize;
 
     if (size === 'CHATBOX') {
@@ -23,7 +24,14 @@ export default function Avatar({ user, status, size }: AvatarProps) {
     }
 
     return (
-        <div className={clsx('relative bg-gray-300 rounded-full', avatarSize)}>
+        <div
+            className={clsx(
+                'relative bg-gray-300 rounded-full',
+                avatarSize,
+                onClick !== null && 'cursor-pointer'
+            )}
+            onClick={onClick}
+        >
             <Image
                 src={user?.image || '/user.png'}
                 alt={'User Image'}

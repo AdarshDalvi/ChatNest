@@ -32,6 +32,9 @@ const config: Config = {
             backgroundImage: {
                 chatBody: 'url(/chat-bg.png)',
             },
+            fontSize: {
+                camIconSize: 'clamp(1.2rem,1rem + 1.3vw,3rem)',
+            },
         },
     },
     plugins: [
