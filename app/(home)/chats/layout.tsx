@@ -1,6 +1,6 @@
 import getChats from '@/app/actions/getChats';
-import ListWrapper from '../components/ListWrapper';
-import Wrapper from '../components/Wrapper';
+import ListWrapper from '../components/WrapperComponents/ListWrapper';
+import Wrapper from '../components/WrapperComponents/Wrapper';
 import ChatList from './components/ChatList';
 
 interface ChatLayoutProps {

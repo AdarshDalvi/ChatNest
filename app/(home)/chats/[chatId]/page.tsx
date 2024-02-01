@@ -18,6 +18,7 @@ const ChatId = async ({ params }: { params: ChatIdParams }) => {
         <main
             className="
                 h-screen
+                relative
                 flex-1
                 bg-red-200
                 flex

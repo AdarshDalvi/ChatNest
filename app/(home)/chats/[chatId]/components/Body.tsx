@@ -43,6 +43,7 @@ const ChatScreenBody: React.FC<ChatScreenBodyProps> = ({
                     z-10
                     overflow-y-auto
                     "
+                style={{ scrollbarGutter: 'stable' }}
             >
                 {messages.map((message, index, messages) => (
                     <MessageBox

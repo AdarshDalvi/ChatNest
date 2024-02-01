@@ -21,6 +21,7 @@ body {
     h2 {
         font-size: clamp(1.3rem, 3vw + 1rem, 2.8rem);
     }
+    scrollbar-gutter: stable;
 }
 
 #text-between {
@@ -78,27 +79,28 @@ body {
     width: 5px;
 }
 
-#list {
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: #1b262c;
-    }
+/* Track */
+::-webkit-scrollbar-track {
+    background: #1b262c;
+}
 
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: #233d5d;
-    }
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #233d5d;
 }
 
 #messages {
+    &::-webkit-scrollbar {
+        width: 7px;
+    }
     /* Track */
     &::-webkit-scrollbar-track {
-        background: #1b262c;
+        background: transparent;
     }
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-        background: #233d5d;
+        background: rgba($color: #233d5d, $alpha: 0.6);
     }
 }
 

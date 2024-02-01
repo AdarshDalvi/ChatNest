@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
-import CardWrapper from '../../components/CardWrapper';
+import CardWrapper from '../../components/WrapperComponents/CardWrapper/CardWrapper';
 
 interface UserCardProps {
     user: User;

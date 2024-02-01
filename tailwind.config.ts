@@ -25,10 +25,6 @@ const config: Config = {
                 listHeight: 'calc(100vh - 93.5px)',
                 listHeightSmall: 'calc(100vh - 88.5px)',
             },
-            maxWidth: {
-                messageBoxWidth: 'calc(100% - 42.5px)',
-                messageBoxWidthSmall: 'calc(100% - 27.5px)',
-            },
             margin: {
                 listMargin: '93.5px',
                 listMarginSmall: '88.5px',

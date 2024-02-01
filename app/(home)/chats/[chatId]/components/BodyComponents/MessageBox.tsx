@@ -1,6 +1,7 @@
 import Avatar from '@/app/(home)/components/Avatar';
 import { FullMessageType } from '@/app/types/conversation';
 import clsx from 'clsx';
+import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 
@@ -19,12 +20,12 @@ const MessageBox: React.FC<MessageBoxProps> = ({
 }) => {
     const session = useSession();
     const isOwn = session?.data?.user?.email === message?.sender?.email;
-    const sameUserPreviousMessage =
+    const previousMessageSameUser =
         previousMessage?.sender?.email === message.sender.email;
 
     let alignment;
 
-    let textImageContainer = 'rounded-xl';
+    let textImageContainer = '';
 
     if (isOwn) {
         alignment = 'self-end';
@@ -37,78 +38,175 @@ const MessageBox: React.FC<MessageBoxProps> = ({
     if (isFirstMessage) {
         marginTop = 'mt-8';
         textImageContainer += isOwn
-            ? ' pointyEdgeRight  rounded-tr-none'
-            : ' pointyEdgeLeft rounded-tl-none';
+            ? 'pointyEdgeRight  rounded-tr-none'
+            : 'pointyEdgeLeft rounded-tl-none';
     }
 
-    if (sameUserPreviousMessage) {
+    if (previousMessageSameUser) {
         marginTop = 'mt-1';
     } else {
         marginTop = 'mt-4';
         textImageContainer += isOwn
-            ? ' pointyEdgeRight  rounded-tr-none'
-            : ' pointyEdgeLeft rounded-tl-none';
+            ? 'pointyEdgeRight  rounded-tr-none'
+            : 'pointyEdgeLeft rounded-tl-none';
     }
 
-    if (isGroup) {
-        return (
-            <div
-                className={clsx(
-                    'flex max-w-[80%] min-w-0  gap-4 midPhones:gap-6 text-white',
-                    alignment,
-                    marginTop
-                )}
-            >
-                {!sameUserPreviousMessage ? (
-                    <Avatar
-                        user={message.sender}
-                        status={false}
-                        size="CHATBOX"
-                    />
-                ) : (
-                    <div className="w-7 h-7 midPhones:w-11 midPhones:h-11"></div>
-                )}
-                <p
-                    className={clsx(
-                        'flex-1 relative bg-primary break-words max-w-messageBoxWidthSmall midPhones:max-w-messageBoxWidth',
-                        textImageContainer,
-                        isOwn && '-order-1'
-                    )}
-                >
-                    {message.body}
-                </p>
-            </div>
-        );
+    let displayUserName;
+    if (!isOwn) {
+        if (message.body && !previousMessageSameUser) {
+            displayUserName = true;
+        } else if (message.image) {
+            displayUserName = true;
+        } else {
+            displayUserName = false;
+        }
     }
 
     return (
         <div
             className={clsx(
                 `
-                relative
-                p-4
+                flex
+                min-w-0
+                max-w-[80%]
                 text-white
-                bg-primary
-                max-w-[85%]
-                midPhones:max-w-[75%]
-                break-words`,
-                marginTop,
+                gap-3
+                midPhones:gap-4`,
                 alignment,
-                textImageContainer
+                marginTop
             )}
         >
-            {message.body && message.body}
-            {message.image && (
-                <Image
-                    src={message.image}
-                    height={40}
-                    width={40}
-                    alt="message-image"
-                    className="w-auto h-auto"
-                />
+            {!previousMessageSameUser ? (
+                <Avatar user={message.sender} status={false} size="CHATBOX" />
+            ) : (
+                <div className="w-7 h-7 midPhones:w-11 midPhones:h-11"></div>
             )}
+            <div
+                className={clsx(
+                    `
+                    relative
+                    flex
+                    flex-col
+                    flex-1
+                    bg-primary
+                    rounded-xl`,
+                    isOwn && '-order-1',
+                    textImageContainer,
+                    previousMessageSameUser ? '' : '',
+                    message.image ? 'p-1.5' : 'pt-2.5 pb-3.5 pl-4 pr-3.5'
+                )}
+            >
+                {displayUserName && (
+                    <p
+                        className={clsx(
+                            `text-base midPhones:text-lg text-yellow-400`,
+                            message.image && 'pl-2.5 pr-2 pb-3.5 pt-1.5'
+                        )}
+                    >
+                        {message.sender.name}
+                    </p>
+                )}
+                {message.image && (
+                    <div className="relative">
+                        <Image
+                            src={message.image}
+                            height={300}
+                            width={300}
+                            alt="message-image"
+                            className="rounded-lg"
+                        />
+                        <p className="absolute right-2.5 bottom-1.5 text-base midPhones:text-lg ">
+                            {format(new Date(message.createdAt), 'p')}
+                        </p>
+                    </div>
+                )}
+                {
+                    <div
+                        className="whitespace-normal text-lg midPhones:text-xl relative"
+                        style={{ overflowWrap: 'anywhere' }}
+                    >
+                        {message.body}
+                    </div>
+                }
+                {/* {!isOwn && !sameUserPreviousMessage && (
+                    <p
+                        className={clsx(
+                            'text-xl leading-4 text-yellow-400 pl-2.5 pr-2 pb-3.5 pt-1.5'
+                        )}
+                    >
+                        {message.sender.name}
+                    </p>
+                )}
+                {message.image ? (
+                    <div className="relative">
+                        <Image
+                            src={message.image}
+                            height={300}
+                            width={300}
+                            alt="message-image"
+                            className="rounded-xl"
+                        />
+                    </div>
+                ) : (
+                    <p
+                        className="whitespace-normal text-xl "
+                        style={{ overflowWrap: 'anywhere' }}
+                    >
+                        {message.body}
+                    </p>
+                )} */}
+                {/* <div
+                    className={clsx(`
+                    whitespace-normal
+                    text-xl
+                    `)}
+                    style={{ overflowWrap: 'anywhere' }}
+                > */}
+                {/* {message.body && message.body} */}
+                {/* {message.image && (
+                        <Image
+                            src={message.image}
+                            height={288}
+                            width={288}
+                            alt="message-image"
+                            className="rounded-xl"
+                        />
+                    )} */}
+                {/* </div> */}
+                {/* <div>{format(new Date(message.createdAt), 'p')}</div> */}
+            </div>
         </div>
     );
+    // }
+
+    // return (
+    //     <div
+    //         className={clsx(
+    //             `
+    //             relative
+    //             text-white
+    //             bg-primary
+    //             max-w-[85%]
+    //             midPhones:max-w-[75%]
+    //             break-words`,
+    //             marginTop,
+    //             alignment,
+    //             textImageContainer,
+    //             message.image ? 'rounded-2xl p-1.5' : 'rounded-xl p-4'
+    //         )}
+    //     >
+    //         {message.body && message.body}
+    //         {message.image && (
+    //             <Image
+    //                 src={message.image}
+    //                 height={288}
+    //                 width={288}
+    //                 alt="message-image"
+    //                 className="rounded-xl"
+    //             />
+    //         )}
+    //     </div>
+    // );
 };
 
 export default MessageBox;

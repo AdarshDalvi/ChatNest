@@ -1,7 +1,7 @@
 'use client';
 
 import { FullChatType } from '@/app/types/conversation';
-import CardWrapper from '../../components/CardWrapper';
+import CardWrapper from '../../components/WrapperComponents/CardWrapper/CardWrapper';
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Conversation, Message, User } from '@prisma/client';
@@ -108,7 +108,7 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
                         text-lg 
                         midPhones:text-xl 
                         truncate`,
-                        hasSeen ? 'text-gray-500' : 'white'
+                        hasSeen ? 'text-gray-400' : 'white'
                     )}
                     style={{ width: 'calc(90%)' }}
                 >

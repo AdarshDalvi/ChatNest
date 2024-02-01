@@ -4,7 +4,7 @@ import { User } from '@prisma/client';
 import clsx from 'clsx';
 import Image from 'next/image';
 
-type AvatarSize = 'CARD' | 'CHATBOX' | 'HEADER';
+type AvatarSize = 'CARD' | 'CHATBOX' | 'HEADER' | 'INFO';
 
 interface AvatarProps {
     user?: User;

@@ -50,26 +50,6 @@ const ChatList: React.FC<ChatListProps> = ({ initialChats }) => {
                     />
                 ))}
             </div>
-            {/* <SearchBox
-                id="search-text"
-                register={register}
-                resetField={resetField}
-                watchForm={watch}
-                placeholder="Search or start a new chat"
-            />
-            <div
-                className="w-full flex-1 overflow-y-auto  pr-2 "
-                style={{ scrollbarGutter: 'stable' }}
-            >
-                {chats.map((chat, index, chats) => (
-                    <ChatCard
-                        key={chat.id}
-                        chat={chat}
-                        selected={chat.id === chatId}
-                        lastElement={index === chats.length - 1}
-                    />
-                ))}
-            </div> */}
         </>
     );
 };
