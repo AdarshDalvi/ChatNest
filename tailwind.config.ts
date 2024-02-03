@@ -22,8 +22,8 @@ const config: Config = {
                 midPhones: '500px',
             },
             height: {
-                listHeight: 'calc(100vh - 93.5px)',
-                listHeightSmall: 'calc(100vh - 88.5px)',
+                listHeight: 'calc(100dvh - 93.5px)',
+                listHeightSmall: 'calc(100dvh - 88.5px)',
             },
             margin: {
                 listMargin: '93.5px',

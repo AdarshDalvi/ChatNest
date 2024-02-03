@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { LiaCheckDoubleSolid } from 'react-icons/lia';
 
 interface MessageBoxProps {
     message: FullMessageType;
@@ -43,7 +44,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
     }
 
     if (previousMessageSameUser) {
-        marginTop = 'mt-1';
+        marginTop = 'mt-1.5';
     } else {
         marginTop = 'mt-4';
         textImageContainer += isOwn
@@ -62,25 +63,105 @@ const MessageBox: React.FC<MessageBoxProps> = ({
         }
     }
 
-    return (
-        <div
-            className={clsx(
-                `
+    if (isGroup) {
+        return (
+            <div
+                className={clsx(
+                    `
                 flex
                 min-w-0
                 max-w-[80%]
                 text-white
                 gap-3
                 midPhones:gap-4`,
+                    alignment,
+                    marginTop
+                )}
+            >
+                {!previousMessageSameUser ? (
+                    <Avatar
+                        user={message.sender}
+                        status={false}
+                        size="CHATBOX"
+                    />
+                ) : (
+                    <div className="w-7 h-7 midPhones:w-11 midPhones:h-11"></div>
+                )}
+                <div
+                    className={clsx(
+                        `
+                    relative
+                    flex
+                    flex-col
+                    flex-1
+                    bg-primary
+                    rounded-xl`,
+                        isOwn && '-order-1',
+                        textImageContainer,
+                        previousMessageSameUser ? '' : '',
+                        message.image ? 'p-1.5' : 'pt-2.5 pb-3.5 pl-4 pr-3.5'
+                    )}
+                >
+                    {displayUserName && (
+                        <p
+                            className={clsx(
+                                `text-base midPhones:text-lg text-yellow-400`,
+                                message.image && 'pl-2.5 pr-2 pb-3.5 pt-1.5'
+                            )}
+                        >
+                            {message.sender.name}
+                        </p>
+                    )}
+                    {message.image ? (
+                        <div className="relative">
+                            <Image
+                                src={message.image}
+                                height={300}
+                                width={300}
+                                alt="message-image"
+                                className="rounded-lg"
+                            />
+                            <p className="absolute right-2.5 bottom-1.5 text-base midPhones:text-lg ">
+                                {format(new Date(message.createdAt), 'p')}
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            <div
+                                className="whitespace-normal text-[14px] -mb-1"
+                                style={{ overflowWrap: 'anywhere' }}
+                            >
+                                {message.body}
+                            </div>
+                            <div className="flex self-end -mb-3 gap-2">
+                                <p className=" text-gray-400">
+                                    {format(new Date(message.createdAt), 'p')}
+                                </p>
+                                {isOwn && (
+                                    <LiaCheckDoubleSolid className="text-2xl" />
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+        );
+    }
+    // }
+
+    return (
+        <div
+            className={clsx(
+                `
+                flex
+                min-w-0
+                max-w-[85%]
+                text-white
+                midPhones:gap-4`,
                 alignment,
                 marginTop
             )}
         >
-            {!previousMessageSameUser ? (
-                <Avatar user={message.sender} status={false} size="CHATBOX" />
-            ) : (
-                <div className="w-7 h-7 midPhones:w-11 midPhones:h-11"></div>
-            )}
             <div
                 className={clsx(
                     `
@@ -96,117 +177,45 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                     message.image ? 'p-1.5' : 'pt-2.5 pb-3.5 pl-4 pr-3.5'
                 )}
             >
-                {displayUserName && (
-                    <p
-                        className={clsx(
-                            `text-base midPhones:text-lg text-yellow-400`,
-                            message.image && 'pl-2.5 pr-2 pb-3.5 pt-1.5'
-                        )}
-                    >
-                        {message.sender.name}
-                    </p>
-                )}
-                {message.image && (
-                    <div className="relative">
-                        <Image
-                            src={message.image}
-                            height={300}
-                            width={300}
-                            alt="message-image"
-                            className="rounded-lg"
-                        />
-                        <p className="absolute right-2.5 bottom-1.5 text-base midPhones:text-lg ">
-                            {format(new Date(message.createdAt), 'p')}
-                        </p>
-                    </div>
-                )}
-                {
-                    <div
-                        className="whitespace-normal text-lg midPhones:text-xl relative"
-                        style={{ overflowWrap: 'anywhere' }}
-                    >
-                        {message.body}
-                    </div>
-                }
-                {/* {!isOwn && !sameUserPreviousMessage && (
-                    <p
-                        className={clsx(
-                            'text-xl leading-4 text-yellow-400 pl-2.5 pr-2 pb-3.5 pt-1.5'
-                        )}
-                    >
-                        {message.sender.name}
-                    </p>
-                )}
                 {message.image ? (
                     <div className="relative">
                         <Image
                             src={message.image}
-                            height={300}
-                            width={300}
+                            width={288}
+                            height={288}
                             alt="message-image"
-                            className="rounded-xl"
+                            className="rounded-lg "
                         />
+                        <div className="absolute flex right-2.5 bottom-1.5 gap-2">
+                            <p className="text-base midPhones:text-lg">
+                                {format(new Date(message.createdAt), 'p')}
+                            </p>
+                            {isOwn && (
+                                <LiaCheckDoubleSolid className="text-2xl" />
+                            )}
+                        </div>
                     </div>
                 ) : (
-                    <p
-                        className="whitespace-normal text-xl "
-                        style={{ overflowWrap: 'anywhere' }}
-                    >
-                        {message.body}
-                    </p>
-                )} */}
-                {/* <div
-                    className={clsx(`
-                    whitespace-normal
-                    text-xl
-                    `)}
-                    style={{ overflowWrap: 'anywhere' }}
-                > */}
-                {/* {message.body && message.body} */}
-                {/* {message.image && (
-                        <Image
-                            src={message.image}
-                            height={288}
-                            width={288}
-                            alt="message-image"
-                            className="rounded-xl"
-                        />
-                    )} */}
-                {/* </div> */}
-                {/* <div>{format(new Date(message.createdAt), 'p')}</div> */}
+                    <>
+                        <div
+                            className="whitespace-normal text-[14px] -mb-1"
+                            style={{ overflowWrap: 'anywhere' }}
+                        >
+                            {message.body}
+                        </div>
+                        <div className="flex self-end -mb-3 gap-2">
+                            <p className=" text-gray-400">
+                                {format(new Date(message.createdAt), 'p')}
+                            </p>
+                            {isOwn && (
+                                <LiaCheckDoubleSolid className="text-2xl" />
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
-    // }
-
-    // return (
-    //     <div
-    //         className={clsx(
-    //             `
-    //             relative
-    //             text-white
-    //             bg-primary
-    //             max-w-[85%]
-    //             midPhones:max-w-[75%]
-    //             break-words`,
-    //             marginTop,
-    //             alignment,
-    //             textImageContainer,
-    //             message.image ? 'rounded-2xl p-1.5' : 'rounded-xl p-4'
-    //         )}
-    //     >
-    //         {message.body && message.body}
-    //         {message.image && (
-    //             <Image
-    //                 src={message.image}
-    //                 height={288}
-    //                 width={288}
-    //                 alt="message-image"
-    //                 className="rounded-xl"
-    //             />
-    //         )}
-    //     </div>
-    // );
 };
 
 export default MessageBox;

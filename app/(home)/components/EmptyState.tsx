@@ -6,7 +6,7 @@ export default function EmptyState() {
             flex 
             flex-col 
             flex-1 
-            h-screen 
+            h-dvh 
             justify-center 
             items-center 
             bg-primary

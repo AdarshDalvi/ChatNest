@@ -13,7 +13,7 @@ export default function Error() {
             : 'Oops Something Went Wrong!';
 
     return (
-        <div className="w-full flex flex-col min-h-screen items-center justify-center text-center bg-gradient-to-b from-cyan-500 to-blue-500">
+        <div className="w-full flex flex-col min-h-full items-center justify-center text-center bg-gradient-to-b from-cyan-500 to-blue-500">
             <div className="bg-white mx-4 text-black flex flex-col gap-8 p-12 rounded-2xl items-center">
                 <Image
                     src="/logochat.png"

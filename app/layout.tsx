@@ -28,7 +28,7 @@ async function RootLayout({ children }: { children: React.ReactNode }) {
         <html lang="en">
             <body
                 className={clsx(
-                    `bg-cyan-950 flex justify-center w-screen h-screen`,
+                    `bg-cyan-950 flex justify-center w-screen min-h-dvh`,
                     roboto.className
                 )}
             >

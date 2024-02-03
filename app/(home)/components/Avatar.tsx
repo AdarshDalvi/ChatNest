@@ -16,7 +16,8 @@ export default function Avatar({ user, status, size, onClick }: AvatarProps) {
     let avatarSize;
 
     if (size === 'CHATBOX') {
-        avatarSize = 'w-7 h-7 midPhones:w-11 midPhones:h-11';
+        avatarSize =
+            'w-7 h-7 midPhones:w-11 midPhones:h-11 min-w-[22px] min-h-[22px]';
     } else if (size === 'HEADER') {
         avatarSize = 'w-14 h-14 midPhones:w-16 midPhones:h-16';
     } else {

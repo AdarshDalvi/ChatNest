@@ -56,7 +56,7 @@ export default function AuthLayout({
     };
 
     return (
-        <main className="flex flex-col w-full min-h-screen justify-center items-center bg-gradient-to-b from-cyan-500 to-blue-500 pb-8">
+        <main className="flex flex-col w-full min-h-full justify-center items-center bg-gradient-to-b from-cyan-500 to-blue-500 pb-8">
             <div
                 className={clsx(
                     `w-[95%] smallMobiles:w-[90%] midPhones:[w-85%] max-w-[450px] flex flex-col items-center rounded-lg  shadow-[0px_0px_20px_10px_#00000024] bg-white py-8`,

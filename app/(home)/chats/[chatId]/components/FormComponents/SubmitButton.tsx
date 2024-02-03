@@ -5,10 +5,10 @@ const InputSubmitButton = ({}) => (
     <button
         type="submit"
         className={clsx(
-            'bg-primary py-3.5 midPhones:py-3.5 pl-3.5 midPhones:pl-4 pr-3 midPhones:pr-3.5 rounded-full text-white self-end '
+            'bg-primary py-4 pl-4 pr-3.5 rounded-full text-white self-end '
         )}
     >
-        <MdSend className="text-2xl midPhones:text-4xl" />
+        <MdSend className="text-4xl" />
     </button>
 );
 

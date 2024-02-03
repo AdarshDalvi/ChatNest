@@ -40,7 +40,7 @@ const SideModal: React.FC<SideModalProps> = ({
                 `,
                 `flex
                 min-w-[250px]
-                h-screen
+                min-h-dvh
                 text-white
                 flex-col
                 scale-x-0

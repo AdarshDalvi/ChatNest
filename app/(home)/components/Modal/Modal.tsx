@@ -20,7 +20,7 @@ const Modal = ({ children }: ModalProps, ref: Ref<ModalDialgRef>) => {
         };
     });
 
-    return ReactDOM.createPortal(
+    return (
         <dialog
             ref={modalDialogRef}
             className="backdrop:bg-black/60 bg-transparent"
@@ -28,8 +28,7 @@ const Modal = ({ children }: ModalProps, ref: Ref<ModalDialgRef>) => {
             <div className="flex w-full h-full items-center justify-center">
                 {children}
             </div>
-        </dialog>,
-        document.body
+        </dialog>
     );
 };
 

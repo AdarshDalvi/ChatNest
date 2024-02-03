@@ -7,15 +7,16 @@ import useConversation from '@/app/hooks/useConversation';
 
 function Form() {
     const { chatId } = useConversation();
-    const { control, setValue, handleSubmit, getValues } =
-        useForm<FieldValues>();
+    const { control, setValue, handleSubmit } = useForm<FieldValues>();
 
     const handleTextInputSend: SubmitHandler<FieldValues> = (data) => {
-        setValue('message', '');
-        axios.post('/api/messages', {
-            ...data,
-            chatId,
-        });
+        if (data.message) {
+            setValue('message', '');
+            axios.post('/api/messages', {
+                ...data,
+                chatId,
+            });
+        }
     };
 
     const handleImageSend = (result: any) => {
@@ -30,7 +31,7 @@ function Form() {
             onSubmit={handleSubmit(handleTextInputSend)}
             className={`
                 w-full
-                pb-4
+                pb-3
                 px-2
                 flex
                 flex-col
@@ -42,7 +43,6 @@ function Form() {
                 id="message"
                 control={control}
                 setValue={setValue}
-                getValues={getValues}
                 handleImageSend={handleImageSend}
             />
         </form>

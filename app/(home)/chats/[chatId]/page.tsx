@@ -17,12 +17,12 @@ const ChatId = async ({ params }: { params: ChatIdParams }) => {
     return (
         <main
             className="
-                h-screen
+                h-dvh
                 relative
                 flex-1
-                bg-red-200
                 flex
                 flex-col
+                bg-white
                 min-w-[200px]
                 max-md:fixed
                 max-md:left-0
@@ -30,6 +30,7 @@ const ChatId = async ({ params }: { params: ChatIdParams }) => {
                 max-md:w-screen"
         >
             <ChatScreenHeader chat={chatDetails} />
+
             <ChatScreenBody
                 initialMessages={messages}
                 isGroup={chatDetails.isGroup}
