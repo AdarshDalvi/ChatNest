@@ -33,6 +33,7 @@ export async function POST(request: Request) {
         });
         return NextResponse.json(newGroupConversation);
     } catch (error: any) {
+        console.log(error, 'ERROR_MESSAGES_GROUP_CHAT');
         return new NextResponse(`Internal Error ${error}`, { status: 500 });
     }
 }

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import './CardWrapper.css';
+import './CardWrapper.scss';
 
 interface CardWrapperProps {
     children: React.ReactNode;

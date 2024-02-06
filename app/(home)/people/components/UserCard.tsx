@@ -21,7 +21,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, lastElement }) => {
     const handleClick = useCallback(async () => {
         setIsLoading(true);
         try {
-            const { data } = await axios.post('/api/new-conversation', {
+            const { data } = await axios.post('/api/single-chat', {
                 userId: user.id,
             });
             router.push(`/chats/${data.id}`);

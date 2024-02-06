@@ -4,12 +4,14 @@ import { Conversation, User } from '@prisma/client';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { IoTrash } from 'react-icons/io5';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import clsx from 'clsx';
 import Modal from '../Modal/Modal';
 import useModalDialog from '@/app/hooks/useModalDialog';
 import ConfirmationDialog from '../Modal/ConfirmationDialog';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface UserInfoProps {
     chat: Conversation & {
@@ -20,13 +22,23 @@ interface UserInfoProps {
 
 const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
     const [isHovering, setIsHovering] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const { openDialog, modalDialogRef, closeDialog } = useModalDialog();
     const router = useRouter();
 
-    const confirmDeleteAction = () => {
-        router.push('/chats');
-    };
+    const confirmDeleteAction = useCallback(() => {
+        setIsLoading(true);
+        axios
+            .delete(`/api/single-chat/${chat.id}`)
+            .then(() => {
+                closeDialog();
+                router.push('/chats');
+                router.refresh();
+            })
+            .catch(() => toast.error('Something went wrong!'))
+            .finally(() => setIsLoading(false));
+    }, []);
 
     return (
         <>
@@ -37,10 +49,11 @@ const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
                     modalHeading="Delete Chat"
                     modalMessage="Are you sure you want to delete this chat? This action
                         cannot be undone."
+                    isLoading={isLoading}
                 />
             </Modal>
             <div
-                className="w-[30%] max-w-[200px] lg:max-w-[220px] relative rounded-full overflow-hidden cursor-pointer"
+                className="w-[30%] max-w-[200px]  relative rounded-full overflow-hidden cursor-pointer"
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
             >
@@ -57,6 +70,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
                         `absolute cursor-pointer justify-center items-center inset-0 rounded-full bg-secondary z-10 bg-opacity-50`,
                         isHovering ? 'flex' : 'hidden'
                     )}
+                    onClick={(event) => {
+                        console.log(event.clientX);
+                    }}
                 >
                     <p className="text-sm smallMobiles:text-base midPhones:text-xl">
                         View Image

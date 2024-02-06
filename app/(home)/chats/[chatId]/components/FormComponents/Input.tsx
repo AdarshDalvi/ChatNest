@@ -82,7 +82,7 @@ const ChatScreenInput: React.FC<ChatScreenInputProps> = ({
                 className={`
                     flex
                     z-10
-                    items-center
+                    
                     gap-1.5
                     midPhones:gap-2
                     text-white
@@ -104,8 +104,8 @@ const ChatScreenInput: React.FC<ChatScreenInputProps> = ({
                         id={id}
                         innerRef={contentEditabeleRef}
                         aria-placeholder="Type a message"
-                        onChange={handleChange}
                         html={message}
+                        onChange={handleChange}
                         autoFocus
                         className="
                             flex-1
@@ -118,10 +118,16 @@ const ChatScreenInput: React.FC<ChatScreenInputProps> = ({
                             "
                         style={{
                             overflowWrap: 'anywhere',
-                            scrollbarGutter: 'stable',
+                            // scrollbarGutter: 'stable',
                         }}
                     />
                     <CldUploadButton
+                        className="
+                           self-end
+                           mb-0.5
+                           midPhones:mb-1
+                           text-3xl
+                           text-placeHolderColor"
                         options={{
                             maxFiles: 1,
                             clientAllowedFormats: ['jpeg', 'jpg', 'png'],
@@ -129,15 +135,7 @@ const ChatScreenInput: React.FC<ChatScreenInputProps> = ({
                         onUpload={handleImageSend}
                         uploadPreset="iuakprob"
                     >
-                        <FaImage
-                            className="
-                            cursor-pointer
-                            self-end
-                            mb-0.5
-                            midPhones:mb-1
-                            text-3xl
-                            text-placeHolderColor"
-                        />
+                        <FaImage />
                     </CldUploadButton>
                 </div>
                 <InputSubmitButton />

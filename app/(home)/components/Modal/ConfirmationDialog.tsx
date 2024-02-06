@@ -5,6 +5,7 @@ interface ConfirmationDialogProps {
     modalMessage: string;
     confirmAction: () => void;
     closeModal: () => void;
+    isLoading: boolean;
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
@@ -12,6 +13,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     modalMessage,
     confirmAction,
     closeModal,
+    isLoading,
 }) => {
     return (
         <div className="flex flex-col bg-cardHoverColor text-white px-8 py-8 max-w-[400px] rounded-md">
@@ -26,14 +28,16 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             </div>
             <div className="self-end mt-4">
                 <button
-                    className="px-8 py-2  font-medium midPhones:text-lg hover:opacity-85"
+                    className="px-8 py-2  font-medium midPhones:text-lg hover:opacity-85 disabled:opacity-40 disabled:cursor-not-allowed"
                     onClick={closeModal}
+                    disabled={isLoading}
                 >
                     Cancel
                 </button>
                 <button
-                    className="px-8 py-2 font-medium midPhones:text-lg bg-red-500 hover:opacity-85"
+                    className="px-8 py-2 font-medium midPhones:text-lg bg-red-500 hover:opacity-85 disabled:opacity-40 disabled:cursor-not-allowed"
                     onClick={confirmAction}
+                    disabled={isLoading}
                 >
                     Delete
                 </button>

@@ -2,9 +2,10 @@
 
 import { FullMessageType } from '@/app/types/conversation';
 import Form from './Form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useConversation from '@/app/hooks/useConversation';
 import MessageBox from './BodyComponents/MessageBox';
+import axios from 'axios';
 
 interface ChatScreenBodyProps {
     isGroup: boolean | null;
@@ -18,6 +19,10 @@ const ChatScreenBody: React.FC<ChatScreenBodyProps> = ({
     const [messages, setMessages] = useState(initialMessages);
 
     const { chatId } = useConversation();
+
+    useEffect(() => {
+        axios.post(`/api/single-chat/${chatId}/seen`);
+    }, [chatId]);
 
     return (
         <div

@@ -45,6 +45,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json(newConversation);
     } catch (error: any) {
+        console.log(error, 'ERROR_MESSAGES_SINGLE_CHAT');
         return new NextResponse(`Internal Error ${error}`, { status: 500 });
     }
 }

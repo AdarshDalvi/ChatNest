@@ -4,8 +4,7 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { LiaCheckDoubleSolid } from 'react-icons/lia';
-
+import { TbChecks } from 'react-icons/tb';
 interface MessageBoxProps {
     message: FullMessageType;
     previousMessage: FullMessageType | null;
@@ -63,6 +62,11 @@ const MessageBox: React.FC<MessageBoxProps> = ({
         }
     }
 
+    const seenList = (message.seen || [])
+        .filter((user) => user.email !== message?.sender?.email)
+        .map((user) => user.name)
+        .join(', ');
+
     if (isGroup) {
         return (
             <div
@@ -116,8 +120,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                         <div className="relative">
                             <Image
                                 src={message.image}
-                                height={300}
-                                width={300}
+                                height={288}
+                                width={288}
                                 alt="message-image"
                                 className="rounded-lg"
                             />
@@ -137,9 +141,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                                 <p className=" text-gray-400">
                                     {format(new Date(message.createdAt), 'p')}
                                 </p>
-                                {isOwn && (
-                                    <LiaCheckDoubleSolid className="text-2xl" />
-                                )}
+                                {isOwn && <TbChecks className="text-2xl" />}
                             </div>
                         </>
                     )}
@@ -147,7 +149,6 @@ const MessageBox: React.FC<MessageBoxProps> = ({
             </div>
         );
     }
-    // }
 
     return (
         <div
@@ -191,7 +192,14 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                                 {format(new Date(message.createdAt), 'p')}
                             </p>
                             {isOwn && (
-                                <LiaCheckDoubleSolid className="text-2xl" />
+                                <TbChecks
+                                    className={clsx(
+                                        'text-2xl',
+                                        seenList.length > 0
+                                            ? 'text-cyan-600'
+                                            : 'text-gray-400'
+                                    )}
+                                />
                             )}
                         </div>
                     </div>
@@ -208,7 +216,14 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                                 {format(new Date(message.createdAt), 'p')}
                             </p>
                             {isOwn && (
-                                <LiaCheckDoubleSolid className="text-2xl" />
+                                <TbChecks
+                                    className={clsx(
+                                        'text-2xl',
+                                        seenList.length > 0
+                                            ? 'text-cyan-600'
+                                            : 'text-gray-400'
+                                    )}
+                                />
                             )}
                         </div>
                     </>
@@ -219,12 +234,3 @@ const MessageBox: React.FC<MessageBoxProps> = ({
 };
 
 export default MessageBox;
-
-// const seenList = (message.seen || [])
-//     .filter((user) => user.email !== message?.sender?.email)
-//     .map((user) => user.name)
-//     .join(', ');
-
-// if (isGroup) {
-//     return <div>a group chat</div>;
-// }
