@@ -1,88 +1,32 @@
 'use client';
 
 import { FaImage } from 'react-icons/fa6';
-import { useEffect, useRef, useState } from 'react';
-
-import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
-import sanitizeHtml from 'sanitize-html';
-
-import {
-    useWatch,
-    Control,
-    FieldValues,
-    UseFormSetValue,
-} from 'react-hook-form';
+import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 import InputSubmitButton from './SubmitButton';
 
 import { CldUploadButton } from 'next-cloudinary';
+import MultilineInput from '@/app/components/inputs/MultilineInput';
 
 interface ChatScreenInputProps {
     id: string;
-    control: Control<FieldValues>;
-    setValue: UseFormSetValue<FieldValues>;
+    handleImageChange: (file: File | null) => void;
+    register: UseFormRegister<FieldValues>;
     handleImageSend: (result: any) => void;
 }
 
 const ChatScreenInput: React.FC<ChatScreenInputProps> = ({
     id,
-    control,
-    setValue,
+    register,
+    handleImageChange,
     handleImageSend,
 }) => {
-    const message = useWatch({
-        control,
-        name: id,
-        defaultValue: '',
-    });
-
-    const contentEditabeleRef = useRef<HTMLElement | null>(null);
-
-    const handleChange = (event: ContentEditableEvent) => {
-        const sanitizeConfig = {
-            allowedTags: ['b', 'i', 'em', 'strong', 'a'],
-            allowedAttributes: {
-                a: ['href'],
-            },
-        };
-        setValue(id, sanitizeHtml(event.target.value, sanitizeConfig));
-    };
-
-    useEffect(() => {
-        const contentEditableDiv = contentEditabeleRef.current;
-
-        if (contentEditableDiv) {
-            contentEditableDiv.focus();
-            const handleDrop = (event: DragEvent) => {
-                // Prevent default behavior to avoid dropping content into the div
-                event.preventDefault();
-            };
-
-            const handleDragOver = (event: DragEvent) => {
-                // Prevent default behavior to avoid dragging content over the div
-                event.preventDefault();
-            };
-
-            contentEditableDiv.addEventListener('drop', handleDrop);
-            contentEditableDiv.addEventListener('dragover', handleDragOver);
-
-            return () => {
-                contentEditableDiv.removeEventListener('drop', handleDrop);
-                contentEditableDiv.removeEventListener(
-                    'dragover',
-                    handleDragOver
-                );
-            };
-        }
-    }, [contentEditabeleRef]);
-
     return (
         <>
             <main
                 className={`
                     flex
                     z-10
-                    
                     gap-1.5
                     midPhones:gap-2
                     text-white
@@ -100,43 +44,46 @@ const ChatScreenInput: React.FC<ChatScreenInputProps> = ({
                     rounded-[2.2rem]
                     text-2xl"
                 >
-                    <ContentEditable
+                    <MultilineInput
                         id={id}
-                        innerRef={contentEditabeleRef}
-                        aria-placeholder="Type a message"
-                        html={message}
-                        onChange={handleChange}
-                        autoFocus
+                        validationSchema={{ required: true }}
+                        placeHolder="Type a message"
+                        register={register}
+                        maxHeight={100}
+                        shouldReset
+                        style={{ scrollbarGutter: 'stable' }}
                         className="
+                            bg-inherit
+                            text-inherit
                             flex-1
-                            ml-2.5
-                            outline-none
-                            max-h-40
-                            overflow-y-auto
                             mr-1.5
-                            pr-1
-                            "
-                        style={{
-                            overflowWrap: 'anywhere',
-                            // scrollbarGutter: 'stable',
-                        }}
+                            ml-2.5
+                            pr-1"
                     />
-                    <CldUploadButton
+                    <div
                         className="
                            self-end
                            mb-0.5
                            midPhones:mb-1
                            text-3xl
                            text-placeHolderColor"
-                        options={{
-                            maxFiles: 1,
-                            clientAllowedFormats: ['jpeg', 'jpg', 'png'],
-                        }}
-                        onUpload={handleImageSend}
-                        uploadPreset="iuakprob"
                     >
-                        <FaImage />
-                    </CldUploadButton>
+                        <input
+                            id="image-btn"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(event) => {
+                                const file = event.target.files
+                                    ? event.target.files[0]
+                                    : null;
+                                handleImageChange(file);
+                            }}
+                        />
+                        <label htmlFor="image-btn" className="cursor-pointer">
+                            <FaImage />
+                        </label>
+                    </div>
                 </div>
                 <InputSubmitButton />
             </main>
@@ -145,3 +92,64 @@ const ChatScreenInput: React.FC<ChatScreenInputProps> = ({
 };
 
 export default ChatScreenInput;
+
+// useEffect(() => {
+//     const contentEditableDiv = contentEditabeleRef.current;
+
+//     if (contentEditableDiv) {
+//         contentEditableDiv.focus();
+//         const handleDrop = (event: DragEvent) => {
+//             // Prevent default behavior to avoid dropping content into the div
+//             event.preventDefault();
+//         };
+
+//         const handleDragOver = (event: DragEvent) => {
+//             // Prevent default behavior to avoid dragging content over the div
+//             event.preventDefault();
+//         };
+
+//         contentEditableDiv.addEventListener('drop', handleDrop);
+//         contentEditableDiv.addEventListener('dragover', handleDragOver);
+
+//         return () => {
+//             contentEditableDiv.removeEventListener('drop', handleDrop);
+//             contentEditableDiv.removeEventListener(
+//                 'dragover',
+//                 handleDragOver
+//             );
+//         };
+//     }
+// }, [contentEditabeleRef]);
+
+// const contentEditabeleRef = useRef<HTMLElement | null>(null);
+
+// const handleChange = (event: ContentEditableEvent) => {
+//     const sanitizeConfig = {
+//         allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+//         allowedAttributes: {
+//             a: ['href'],
+//         },
+//     };
+//     setValue(id, sanitizeHtml(event.target.value, sanitizeConfig));
+// };
+
+/* <ContentEditable
+    id={id}
+    innerRef={contentEditabeleRef}
+    aria-placeholder="Type a message"
+    html={message}
+    onChange={handleChange}
+    autoFocus
+    className="
+        flex-1
+        ml-2.5
+        outline-none
+        max-h-40
+        overflow-y-auto
+        mr-1.5
+        pr-1
+        "
+        style={{
+            overflowWrap: 'anywhere',
+        }}
+    /> */

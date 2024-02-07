@@ -10,6 +10,7 @@ interface MultilineInputProps extends InputHTMLAttributes<HTMLTextAreaElement> {
     validationSchema?: RegisterOptions<FieldValues, string> | undefined;
     maxHeight?: number;
     maxLength?: number;
+    shouldReset?: boolean;
     className?: string | undefined;
 }
 
@@ -21,6 +22,7 @@ const MultilineInput: React.FC<MultilineInputProps> = ({
     validationSchema = {},
     maxHeight,
     className,
+    shouldReset,
     ...rest
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -69,14 +71,21 @@ const MultilineInput: React.FC<MultilineInputProps> = ({
                 currentField.removeEventListener('dragover', handleDragOver);
             };
         }
-    }, []);
+    }, [maxHeight]);
+
+    useEffect(() => {
+        if (shouldReset && textAreaRef.current) {
+            textAreaRef.current.style.height = 'auto';
+        }
+    }, [shouldReset, registerMethod]);
 
     return (
         <textarea
+            id={id}
             {...registerMethod}
             ref={(e) => {
                 ref(e);
-                textAreaRef.current = e; // you can still assign to ref
+                textAreaRef.current = e;
             }}
             rows={1}
             {...rest}

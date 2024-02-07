@@ -1,5 +1,4 @@
 import { Ref, forwardRef, useImperativeHandle, useRef } from 'react';
-import ReactDOM from 'react-dom';
 
 interface ModalProps {
     children: React.ReactNode;
@@ -23,11 +22,9 @@ const Modal = ({ children }: ModalProps, ref: Ref<ModalDialgRef>) => {
     return (
         <dialog
             ref={modalDialogRef}
-            className="backdrop:bg-black/60 bg-transparent"
+            className="backdrop:bg-black/60 bg-transparent outline-none"
         >
-            <div className="flex w-full h-full items-center justify-center">
-                {children}
-            </div>
+            {children}
         </dialog>
     );
 };

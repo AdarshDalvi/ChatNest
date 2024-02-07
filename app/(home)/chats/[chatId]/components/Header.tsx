@@ -33,7 +33,7 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
 
     const [showSideModal, setShowSideModal] = useState(false);
 
-    const handleNavigation = (event: MouseEvent) => {
+    const handleNavigation = (event: any) => {
         stopEventPropagation(event);
         router.push('/chats');
     };
@@ -42,7 +42,7 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
         setShowSideModal((prevValue) => !prevValue);
     };
 
-    const handleMenuClick = (event: MouseEvent) => {
+    const handleMenuClick = (event: any) => {
         stopEventPropagation(event);
     };
 
