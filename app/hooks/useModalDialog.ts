@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { ModalDialgRef } from '../(home)/components/Modal/Modal';
+import { ModalDialgRef } from '../(home)/components/Modal/ModalWrapper';
 
 export default function useModalDialog() {
     const modalDialogRef = useRef<ModalDialgRef>(null);

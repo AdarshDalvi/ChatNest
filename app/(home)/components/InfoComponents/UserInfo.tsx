@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { IoTrash } from 'react-icons/io5';
 import { useCallback, useState } from 'react';
 import clsx from 'clsx';
-import Modal from '../Modal/Modal';
+import ModalWrapper from '../Modal/ModalWrapper';
 import useModalDialog from '@/app/hooks/useModalDialog';
 import ConfirmationDialog from '../Modal/ConfirmationDialog';
 import axios from 'axios';
@@ -42,7 +42,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
 
     return (
         <>
-            <Modal ref={modalDialogRef}>
+            <ModalWrapper ref={modalDialogRef}>
                 <ConfirmationDialog
                     confirmAction={confirmDeleteAction}
                     closeModal={() => closeDialog()}
@@ -51,7 +51,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
                         cannot be undone."
                     isLoading={isLoading}
                 />
-            </Modal>
+            </ModalWrapper>
             <div
                 className="w-[30%] max-w-[200px]  relative rounded-full overflow-hidden cursor-pointer"
                 onMouseEnter={() => setIsHovering(true)}

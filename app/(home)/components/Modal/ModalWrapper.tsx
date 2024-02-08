@@ -9,7 +9,7 @@ export interface ModalDialgRef {
     close: () => void;
 }
 
-const Modal = ({ children }: ModalProps, ref: Ref<ModalDialgRef>) => {
+const ModalWrapper = ({ children }: ModalProps, ref: Ref<ModalDialgRef>) => {
     const modalDialogRef = useRef<HTMLDialogElement>(null);
 
     useImperativeHandle(ref, () => {
@@ -29,4 +29,4 @@ const Modal = ({ children }: ModalProps, ref: Ref<ModalDialgRef>) => {
     );
 };
 
-export default forwardRef(Modal);
+export default forwardRef(ModalWrapper);

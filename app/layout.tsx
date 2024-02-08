@@ -36,7 +36,6 @@ async function RootLayout({ children }: { children: React.ReactNode }) {
                     <ConnversationContextProvider>
                         <ToastContext />
                         {children}
-                        <div id="modal"></div>
                     </ConnversationContextProvider>
                 </AuthContext>
             </body>
