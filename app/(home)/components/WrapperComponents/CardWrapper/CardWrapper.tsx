@@ -21,10 +21,10 @@ const CardWrapper: React.FC<CardWrapperProps> = ({
                 w-full
                 flex
                 cursor-pointer
-                hover:bg-cardHoverColor
                 pl-6
                 gap-6`,
-                selected && 'bg-cardHoverColor',
+                !selected && 'hover:bg-cardHoverColor',
+                selected && 'bg-cardFocusColor',
                 lastElement && 'relative last-element'
             )}
         >

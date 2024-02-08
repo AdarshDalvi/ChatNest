@@ -119,7 +119,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                     {message.image ? (
                         <div className="relative">
                             <Image
-                                src={message.image}
+                                src={message.image.src}
                                 height={288}
                                 width={288}
                                 alt="message-image"
@@ -181,7 +181,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                 {message.image ? (
                     <div className="relative">
                         <Image
-                            src={message.image}
+                            src={message.image.src}
                             width={288}
                             height={288}
                             alt="message-image"

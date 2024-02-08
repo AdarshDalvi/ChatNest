@@ -69,10 +69,11 @@ model Conversation{
 
 }
 
+
 model Message{
   id String @id @default(auto()) @map("_id") @db.ObjectId
   body String?
-  image String?
+  image Image?
   createdAt DateTime @default(now())
 
   seenIds String[] @db.ObjectId
@@ -85,3 +86,10 @@ model Message{
   sender User @relation(fields: [senderId],references: [id], onDelete: Cascade)
 }
 
+
+type Image {
+  src String
+  caption String?
+  width Int
+  height Int
+}

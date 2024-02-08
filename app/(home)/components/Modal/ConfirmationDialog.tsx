@@ -17,7 +17,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 }) => {
     return (
         <div className="flex flex-col w-full h-full items-center justify-center">
-            <div className="flex flex-col bg-cardHoverColor text-white px-8 py-8 max-w-[400px] rounded-md">
+            <div className="flex flex-col bg-cardFocusColor text-white px-8 py-8 max-w-[400px] rounded-md">
                 <div className="flex gap-6">
                     <FiAlertTriangle className="text-red-500 text-4xl" />
                     <div className="flex flex-col gap-2 mt-1">

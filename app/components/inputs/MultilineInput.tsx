@@ -81,7 +81,6 @@ const MultilineInput: React.FC<MultilineInputProps> = ({
 
     return (
         <textarea
-            id={id}
             {...registerMethod}
             ref={(e) => {
                 ref(e);
@@ -91,7 +90,8 @@ const MultilineInput: React.FC<MultilineInputProps> = ({
             {...rest}
             maxLength={maxLength}
             placeholder={placeHolder}
-            className={`resize-none outline-none overflow-y-hidden ${className}`}
+            style={{ scrollbarGutter: 'stable' }}
+            className={`multiline-input resize-none outline-none overflow-y-hidden ${className}`}
         />
     );
 };

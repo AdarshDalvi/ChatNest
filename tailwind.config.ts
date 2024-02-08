@@ -15,7 +15,8 @@ const config: Config = {
                 cardBorder: '#2c4049',
                 searchBoxBg: '#2d3f48',
                 placeHolderColor: '#8696A0',
-                cardHoverColor: '#324d5b',
+                cardFocusColor: '#324d5b',
+                cardHoverColor: '#1E3947',
             },
             screens: {
                 smallMobiles: '350px',

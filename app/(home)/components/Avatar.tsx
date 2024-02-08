@@ -46,7 +46,7 @@ export default function Avatar({ user, status, size, onClick }: AvatarProps) {
                     className={clsx(
                         `
                 absolute 
-                ring-cardHoverColor
+                ring-cardFocusColor
                 ring-1
                 h-3 
                 w-3
