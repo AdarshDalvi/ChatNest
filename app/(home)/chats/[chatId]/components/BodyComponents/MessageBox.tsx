@@ -3,8 +3,9 @@ import { FullMessageType } from '@/app/types/conversation';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
-import Image from 'next/image';
 import { TbChecks } from 'react-icons/tb';
+import ImageText from './ImageText';
+
 interface MessageBoxProps {
     message: FullMessageType;
     previousMessage: FullMessageType | null;
@@ -64,8 +65,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
 
     const seenList = (message.seen || [])
         .filter((user) => user.email !== message?.sender?.email)
-        .map((user) => user.name)
-        .join(', ');
+        .map((user) => user.name);
 
     if (isGroup) {
         return (
@@ -103,32 +103,25 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                         isOwn && '-order-1',
                         textImageContainer,
                         previousMessageSameUser ? '' : '',
-                        message.image ? 'p-1.5' : 'pt-2.5 pb-3.5 pl-4 pr-3.5'
+                        message.body && 'pt-2.5 pb-3.5 pl-4 pr-3.5'
                     )}
                 >
                     {displayUserName && (
                         <p
                             className={clsx(
                                 `text-base midPhones:text-lg text-yellow-400`,
-                                message.image && 'pl-2.5 pr-2 pb-3.5 pt-1.5'
+                                message.image && 'pl-2.5 pt-1.5'
                             )}
                         >
                             {message.sender.name}
                         </p>
                     )}
                     {message.image ? (
-                        <div className="relative">
-                            <Image
-                                src={message.image.src}
-                                height={288}
-                                width={288}
-                                alt="message-image"
-                                className="rounded-lg"
-                            />
-                            <p className="absolute right-2.5 bottom-1.5 text-base midPhones:text-lg ">
-                                {format(new Date(message.createdAt), 'p')}
-                            </p>
-                        </div>
+                        <ImageText
+                            isOwn={isOwn}
+                            message={message}
+                            seenList={seenList}
+                        />
                     ) : (
                         <>
                             <div
@@ -175,34 +168,15 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                     isOwn && '-order-1',
                     textImageContainer,
                     previousMessageSameUser ? '' : '',
-                    message.image ? 'p-1.5' : 'pt-2.5 pb-3.5 pl-4 pr-3.5'
+                    message.body && 'pt-2.5 pb-3.5 pl-4 pr-3.5'
                 )}
             >
                 {message.image ? (
-                    <div className="relative">
-                        <Image
-                            src={message.image.src}
-                            width={288}
-                            height={288}
-                            alt="message-image"
-                            className="rounded-lg "
-                        />
-                        <div className="absolute flex right-2.5 bottom-1.5 gap-2">
-                            <p className="text-base midPhones:text-lg">
-                                {format(new Date(message.createdAt), 'p')}
-                            </p>
-                            {isOwn && (
-                                <TbChecks
-                                    className={clsx(
-                                        'text-2xl',
-                                        seenList.length > 0
-                                            ? 'text-cyan-600'
-                                            : 'text-gray-400'
-                                    )}
-                                />
-                            )}
-                        </div>
-                    </div>
+                    <ImageText
+                        message={message}
+                        isOwn={isOwn}
+                        seenList={seenList}
+                    />
                 ) : (
                     <>
                         <div

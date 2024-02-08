@@ -23,7 +23,7 @@ const ChatId = async ({ params }: { params: ChatIdParams }) => {
                 flex
                 flex-col
                 bg-white
-                min-w-[200px]
+                min-w-[250px]
                 max-md:fixed
                 max-md:left-0
                 max-md:top-0
