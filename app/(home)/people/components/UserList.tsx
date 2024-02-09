@@ -2,27 +2,24 @@
 
 import { User } from '@prisma/client';
 import SearchBox from '../../components/SearchBox';
-import { FieldValues, useForm } from 'react-hook-form';
 import UserCard from './UserCard';
+import { useSearchBox } from '@/app/hooks/useSearchBox';
 
 interface UserListProps {
     users?: User[];
 }
 
 function UserList({ users }: UserListProps) {
-    const { register, resetField, watch } = useForm<FieldValues>({
-        defaultValues: {
-            searchText: '',
-        },
-    });
+    const { searchText, updateSearchText, clearSearchText } = useSearchBox();
+
     return (
         <>
             <SearchBox
                 id="search-text"
-                register={register}
-                resetField={resetField}
-                watchForm={watch}
                 placeholder="Search by name, email, or phone"
+                searchText={searchText}
+                handleChange={updateSearchText}
+                clearSearchText={clearSearchText}
             />
             <div
                 className="flex-1 overflow-y-auto  pr-2 "

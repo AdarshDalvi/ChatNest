@@ -1,8 +1,8 @@
 'use client';
 
 import Avatar from '@/app/(home)/components/Avatar';
-import GroupInfo from '@/app/(home)/components/InfoComponents/GroupInfo';
-import UserInfo from '@/app/(home)/components/InfoComponents/UserInfo';
+import GroupInfo from '@/app/(home)/components/InfoSideModals/GroupInfo';
+import UserInfo from '@/app/(home)/components/InfoSideModals/UserInfo';
 import SideModal from '@/app/(home)/components/Modal/SideModal';
 import useOtherUser from '@/app/hooks/useOther';
 import stopEventPropagation from '@/app/lib/stopEventPropagation';

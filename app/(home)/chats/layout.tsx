@@ -1,6 +1,6 @@
 import getChats from '@/app/actions/getChats';
 import ListWrapper from '../components/WrapperComponents/ListWrapper';
-import Wrapper from '../components/WrapperComponents/Wrapper';
+import PageWrapper from '../components/WrapperComponents/PageWrapper';
 import ChatList from './components/ChatList';
 
 interface ChatLayoutProps {
@@ -11,11 +11,11 @@ const ChatLayout: React.FC<ChatLayoutProps> = async ({ children }) => {
     const chats = await getChats();
     return (
         <>
-            <Wrapper>
+            <PageWrapper>
                 <ListWrapper>
                     <ChatList initialChats={chats} />
                 </ListWrapper>
-            </Wrapper>
+            </PageWrapper>
             {children}
         </>
     );

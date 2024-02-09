@@ -6,12 +6,13 @@ import { format } from 'date-fns';
 import { IoTrash } from 'react-icons/io5';
 import { useCallback, useState } from 'react';
 import clsx from 'clsx';
-import ModalWrapper from '../Modal/ModalWrapper';
+import ModalWrapper from '../WrapperComponents/ModalWrapper';
 import useModalDialog from '@/app/hooks/useModalDialog';
 import ConfirmationDialog from '../Modal/ConfirmationDialog';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import InfoWrapper from '../WrapperComponents/InfoWrapper';
 
 interface UserInfoProps {
     chat: Conversation & {
@@ -41,7 +42,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
     }, []);
 
     return (
-        <>
+        <InfoWrapper>
             <ModalWrapper ref={modalDialogRef}>
                 <ConfirmationDialog
                     confirmAction={confirmDeleteAction}
@@ -110,7 +111,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ chat, otherUser }) => {
                     </p>
                 </div>
             </div>
-        </>
+        </InfoWrapper>
     );
 };
 

@@ -1,62 +1,52 @@
 'use client';
 
-import {
-    FieldValues,
-    UseFormRegister,
-    UseFormResetField,
-    UseFormWatch,
-} from 'react-hook-form';
-
+import { ChangeEvent } from 'react';
 import { MdOutlineClear } from 'react-icons/md';
 
 interface SearchBoxProps {
     id: string;
     placeholder: string;
-    resetField: UseFormResetField<FieldValues>;
-    register: UseFormRegister<FieldValues>;
-    watchForm: UseFormWatch<FieldValues>;
+    searchText: string;
+    handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    clearSearchText: () => void;
 }
 
 const SearchBox: React.FC<SearchBoxProps> = ({
     id,
     placeholder,
-    resetField,
-    watchForm,
-    register,
+    searchText,
+    handleChange,
+    clearSearchText,
 }) => {
-    const searchText = watchForm(id);
-
-    const clearSearchBox = () => {
-        resetField(id);
-    };
-
     return (
-        <form className="relative w-full px-4 ">
+        <div className="relative w-full px-4 ">
             <input
-                id={id}
+                name={id}
                 type="text"
                 className="
-                            w-full 
-                            text-xl
-                            midPhones:text-2xl
-                            bg-searchBoxBg
-                            py-3
-                            focus:outline-none
-                            pl-4
-                            pr-12
-                            rounded-xl
-                            placeholder:text-placeHolderColor
-                            "
+                    autofill:bg-searchBoxBg
+                    w-full 
+                    text-xl
+                    midPhones:text-2xl
+                    bg-searchBoxBg
+                    py-3
+                    focus:outline-none
+                    pl-4
+                    pr-12
+                    rounded-xl
+                    placeholder:text-placeHolderColor
+                    "
                 placeholder={placeholder}
-                {...register(id)}
+                value={searchText}
+                onChange={handleChange}
             />
             {searchText && (
                 <MdOutlineClear
                     className="absolute text-3xl right-7 top-1/2 -translate-y-1/2 cursor-pointer"
-                    onClick={clearSearchBox}
+                    onClick={clearSearchText}
                 />
             )}
-        </form>
+        </div>
     );
 };
 

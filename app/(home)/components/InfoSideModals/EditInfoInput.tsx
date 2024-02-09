@@ -8,8 +8,6 @@ import {
     FieldErrors,
     FieldValues,
     RegisterOptions,
-    SubmitHandler,
-    UseFormHandleSubmit,
     UseFormRegister,
 } from 'react-hook-form';
 

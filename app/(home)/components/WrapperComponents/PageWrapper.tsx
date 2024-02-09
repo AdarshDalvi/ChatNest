@@ -1,8 +1,8 @@
-interface WrapperProps {
+interface PageWrapperProps {
     children: React.ReactNode;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children }) => {
+const PageWrapper: React.FC<PageWrapperProps> = ({ children }) => {
     return (
         <aside
             className="
@@ -23,13 +23,4 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
     );
 };
 
-export default Wrapper;
-
-// w-full
-//             h-listHeight
-//             mt-[93.5px]
-//             md:w-[45%]
-//             md:max-w-[480px]
-//             bg-secondary
-//             md:border-borderColor
-//             md:border-r
+export default PageWrapper;

@@ -1,34 +1,30 @@
 'use client';
 
 import SearchBox from '../../components/SearchBox';
-import { FieldValues, useForm } from 'react-hook-form';
 import { FullChatType } from '@/app/types/conversation';
 import { useState } from 'react';
 import useConversation from '@/app/hooks/useConversation';
 import ChatCard from './ChatCard';
+import { useSearchBox } from '@/app/hooks/useSearchBox';
 
 interface ChatListProps {
     initialChats: FullChatType[];
 }
 
 const ChatList: React.FC<ChatListProps> = ({ initialChats }) => {
-    const { register, resetField, watch } = useForm<FieldValues>({
-        defaultValues: {
-            searchText: '',
-        },
-    });
-
     const [chats, setChats] = useState(initialChats);
-
     const { chatId } = useConversation();
+
+    const { searchText, updateSearchText, clearSearchText } = useSearchBox();
+
     return (
         <>
             <SearchBox
                 id="search-text"
-                register={register}
-                resetField={resetField}
-                watchForm={watch}
                 placeholder="Search or start a new chat"
+                searchText={searchText}
+                handleChange={updateSearchText}
+                clearSearchText={clearSearchText}
             />
             <div
                 id="list"

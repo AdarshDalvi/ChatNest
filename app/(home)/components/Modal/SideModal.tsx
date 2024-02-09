@@ -9,6 +9,7 @@ interface SideModalProps {
     showSideModal: boolean;
     setShowSideModal: () => void;
     icon: IconType;
+    iconLeft?: boolean;
     isOpen?: boolean;
     children: React.ReactNode;
 }
@@ -19,6 +20,7 @@ const SideModal: React.FC<SideModalProps> = ({
     modalOrigin,
     setShowSideModal,
     icon: Icon,
+    iconLeft,
     isOpen,
     children,
 }) => {
@@ -40,7 +42,8 @@ const SideModal: React.FC<SideModalProps> = ({
                 `,
                 `flex
                 min-w-[250px]
-                min-h-dvh
+                h-dvh
+                max-h-dvh
                 text-white
                 flex-col
                 scale-x-0
@@ -54,14 +57,17 @@ const SideModal: React.FC<SideModalProps> = ({
         >
             <header className="flex w-full items-center px-6 midPhones:px-8 gap-8 py-[1.86rem] bg-primary">
                 <Icon
-                    className="text-3xl midPhones:text-4xl  font-medium cursor-pointer"
+                    className={clsx(
+                        'text-3xl midPhones:text-4xl  font-medium cursor-pointer',
+                        iconLeft && 'order-3 justify-self-end ml-auto '
+                    )}
                     onClick={setShowSideModal}
                 />
-                <h3 className="text-2xl midPhones:text-3xl">{modalHeading}</h3>
+                <h3 className="text-2xl midPhones:text-[1.6rem]">
+                    {modalHeading}
+                </h3>
             </header>
-            <div className="flex-1 flex flex-col bg-secondary overflow-y-auto items-center py-12">
-                {children}
-            </div>
+            {children}
         </aside>
     );
 };

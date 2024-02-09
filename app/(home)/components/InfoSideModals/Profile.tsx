@@ -15,6 +15,7 @@ import OptionsMenu, { Option } from '../OptionsMenu';
 import useOptionsMenu from '@/app/hooks/useOptionsMenu';
 import useImageHover from '@/app/hooks/useImageHover';
 import useClickOutside from '@/app/hooks/useClickOutside';
+import InfoWrapper from '../WrapperComponents/InfoWrapper';
 
 interface ProfileProps {
     currentUser: User;
@@ -56,7 +57,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
     };
 
     return (
-        <>
+        <InfoWrapper className="gap-20">
             <OptionsMenu
                 position="fixed"
                 positionCordinates={menuPosition}
@@ -96,7 +97,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
                 </div>
             </div>
             <form
-                className="mt-20 w-full px-12 flex flex-col gap-12"
+                className="flex-1 flex flex-col overflow-y-auto w-full gap-12 px-12"
                 onSubmit={handleSubmit(updateProfile)}
             >
                 <EditInfoInput
@@ -109,6 +110,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
                     validationSchema={{ required: 'Name cannot be empty!' }}
                     errors={errors}
                 />
+
                 <div className="w-full flex flex-col gap-6">
                     <label htmlFor="about" className="text-cyan-500 text-xl">
                         About
@@ -152,8 +154,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
                     </div>
                 </div>
             </form>
-            <div></div>
-        </>
+        </InfoWrapper>
     );
 };
 
