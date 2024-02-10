@@ -4,7 +4,7 @@ import Avatar from '@/app/(home)/components/Avatar';
 import { User } from '@prisma/client';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { GoKebabHorizontal } from 'react-icons/go';
 import { MdClose, MdOutlineGroupAdd } from 'react-icons/md';
 import SideModal from './Modal/SideModal';
@@ -21,6 +21,7 @@ interface HeaderProps {
 
 export default function Header({ currentUser, users }: HeaderProps) {
     const pathname = usePathname();
+    const router = useRouter();
     const links = [
         {
             key: 'cknskcns',

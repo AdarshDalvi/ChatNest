@@ -1,5 +1,6 @@
 import { IconType } from 'react-icons';
 import clsx from 'clsx';
+import './Modal.scss';
 
 type ModalOrigin = 'origin-right' | 'origin-left';
 
@@ -24,17 +25,21 @@ const SideModal: React.FC<SideModalProps> = ({
     isOpen,
     children,
 }) => {
+    if (!showSideModal) {
+        return null;
+    }
+
     return (
         <aside
-            id="side-modal"
+            id={`side-modal-${modalOrigin}`}
             className={clsx(
                 modalOrigin === 'origin-left'
                     ? `absolute
                 w-full    
                 md:w-[45%]
                 md:max-w-[480px]
-                border-r
-                border-r-borderColor `
+                md:border-r 
+                md:border-r-borderColor`
                     : `
                 fixed
                 w-full
@@ -46,12 +51,7 @@ const SideModal: React.FC<SideModalProps> = ({
                 max-h-dvh
                 text-white
                 flex-col
-                scale-x-0
-                transition-transform
-                ease-in
                 z-40`,
-                modalOrigin,
-                showSideModal && 'scale-x-100',
                 isOpen && 'max-md:hidden'
             )}
         >
@@ -63,7 +63,7 @@ const SideModal: React.FC<SideModalProps> = ({
                     )}
                     onClick={setShowSideModal}
                 />
-                <h3 className="text-2xl midPhones:text-[1.6rem]">
+                <h3 className="text-2xl midPhones:text-[1.7rem]">
                     {modalHeading}
                 </h3>
             </header>

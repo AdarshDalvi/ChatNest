@@ -3,9 +3,10 @@
 import { FieldValues, useForm } from 'react-hook-form';
 import { User } from '@prisma/client';
 import { useNewgroup } from '@/app/hooks/useNewGroup';
-import NewGroupStepOne from './components/NewGroupStepOne';
-import NewGroupStepTwo from './components/NewGroupStepTwo';
+import NewGroupStepOne from './NewGroupStepOne';
+import NewGroupStepTwo from './NewGroupStepTwo';
 import { useState } from 'react';
+import './NewGroupChat.scss';
 
 interface NewGroupChatProps {
     users: User[];

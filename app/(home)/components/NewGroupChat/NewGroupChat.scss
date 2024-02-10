@@ -1,0 +1,20 @@
+#selected-member {
+    animation: display-in 0.2s;
+
+    @keyframes display-in {
+        0% {
+            opacity: 0;
+            transform: scale(0);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}
+
+#selected-members-container {
+    &::-webkit-scrollbar-thumb {
+        background: #8696a0;
+    }
+}
