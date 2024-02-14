@@ -1,39 +1,39 @@
 import { IconType } from 'react-icons';
 import clsx from 'clsx';
-import './Modal.scss';
+import './DrawerWrapper.scss';
+import useConversation from '@/app/hooks/useConversation';
 
-type ModalOrigin = 'origin-right' | 'origin-left';
+type DrawerOrigin = 'origin-right' | 'origin-left';
 
-interface SideModalProps {
-    modalHeading: string;
-    modalOrigin: ModalOrigin;
-    showSideModal: boolean;
-    setShowSideModal: () => void;
+interface DrawerWrapperProps {
+    drawerHeading: string;
+    drawerOrigin: DrawerOrigin;
+    showDrawer: boolean;
+    closeDrawer: () => void;
     icon: IconType;
-    iconLeft?: boolean;
-    isOpen?: boolean;
+    iconRight?: boolean;
     children: React.ReactNode;
 }
 
-const SideModal: React.FC<SideModalProps> = ({
-    modalHeading,
-    showSideModal,
-    modalOrigin,
-    setShowSideModal,
+const DrawerWrapper: React.FC<DrawerWrapperProps> = ({
+    drawerHeading,
+    showDrawer,
+    drawerOrigin,
+    closeDrawer,
     icon: Icon,
-    iconLeft,
-    isOpen,
+    iconRight,
     children,
 }) => {
-    if (!showSideModal) {
+    const { isOpen } = useConversation();
+    if (!showDrawer) {
         return null;
     }
 
     return (
         <aside
-            id={`side-modal-${modalOrigin}`}
+            id={`side-drawer-${drawerOrigin}`}
             className={clsx(
-                modalOrigin === 'origin-left'
+                drawerOrigin === 'origin-left'
                     ? `absolute
                 w-full    
                 md:w-[45%]
@@ -59,12 +59,12 @@ const SideModal: React.FC<SideModalProps> = ({
                 <Icon
                     className={clsx(
                         'text-3xl midPhones:text-4xl  font-medium cursor-pointer',
-                        iconLeft && 'order-3 justify-self-end ml-auto '
+                        iconRight && 'order-3 justify-self-end ml-auto '
                     )}
-                    onClick={setShowSideModal}
+                    onClick={closeDrawer}
                 />
                 <h3 className="text-2xl midPhones:text-[1.7rem]">
-                    {modalHeading}
+                    {drawerHeading}
                 </h3>
             </header>
             {children}
@@ -72,4 +72,4 @@ const SideModal: React.FC<SideModalProps> = ({
     );
 };
 
-export default SideModal;
+export default DrawerWrapper;

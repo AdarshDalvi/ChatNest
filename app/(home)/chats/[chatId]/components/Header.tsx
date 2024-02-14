@@ -1,9 +1,7 @@
 'use client';
 
 import Avatar from '@/app/(home)/components/Avatar';
-import GroupInfo from '@/app/(home)/components/InfoSideModals/GroupInfo';
-import UserInfo from '@/app/(home)/components/InfoSideModals/UserInfo';
-import SideModal from '@/app/(home)/components/Modal/SideModal';
+import UserInfoDrawer from '@/app/(home)/components/InfoDrawers/UserInfoDrawer';
 import useOtherUser from '@/app/hooks/useOther';
 import stopEventPropagation from '@/app/lib/stopEventPropagation';
 import { Conversation, User } from '@prisma/client';
@@ -12,7 +10,6 @@ import { useMemo, useState } from 'react';
 
 import { GoKebabHorizontal } from 'react-icons/go';
 import { IoArrowBack } from 'react-icons/io5';
-import { MdClear } from 'react-icons/md';
 
 interface ChatScreenHeaderProps {
     chat: Conversation & {
@@ -31,15 +28,15 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
         return 'online';
     }, [chat]);
 
-    const [showSideModal, setShowSideModal] = useState(false);
+    const [showUserInfoDrawer, setShowUserInfoDrawer] = useState(false);
 
     const handleNavigation = (event: any) => {
         stopEventPropagation(event);
         router.push('/chats');
     };
 
-    const handleSideModal = () => {
-        setShowSideModal((prevValue) => !prevValue);
+    const handleUserInfoDrawer = () => {
+        setShowUserInfoDrawer((prevValue) => !prevValue);
     };
 
     const handleMenuClick = (event: any) => {
@@ -48,22 +45,17 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
 
     return (
         <>
-            <SideModal
-                modalHeading={chat.isGroup ? 'Group info' : 'Contact info'}
-                showSideModal={showSideModal}
-                modalOrigin="origin-right"
-                setShowSideModal={handleSideModal}
-                icon={MdClear}
-            >
-                {chat.isGroup ? (
-                    <GroupInfo chat={chat} />
-                ) : (
-                    <UserInfo chat={chat} otherUser={otherUser} />
-                )}
-            </SideModal>
+            {!chat.isGroup && (
+                <UserInfoDrawer
+                    chat={chat}
+                    otherUser={otherUser}
+                    showUserInfoDrawer={showUserInfoDrawer}
+                    setShowUserInfoDrawer={setShowUserInfoDrawer}
+                />
+            )}
             <header
                 className="flex py-4 pl-4 pr-3.5  items-center gap-2 bg-primary text-white cursor-pointer"
-                onClick={handleSideModal}
+                onClick={handleUserInfoDrawer}
             >
                 <IoArrowBack className="text-4xl" onClick={handleNavigation} />
                 <Avatar user={otherUser} status={false} size="HEADER" />

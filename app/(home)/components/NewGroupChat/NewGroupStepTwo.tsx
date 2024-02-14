@@ -2,32 +2,22 @@
 
 import { Option } from '../OptionsMenu/OptionsMenu';
 import InfoImage from '../InfoImage';
-import {
-    FieldErrors,
-    FieldValues,
-    SubmitHandler,
-    UseFormHandleSubmit,
-    UseFormRegister,
-    UseFormSetFocus,
-    UseFormTrigger,
-} from 'react-hook-form';
+import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form';
 import MultilineInput from '@/app/components/inputs/MultilineInput';
-import EditInfoInput from '../InfoSideModals/EditInfoInput';
+import EditInfoInput from '../InfoDrawers/EditInfoInput';
 
 interface NewGroupStepTwoProps {
     imageSrc: string;
     register: UseFormRegister<FieldValues>;
     errors: FieldErrors;
-    trigger: UseFormTrigger<FieldValues>;
-    setFocus: UseFormSetFocus<FieldValues>;
+    loading: boolean;
 }
 
 const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
     imageSrc,
     register,
     errors,
-    trigger,
-    setFocus,
+    loading,
 }) => {
     const optionsList: Option[] = [
         {
@@ -63,10 +53,11 @@ const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
                     label="Group Name"
                     placeHolder="Enter group name"
                     id="name"
+                    validationSchema={{
+                        required: 'Group name cannot be empty!',
+                    }}
                     errors={errors}
-                    validationSchema={{ required: 'Group name is required' }}
-                    setFocus={setFocus}
-                    trigger={trigger}
+                    loading={loading}
                 />
             </div>
             <div className="flex">
