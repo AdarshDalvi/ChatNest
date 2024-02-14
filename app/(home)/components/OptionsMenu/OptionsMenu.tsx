@@ -1,42 +1,36 @@
 import clsx from 'clsx';
+import './OptionsMenu.scss';
 
 export type Option = {
     name: string;
     onClick: () => void;
 };
 
-export type MenuPosition = {
-    top?: string;
-    left?: string;
-};
-
 interface OptionsMenuProps {
-    position: 'absolute' | 'fixed';
-    positionCordinates?: MenuPosition;
+    className?: string;
     showOptionsMenu: boolean;
     optionsList: Option[];
 }
 
 const OptionsMenu: React.FC<OptionsMenuProps> = ({
-    position,
-    positionCordinates,
     showOptionsMenu,
     optionsList,
+    className,
 }) => {
     return (
         <div
+            id="options-menu"
             className={clsx(
-                'bg-searchBoxBg z-50 flex-col py-4 min-w-40',
-                position,
-                showOptionsMenu ? 'flex' : 'hidden'
+                'absolute  bg-searchBoxBg z-50  flex-col py-4 text-base  smallMobiles:text-lg midPhones:text-xl opacity-0 scale-0 transition-all duration-150 ',
+                className,
+                showOptionsMenu && 'flex opacity-100 scale-100'
             )}
-            style={positionCordinates}
         >
             {optionsList.map((option, index) => (
                 <div
                     key={option.name + index}
                     onClick={option.onClick}
-                    className="cursor-pointer hover:bg-gray-800 text-xl py-4 px-12 text-center"
+                    className="cursor-pointer hover:bg-gray-800  py-4 px-12 text-center w-full"
                 >
                     {option.name}
                 </div>

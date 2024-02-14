@@ -10,6 +10,7 @@ const PageWrapper: React.FC<PageWrapperProps> = ({ children }) => {
                 h-listHeightSmall
                 midPhones:h-listHeight
                 w-full
+                min-w-[250px]
                 mt-listMarginSmall
                 midPhones:mt-listMargin
                 md:w-[45%]

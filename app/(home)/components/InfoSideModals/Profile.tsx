@@ -2,20 +2,16 @@
 
 import { User } from '@prisma/client';
 import clsx from 'clsx';
-import Image from 'next/image';
 import { useState } from 'react';
-import { BsCameraFill } from 'react-icons/bs';
 import EditInfoInput from './EditInfoInput';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import MultilineInput from '@/app/components/inputs/MultilineInput';
 
 import { MdOutlineModeEditOutline } from 'react-icons/md';
 import { FaCheck } from 'react-icons/fa6';
-import OptionsMenu, { Option } from '../OptionsMenu';
-import useOptionsMenu from '@/app/hooks/useOptionsMenu';
-import useImageHover from '@/app/hooks/useImageHover';
-import useClickOutside from '@/app/hooks/useClickOutside';
+import { Option } from '../OptionsMenu/OptionsMenu';
 import InfoWrapper from '../WrapperComponents/InfoWrapper';
+import InfoImage from '../InfoImage';
 
 interface ProfileProps {
     currentUser: User;
@@ -35,22 +31,14 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm();
-    const [aboutDisabled, setAboutDisabled] = useState(true);
-
-    const {
-        showOptionsMenu,
-        menuPosition,
-        toggleOptionsMenu,
-        closeOptionsMenu,
-    } = useOptionsMenu();
-
-    const { isHovering, handleImageHover, setIsHovering } =
-        useImageHover(showOptionsMenu);
-    const imageDivRef = useClickOutside(() => {
-        setIsHovering(false);
-        closeOptionsMenu();
+        trigger,
+        setFocus,
+    } = useForm<FieldValues>({
+        defaultValues: {
+            name: currentUser.name,
+        },
     });
+    const [aboutDisabled, setAboutDisabled] = useState(true);
 
     const updateProfile: SubmitHandler<FieldValues> = (data) => {
         console.log(data);
@@ -58,44 +46,11 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
 
     return (
         <InfoWrapper className="gap-20">
-            <OptionsMenu
-                position="fixed"
-                positionCordinates={menuPosition}
-                showOptionsMenu={showOptionsMenu}
+            <InfoImage
+                imageSrc={currentUser.image}
+                hoverElementText="change profile photo"
                 optionsList={optionsList}
             />
-            <div
-                ref={imageDivRef}
-                className="w-[40%] max-w-[200px]  relative rounded-full overflow-hidden cursor-pointer"
-                onMouseEnter={handleImageHover}
-                onMouseLeave={handleImageHover}
-            >
-                <Image
-                    alt="Profile Picture"
-                    src={currentUser.image || '/user.png'}
-                    width={200}
-                    height={200}
-                    className="bg-gray-300"
-                />
-
-                <div
-                    className={clsx(
-                        `absolute select-none cursor-pointer justify-center items-center inset-0 rounded-full bg-secondary z-10 bg-opacity-50 gap-1`,
-                        isHovering ? 'flex flex-col' : 'hidden'
-                    )}
-                    onClick={(event) =>
-                        toggleOptionsMenu(
-                            event.clientY + 15,
-                            event.clientX + 10
-                        )
-                    }
-                >
-                    <BsCameraFill className="text-camIconSize " />
-                    <p className="text-sm smallMobiles:text-base midPhones:text-xl uppercase text-center">
-                        Change profile picture
-                    </p>
-                </div>
-            </div>
             <form
                 className="flex-1 flex flex-col overflow-y-auto w-full gap-12 px-12"
                 onSubmit={handleSubmit(updateProfile)}
@@ -103,12 +58,14 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
                 <EditInfoInput
                     id="name"
                     label="Your Name"
-                    defaultValue={currentUser.name ?? ''}
                     placeHolder="Name"
                     maxLength={25}
                     register={register}
                     validationSchema={{ required: 'Name cannot be empty!' }}
                     errors={errors}
+                    saveFunction={() => handleSubmit(updateProfile)()}
+                    trigger={trigger}
+                    setFocus={setFocus}
                 />
 
                 <div className="w-full flex flex-col gap-6">

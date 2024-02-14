@@ -1,6 +1,6 @@
 'use client';
 
-import { FieldValues, useForm } from 'react-hook-form';
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { User } from '@prisma/client';
 import { useNewgroup } from '@/app/hooks/useNewGroup';
 import NewGroupStepOne from './NewGroupStepOne';
@@ -13,21 +13,52 @@ interface NewGroupChatProps {
 }
 
 const NewGroupChat: React.FC<NewGroupChatProps> = ({ users }) => {
-    const { register, watch, setValue } = useForm<FieldValues>({
+    const {
+        register,
+        watch,
+        setValue,
+        formState: { errors },
+        handleSubmit,
+        trigger,
+        setFocus,
+    } = useForm<FieldValues>({
         defaultValues: {
             name: '',
+            image: '/user.png',
             members: [],
         },
     });
     const [loading, setLoading] = useState(false);
 
-    const { currentStepIndex, navigateTo, steps, step } = useNewgroup([
-        <NewGroupStepOne id="search-box" users={users} setValue={setValue} />,
-        <NewGroupStepTwo />,
-    ]);
+    const { currentStepIndex, navigateTo } = useNewgroup();
+
+    const groupImage = watch('image');
+
+    const addNewGroup: SubmitHandler<FieldValues> = (data) => {
+        console.log(data);
+    };
+
     return (
-        <form className="flex-1 flex flex-col overflow-y-auto bg-secondary py-6">
-            {step}
+        <form
+            onSubmit={handleSubmit(addNewGroup)}
+            className="flex-1 flex flex-col overflow-y-auto items-center w-full bg-secondary py-6 gap-4 relative"
+        >
+            {currentStepIndex === 0 ? (
+                <NewGroupStepOne
+                    id="search-box"
+                    users={users}
+                    setValue={setValue}
+                    navigateToNextStep={navigateTo}
+                />
+            ) : (
+                <NewGroupStepTwo
+                    imageSrc={groupImage}
+                    register={register}
+                    errors={errors}
+                    trigger={trigger}
+                    setFocus={setFocus}
+                />
+            )}
         </form>
     );
 };

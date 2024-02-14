@@ -8,6 +8,8 @@ export default function ToastContext() {
             toastOptions={{
                 style: {
                     fontSize: 'clamp( 10px , 0.6rem + 2vw,1.6rem)',
+                    background: 'black',
+                    color: 'white',
                 },
             }}
         />

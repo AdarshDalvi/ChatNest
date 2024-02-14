@@ -13,11 +13,13 @@ interface NewGroupStepOneProps {
     id: string;
     users: User[];
     setValue: UseFormSetValue<FieldValues>;
+    navigateToNextStep: (page: 0 | 1) => void;
 }
 const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
     id,
     users,
     setValue,
+    navigateToNextStep,
 }) => {
     const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
 
@@ -62,9 +64,14 @@ const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
         filterUsers();
     }, [searchText]);
 
+    const saveAndNavigateToNextPage = () => {
+        setValue('members', selectedMembers);
+        navigateToNextStep(1);
+    };
+
     return (
-        <div className="flex-1 flex flex-col w-full  overflow-y-hidden gap-4 relative">
-            <h2 className="text-2xl midPhones:text-[1.6rem] px-4">
+        <>
+            <h2 className="text-2xl midPhones:text-[1.6rem] px-4 self-start">
                 Add group members{' '}
                 {selectedMembers.length > 0 && (
                     <span>{`(${selectedMembers.length})`}</span>
@@ -88,6 +95,7 @@ const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
                 >
                     {selectedMembers.map((selectedMember) => (
                         <SelectedMemberCard
+                            key={selectedMember.id}
                             selectedUser={selectedMember}
                             deleteFromMember={addDeleteGroupMember}
                         />
@@ -95,7 +103,7 @@ const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
                 </div>
             )}
             <div
-                className="min-h-0 flex-1 flex flex-col overflow-y-auto pr-2"
+                className="min-h-0 flex-1 w-full flex flex-col overflow-y-auto pr-2"
                 style={{ scrollbarGutter: 'stable' }}
             >
                 {filteredUsers.map((user, index, users) => (
@@ -108,7 +116,17 @@ const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
                     />
                 ))}
             </div>
-        </div>
+            {selectedMembers.length > 0 && (
+                <button
+                    type="button"
+                    onClick={saveAndNavigateToNextPage}
+                    id="navigate-step-two"
+                    className="absolute bottom-32  p-5 bg-primary rounded-full"
+                >
+                    <IoArrowForward className="text-[2.5rem]" />
+                </button>
+            )}
+        </>
     );
 };
 
