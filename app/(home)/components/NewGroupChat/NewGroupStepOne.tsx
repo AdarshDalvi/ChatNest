@@ -1,7 +1,11 @@
 'use client';
 
 import { User } from '@prisma/client';
-import { FieldValues, UseFormSetValue } from 'react-hook-form';
+import {
+    FieldValues,
+    UseFormGetValues,
+    UseFormSetValue,
+} from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import NewGroupUserCard from './components/NewGroupUserCard';
 import { useSearchBox } from '@/app/hooks/useSearchBox';
@@ -14,20 +18,30 @@ interface NewGroupStepOneProps {
     users: User[];
     setValue: UseFormSetValue<FieldValues>;
     navigateToNextStep: (page: 0 | 1) => void;
+    getValues: UseFormGetValues<FieldValues>;
 }
 const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
     id,
     users,
     setValue,
+    getValues,
     navigateToNextStep,
 }) => {
-    const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
+    const groupMembers: User[] = getValues('members');
 
-    const [filteredUsers, setFilterdUsers] = useState<User[]>(users);
+    const [selectedMembers, setSelectedMembers] =
+        useState<User[]>(groupMembers);
+
     const { searchText, updateSearchText, clearSearchText } = useSearchBox();
 
+    const [filteredUsers, setFilterdUsers] = useState<User[]>(users);
+
     const addDeleteGroupMember = (user: User) => {
-        if (selectedMembers.includes(user)) {
+        const selected = selectedMembers.findIndex(
+            (member) => member.id === user.id
+        );
+
+        if (selected !== -1) {
             const updatedSelectedMembers = selectedMembers.filter(
                 (member) => member.id !== user.id
             );
@@ -36,6 +50,11 @@ const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
             const updatedSelectedMembers = [...selectedMembers, user];
             setSelectedMembers((prevMembers) => updatedSelectedMembers);
         }
+    };
+
+    const saveAndNavigateToNextPage = () => {
+        setValue('members', selectedMembers);
+        navigateToNextStep(1);
     };
 
     useEffect(() => {
@@ -62,20 +81,12 @@ const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
             });
         };
         filterUsers();
-    }, [searchText]);
-
-    const saveAndNavigateToNextPage = () => {
-        setValue('members', selectedMembers);
-        navigateToNextStep(1);
-    };
+    }, [searchText, users]);
 
     return (
         <>
             <h2 className="text-2xl midPhones:text-[1.6rem] px-4 self-start">
-                Add group members{' '}
-                {selectedMembers.length > 0 && (
-                    <span>{`(${selectedMembers.length})`}</span>
-                )}
+                Members Selected : {selectedMembers.length}
             </h2>
             <SearchBox
                 id={id}
@@ -84,7 +95,6 @@ const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
                 handleChange={updateSearchText}
                 clearSearchText={clearSearchText}
             />
-
             {selectedMembers.length > 0 && (
                 <div
                     id="selected-members-container"
@@ -106,22 +116,28 @@ const NewGroupStepOne: React.FC<NewGroupStepOneProps> = ({
                 className="min-h-0 flex-1 w-full flex flex-col overflow-y-auto pr-2"
                 style={{ scrollbarGutter: 'stable' }}
             >
-                {filteredUsers.map((user, index, users) => (
-                    <NewGroupUserCard
-                        key={user.id}
-                        user={user}
-                        onClick={() => addDeleteGroupMember(user)}
-                        lastElement={index === users.length - 1}
-                        selected={selectedMembers.includes(user)}
-                    />
-                ))}
+                {filteredUsers.map((user, index, users) => {
+                    const selected = selectedMembers.findIndex(
+                        (member) => member.id === user.id
+                    );
+
+                    return (
+                        <NewGroupUserCard
+                            key={user.id}
+                            user={user}
+                            onClick={() => addDeleteGroupMember(user)}
+                            lastElement={index === users.length - 1}
+                            selected={selected !== -1}
+                        />
+                    );
+                })}
             </div>
             {selectedMembers.length > 0 && (
                 <button
                     type="button"
                     onClick={saveAndNavigateToNextPage}
                     id="navigate-step-two"
-                    className="absolute bottom-32  p-5 bg-primary rounded-full"
+                    className="absolute bottom-32  p-4 bg-primary rounded-full"
                 >
                     <IoArrowForward className="text-[2.5rem]" />
                 </button>

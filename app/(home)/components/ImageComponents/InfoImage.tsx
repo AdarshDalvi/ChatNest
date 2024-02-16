@@ -1,6 +1,6 @@
 import useOptionsMenu from '@/app/hooks/useOptionsMenu';
 import Image from 'next/image';
-import OptionsMenu, { Option } from './OptionsMenu/OptionsMenu';
+import OptionsMenu, { Option } from '../OptionsMenu/OptionsMenu';
 import { BsCameraFill } from 'react-icons/bs';
 import useMobileView from '@/app/hooks/useMobileView';
 import clsx from 'clsx';
@@ -38,7 +38,7 @@ const InfoImage: React.FC<InfoImageProps> = ({
         >
             <Image
                 alt="Profile Picture"
-                src={imageSrc || '/user.png'}
+                src={imageSrc!}
                 width={mobileView ? 180 : 200}
                 height={mobileView ? 180 : 200}
                 className={clsx(

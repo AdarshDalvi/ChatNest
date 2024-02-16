@@ -10,7 +10,7 @@ import MultilineInput from '@/app/components/inputs/MultilineInput';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
 import { Option } from '../OptionsMenu/OptionsMenu';
 import InfoWrapper from '../WrapperComponents/InfoWrapper';
-import InfoImage from '../InfoImage';
+import InfoImage from '../ImageComponents/InfoImage';
 import DrawerWrapper from '../WrapperComponents/Drawer/DrawerWrapper';
 
 import { FaCheck } from 'react-icons/fa6';
@@ -42,9 +42,12 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         formState: { errors },
         trigger,
         setFocus,
+        reset,
+        watch,
     } = useForm<FieldValues>({
         defaultValues: {
-            name: currentUser.name ?? '',
+            name: currentUser.name || '',
+            image: currentUser.image || '/user.png',
         },
     });
     const [aboutDisabled, setAboutDisabled] = useState(true);
@@ -53,7 +56,11 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         console.log(data);
     };
 
+    const image = watch('image');
+
     const closeProfileDrawer = () => {
+        reset();
+        setAboutDisabled(true);
         setShowProfileDrawer(false);
     };
 
@@ -65,77 +72,83 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             closeDrawer={closeProfileDrawer}
             showDrawer={showProfileDrawer}
         >
-            <InfoWrapper className="gap-20">
-                <InfoImage
-                    imageSrc={currentUser.image}
-                    hoverElementText="change profile photo"
-                    optionsList={optionsList}
-                />
-                <form
-                    className="flex-1 flex flex-col overflow-y-auto w-full gap-12 px-12"
-                    onSubmit={handleSubmit(updateProfile)}
-                >
-                    <EditInfoInput
-                        id="name"
-                        label="Your Name"
-                        placeHolder="Name"
-                        maxLength={25}
-                        register={register}
-                        validationSchema={{ required: 'Name cannot be empty!' }}
-                        errors={errors}
-                        saveButton
-                        saveFunction={() => handleSubmit(updateProfile)()}
-                        trigger={trigger}
-                        setFocus={setFocus}
+            {showProfileDrawer && (
+                <InfoWrapper className="gap-20">
+                    <InfoImage
+                        imageSrc={image}
+                        hoverElementText="change profile photo"
+                        optionsList={optionsList}
                     />
+                    <form
+                        className="flex-1 flex flex-col overflow-y-auto w-full gap-12 px-12"
+                        onSubmit={handleSubmit(updateProfile)}
+                    >
+                        <EditInfoInput
+                            id="name"
+                            label="Your Name"
+                            placeHolder="Name"
+                            maxLength={25}
+                            register={register}
+                            validationSchema={{
+                                required: 'Name cannot be empty!',
+                            }}
+                            errors={errors}
+                            saveButton
+                            saveFunction={() => handleSubmit(updateProfile)()}
+                            trigger={trigger}
+                            setFocus={setFocus}
+                        />
 
-                    <div className="w-full flex flex-col gap-6">
-                        <label
-                            htmlFor="about"
-                            className="text-cyan-500 text-xl"
-                        >
-                            About
-                        </label>
-                        <div
-                            className={clsx(
-                                'flex gap-1   pb-2.5 items-start',
-                                !aboutDisabled &&
-                                    'border-b-gray-400 border-b-2 focus-within:border-cyan-500'
-                            )}
-                        >
-                            <MultilineInput
-                                id="about"
-                                register={register}
-                                placeHolder="Add About"
-                                className="w-full
+                        <div className="w-full flex flex-col gap-6">
+                            <label
+                                htmlFor="about"
+                                className="text-cyan-500 text-xl"
+                            >
+                                About
+                            </label>
+                            <div
+                                className={clsx(
+                                    'flex gap-1   pb-2.5 items-start',
+                                    !aboutDisabled &&
+                                        'border-b-gray-400 border-b-2 focus-within:border-cyan-500'
+                                )}
+                            >
+                                <MultilineInput
+                                    id="about"
+                                    register={register}
+                                    placeHolder="Add About"
+                                    className="w-full
                                 bg-secondary
                                 text-2xl
                                 midPhones:text-[1.7rem]
                                 pr-1
                                 "
-                                maxLength={130}
-                                disabled={aboutDisabled}
-                            />
-                            {aboutDisabled ? (
-                                <MdOutlineModeEditOutline
-                                    className="cursor-pointer text-3xl midPhones:text-4xl"
-                                    onClick={() => setAboutDisabled(false)}
+                                    maxLength={130}
+                                    disabled={aboutDisabled}
                                 />
-                            ) : (
-                                <button
-                                    type="button"
-                                    onClick={handleSubmit(updateProfile)}
-                                >
-                                    <FaCheck
-                                        onClick={() => setAboutDisabled(true)}
+                                {aboutDisabled ? (
+                                    <MdOutlineModeEditOutline
                                         className="cursor-pointer text-3xl midPhones:text-4xl"
+                                        onClick={() => setAboutDisabled(false)}
                                     />
-                                </button>
-                            )}
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={handleSubmit(updateProfile)}
+                                    >
+                                        <FaCheck
+                                            onClick={() =>
+                                                setAboutDisabled(true)
+                                            }
+                                            className="cursor-pointer text-3xl midPhones:text-4xl"
+                                        />
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </InfoWrapper>
+                    </form>
+                </InfoWrapper>
+            )}
         </DrawerWrapper>
     );
 };

@@ -12,7 +12,6 @@ import {
     UseFormSetFocus,
     UseFormTrigger,
 } from 'react-hook-form';
-import toast from 'react-hot-toast';
 
 type SaveButtonProps = RequiredProps & {
     saveButton: true;

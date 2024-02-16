@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import useImageHover from './useImageHover';
+import { useState } from 'react';
+import useImageHoverWithOptions from './useImageHoverWithOptions';
 import useClickOutside from './useClickOutside';
 
 const useOptionsMenu = () => {
@@ -17,7 +17,7 @@ const useOptionsMenu = () => {
     };
 
     const { handleImageHover, isHovering, setIsHovering } =
-        useImageHover(showOptionsMenu);
+        useImageHoverWithOptions(showOptionsMenu);
 
     return {
         ref,

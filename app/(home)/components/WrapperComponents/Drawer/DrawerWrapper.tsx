@@ -12,6 +12,7 @@ interface DrawerWrapperProps {
     closeDrawer: () => void;
     icon: IconType;
     iconRight?: boolean;
+    subHeading?: string;
     children: React.ReactNode;
 }
 
@@ -22,6 +23,7 @@ const DrawerWrapper: React.FC<DrawerWrapperProps> = ({
     closeDrawer,
     icon: Icon,
     iconRight,
+    subHeading,
     children,
 }) => {
     const { isOpen } = useConversation();
@@ -63,9 +65,14 @@ const DrawerWrapper: React.FC<DrawerWrapperProps> = ({
                     )}
                     onClick={closeDrawer}
                 />
-                <h3 className="text-2xl midPhones:text-[1.7rem]">
-                    {drawerHeading}
-                </h3>
+                <div className="flex flex-col gap-1">
+                    <h3 className="text-2xl midPhones:text-[1.8rem]">
+                        {drawerHeading}
+                    </h3>
+                    {subHeading && (
+                        <h6 className="text-xl text-gray-100">{subHeading}</h6>
+                    )}
+                </div>
             </header>
             {children}
         </aside>

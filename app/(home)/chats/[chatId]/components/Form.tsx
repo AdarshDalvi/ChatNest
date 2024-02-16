@@ -12,7 +12,6 @@ import toast from 'react-hot-toast';
 function Form() {
     const { chatId } = useConversation();
 
-    const toastStyle = { color: 'white', backgroundColor: 'black' };
     const {
         handleSubmit: handleSubmitText,
         register: registerText,
@@ -26,7 +25,6 @@ function Form() {
     } = useForm<FieldValues>({ defaultValues: { caption: '' } });
 
     const [image, setImage] = useState<ImageInterface | null>(null);
-    const [imageFile, setImageFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
 
     const handleTextInputSend: SubmitHandler<FieldValues> = (data) => {
@@ -45,22 +43,21 @@ function Form() {
             const image = new Image();
             image.onload = () => {
                 setImage({
-                    src: reader.result as string,
+                    src: image.src,
                     caption: null,
                     width: image.width,
                     height: image.height,
                 });
-                setImageFile(file);
             };
             image.src = reader.result as string;
         };
         reader.readAsDataURL(file);
     };
 
-    const createSecureUrl = async () => {
+    const createSecureUrl = async (base64String: string) => {
         try {
             const formData = new FormData();
-            formData.append('file', imageFile!);
+            formData.append('file', base64String);
             formData.append('upload_preset', 'image_message_upload');
             const res = await axios.post(
                 `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -77,20 +74,18 @@ function Form() {
         setLoading(true);
         const loadingToast = toast.loading('Sending image...', {
             position: 'bottom-center',
-            style: toastStyle,
         });
 
         try {
-            const secureUrl = await createSecureUrl();
+            const secureUrl = await createSecureUrl(image?.src!);
             if (secureUrl !== null) {
                 const res = await axios.post(`/api/messages`, {
                     image: { ...image, src: secureUrl, caption: data.caption },
                     chatId,
                 });
                 toast.dismiss(loadingToast);
-                toast.success('Image sent!');
+                toast.success('Image sent!', { position: 'bottom-center' });
                 setImage(null);
-                setImageFile(null);
             } else {
                 throw new Error('Unable to upload image');
             }
@@ -98,7 +93,6 @@ function Form() {
             toast.dismiss(loadingToast);
             toast.error('Something went wrong!', {
                 position: 'bottom-center',
-                style: toastStyle,
             });
         } finally {
             setLoading(false);
@@ -107,7 +101,6 @@ function Form() {
 
     const cancelImageInput = () => {
         setImage(null);
-        setImageFile(null);
     };
 
     return (

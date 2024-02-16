@@ -21,6 +21,7 @@ const ModalWrapper = ({ children }: ModalProps, ref: Ref<ModalDialgRef>) => {
 
     return (
         <dialog
+            id="modal-wrapper"
             ref={modalDialogRef}
             className="backdrop:bg-black/60 bg-transparent outline-none"
         >

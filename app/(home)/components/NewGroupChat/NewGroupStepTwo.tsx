@@ -1,16 +1,22 @@
 'use client';
 
 import { Option } from '../OptionsMenu/OptionsMenu';
-import InfoImage from '../InfoImage';
-import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form';
-import MultilineInput from '@/app/components/inputs/MultilineInput';
+import InfoImage from '../ImageComponents/InfoImage';
+import {
+    FieldErrors,
+    FieldValues,
+    UseFormRegister,
+    UseFormSetValue,
+} from 'react-hook-form';
 import EditInfoInput from '../InfoDrawers/EditInfoInput';
+import NoImage from '../ImageComponents/NoImage';
 
 interface NewGroupStepTwoProps {
     imageSrc: string;
     register: UseFormRegister<FieldValues>;
     errors: FieldErrors;
     loading: boolean;
+    setValue: UseFormSetValue<FieldValues>;
 }
 
 const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
@@ -18,6 +24,7 @@ const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
     register,
     errors,
     loading,
+    setValue,
 }) => {
     const optionsList: Option[] = [
         {
@@ -42,17 +49,29 @@ const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
 
     return (
         <>
-            <InfoImage
-                imageSrc={imageSrc}
-                optionsList={optionsList}
-                hoverElementText="CHANGE GROUP ICON"
-            />
+            {imageSrc === '/group.png' ? (
+                <NoImage
+                    id="image"
+                    imageSrc={imageSrc}
+                    editableImage
+                    imageChangeFunction={() => {}}
+                    imageHoverText="Add group icon"
+                    setValue={setValue}
+                />
+            ) : (
+                <InfoImage
+                    imageSrc={imageSrc}
+                    optionsList={optionsList}
+                    hoverElementText="CHANGE GROUP ICON"
+                />
+            )}
             <div className="flex flex-col gap-6 w-full px-8 mt-20">
                 <EditInfoInput
                     register={register}
                     label="Group Name"
                     placeHolder="Enter group name"
                     id="name"
+                    maxLength={30}
                     validationSchema={{
                         required: 'Group name cannot be empty!',
                     }}
@@ -60,9 +79,12 @@ const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
                     loading={loading}
                 />
             </div>
-            <div className="flex">
-                <button type="submit">save</button>
-            </div>
+            <button
+                type="submit"
+                className="bg-primary px-10 rounded-sm py-2.5 text-2xl mt-8"
+            >
+                Add
+            </button>
         </>
     );
 };

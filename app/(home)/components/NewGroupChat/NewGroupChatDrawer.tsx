@@ -9,6 +9,8 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import './NewGroupChatDrawer.scss';
 import DrawerWrapper from '../WrapperComponents/Drawer/DrawerWrapper';
 import { MdClear } from 'react-icons/md';
+import { IconType } from 'react-icons';
+import { IoArrowBack } from 'react-icons/io5';
 
 interface NewGroupChatDrawerProps {
     users: User[];
@@ -27,11 +29,12 @@ const NewGroupChatDrawer: React.FC<NewGroupChatDrawerProps> = ({
         setValue,
         formState: { errors },
         handleSubmit,
-        setFocus,
+        getValues,
+        reset,
     } = useForm<FieldValues>({
         defaultValues: {
             name: '',
-            image: '/user.png',
+            image: '/group.png',
             members: [],
         },
     });
@@ -46,17 +49,29 @@ const NewGroupChatDrawer: React.FC<NewGroupChatDrawerProps> = ({
     };
 
     const closeGroupChatDrawer = () => {
+        reset();
         setShowNewGroupChatDrawer(false);
     };
+
+    const navigateToStepOne = () => {
+        navigateTo(0);
+    };
+
+    const isStepOne: boolean = currentStepIndex === 0;
+
+    const subHeading = isStepOne ? 'Add group members' : 'Change members';
+
+    const icon: IconType = isStepOne ? MdClear : IoArrowBack;
 
     return (
         <DrawerWrapper
             drawerHeading="New Group Chat"
+            subHeading={subHeading}
             drawerOrigin="origin-left"
-            iconRight
-            icon={MdClear}
+            iconRight={isStepOne}
+            icon={icon}
             showDrawer={showNewGroupChatDrawer}
-            closeDrawer={closeGroupChatDrawer}
+            closeDrawer={isStepOne ? closeGroupChatDrawer : navigateToStepOne}
         >
             <form
                 onSubmit={handleSubmit(addNewGroup)}
@@ -68,6 +83,7 @@ const NewGroupChatDrawer: React.FC<NewGroupChatDrawerProps> = ({
                         users={users}
                         setValue={setValue}
                         navigateToNextStep={navigateTo}
+                        getValues={getValues}
                     />
                 ) : (
                     <NewGroupStepTwo
@@ -75,6 +91,7 @@ const NewGroupChatDrawer: React.FC<NewGroupChatDrawerProps> = ({
                         register={register}
                         errors={errors}
                         loading={loading}
+                        setValue={setValue}
                     />
                 )}
             </form>
