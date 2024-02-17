@@ -34,7 +34,7 @@ const NewGroupChatDrawer: React.FC<NewGroupChatDrawerProps> = ({
     } = useForm<FieldValues>({
         defaultValues: {
             name: '',
-            image: '/group.png',
+            image: null,
             members: [],
         },
     });

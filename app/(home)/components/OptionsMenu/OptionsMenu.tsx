@@ -1,10 +1,16 @@
 import clsx from 'clsx';
 import './OptionsMenu.scss';
 
-export type Option = {
+type LabelledOption = {
     name: string;
     onClick: () => void;
 };
+
+type CustomOption = {
+    jsxElement: React.ReactNode;
+};
+
+export type Option = LabelledOption | CustomOption;
 
 interface OptionsMenuProps {
     className?: string;
@@ -28,11 +34,11 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({
         >
             {optionsList.map((option, index) => (
                 <div
-                    key={option.name + index}
-                    onClick={option.onClick}
-                    className="cursor-pointer hover:bg-gray-800  py-4 px-12 text-center w-full"
+                    key={index}
+                    onClick={'name' in option ? option.onClick : undefined}
+                    className="cursor-pointer hover:bg-gray-800 py-4 px-12 text-center w-full"
                 >
-                    {option.name}
+                    {'name' in option ? option.name : option.jsxElement}
                 </div>
             ))}
         </div>

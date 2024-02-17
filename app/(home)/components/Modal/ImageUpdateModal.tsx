@@ -2,11 +2,11 @@ import { useState, useCallback } from 'react';
 import Cropper, { Area } from 'react-easy-crop';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import { MdOutlineRotate90DegreesCcw } from 'react-icons/md';
-import getCroppedImg from './imageCrop';
-import axios from 'axios';
+import getCroppedImg from '../../../lib/imageCrop';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 import { FieldValues, UseFormSetValue } from 'react-hook-form';
+import createSecureUrl from '@/app/lib/secureUrl';
 
 type ImageUpdateModalProps = {
     imageId: string;
@@ -65,15 +65,21 @@ const ImageUpdateModal: React.FC<ImageUpdateModalProps> = ({
                 rotation
             );
             if (croppedImageBase64) {
-                const secure_url = await createSecureUrlFromBlob(
-                    croppedImageBase64
-                );
                 toast.dismiss(loadingToast);
                 toast.success('Image updated!', {
                     position: 'bottom-center',
                     duration: 3000,
                 });
-                setValue(imageId, secure_url);
+                setValue(imageId, croppedImageBase64);
+                // const secure_url = await createSecureUrl(croppedImageBase64);
+                // toast.dismiss(loadingToast);
+                // if (secure_url) {
+                //     toast.success('Image updated!', {
+                //         position: 'bottom-center',
+                //         duration: 3000,
+                //     });
+                //     setValue(imageId, secure_url);
+                // }
             }
         } catch (error: any) {
             toast.dismiss(loadingToast);
@@ -84,25 +90,6 @@ const ImageUpdateModal: React.FC<ImageUpdateModalProps> = ({
             cancelUpdate();
         }
     }, [image, croppedAreaPixels, rotation]);
-
-    const createSecureUrlFromBlob = useCallback(
-        async (base64String: string) => {
-            try {
-                const formData = new FormData();
-                formData.append('file', base64String);
-                formData.append('upload_preset', 'image_message_upload');
-                const res = await axios.post(
-                    `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-                    formData
-                );
-                return res.data.secure_url;
-            } catch (error) {
-                console.error('Error uploading image to Cloudinary:', error);
-                return null;
-            }
-        },
-        []
-    );
 
     const disabledClasses = 'pointer-events-none cursor-not-allowed';
 
@@ -119,7 +106,7 @@ const ImageUpdateModal: React.FC<ImageUpdateModalProps> = ({
                     <Cropper
                         classes={{
                             containerClassName: clsx(
-                                'relative w-full bg-gray-950',
+                                'relative w-full bg-gray-950 ',
                                 loading && disabledClasses
                             ),
                             cropAreaClassName: loading ? disabledClasses : '',

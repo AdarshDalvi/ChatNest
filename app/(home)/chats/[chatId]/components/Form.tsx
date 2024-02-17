@@ -4,10 +4,11 @@ import ChatScreenInput from './FormComponents/Input';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import axios from 'axios';
 import useConversation from '@/app/hooks/useConversation';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import ImageInputModal from '@/app/(home)/components/Modal/ImageInputModal';
 import { Image as ImageInterface } from '@prisma/client';
 import toast from 'react-hot-toast';
+import createSecureUrl from '@/app/lib/secureUrl';
 
 function Form() {
     const { chatId } = useConversation();
@@ -54,50 +55,42 @@ function Form() {
         reader.readAsDataURL(file);
     };
 
-    const createSecureUrl = async (base64String: string) => {
-        try {
-            const formData = new FormData();
-            formData.append('file', base64String);
-            formData.append('upload_preset', 'image_message_upload');
-            const res = await axios.post(
-                `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-                formData
-            );
-            return res.data.secure_url;
-        } catch (error: any) {
-            return null;
-        }
-    };
-
-    const handleImageSend: SubmitHandler<FieldValues> = async (data: any) => {
-        resetImageCaption();
-        setLoading(true);
-        const loadingToast = toast.loading('Sending image...', {
-            position: 'bottom-center',
-        });
-
-        try {
-            const secureUrl = await createSecureUrl(image?.src!);
-            if (secureUrl !== null) {
-                const res = await axios.post(`/api/messages`, {
-                    image: { ...image, src: secureUrl, caption: data.caption },
-                    chatId,
-                });
-                toast.dismiss(loadingToast);
-                toast.success('Image sent!', { position: 'bottom-center' });
-                setImage(null);
-            } else {
-                throw new Error('Unable to upload image');
-            }
-        } catch (error) {
-            toast.dismiss(loadingToast);
-            toast.error('Something went wrong!', {
+    const handleImageSend: SubmitHandler<FieldValues> = useCallback(
+        async (data: any) => {
+            resetImageCaption();
+            setLoading(true);
+            const loadingToast = toast.loading('Sending image...', {
                 position: 'bottom-center',
             });
-        } finally {
-            setLoading(false);
-        }
-    };
+
+            try {
+                const secureUrl = await createSecureUrl(image?.src!);
+                if (secureUrl !== null) {
+                    const res = await axios.post(`/api/messages`, {
+                        image: {
+                            ...image,
+                            src: secureUrl,
+                            caption: data.caption,
+                        },
+                        chatId,
+                    });
+                    toast.dismiss(loadingToast);
+                    toast.success('Image sent!', { position: 'bottom-center' });
+                    setImage(null);
+                } else {
+                    throw new Error('Unable to upload image');
+                }
+            } catch (error) {
+                toast.dismiss(loadingToast);
+                toast.error('Something went wrong!', {
+                    position: 'bottom-center',
+                });
+            } finally {
+                setLoading(false);
+            }
+        },
+        [image?.src]
+    );
 
     const cancelImageInput = () => {
         setImage(null);

@@ -15,6 +15,7 @@ import DrawerWrapper from '../WrapperComponents/Drawer/DrawerWrapper';
 
 import { FaCheck } from 'react-icons/fa6';
 import { IoArrowBack } from 'react-icons/io5';
+import EditableNoImage from '../ImageComponents/EditableNoImage';
 
 interface ProfileDrawerProps {
     currentUser: User;
@@ -44,10 +45,12 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         setFocus,
         reset,
         watch,
+        setValue,
     } = useForm<FieldValues>({
         defaultValues: {
             name: currentUser.name || '',
-            image: currentUser.image || '/user.png',
+            image: currentUser.image,
+            about: currentUser.about || '',
         },
     });
     const [aboutDisabled, setAboutDisabled] = useState(true);
@@ -74,11 +77,21 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         >
             {showProfileDrawer && (
                 <InfoWrapper className="gap-20">
-                    <InfoImage
-                        imageSrc={image}
-                        hoverElementText="change profile photo"
-                        optionsList={optionsList}
-                    />
+                    {image === null ? (
+                        <EditableNoImage
+                            id="image"
+                            imageHoverText="Add profile photo"
+                            imageSrc={image}
+                            setValue={setValue}
+                            defaultImage="/user.png"
+                        />
+                    ) : (
+                        <InfoImage
+                            imageSrc={image}
+                            hoverElementText="change profile photo"
+                            optionsList={optionsList}
+                        />
+                    )}
                     <form
                         className="flex-1 flex flex-col overflow-y-auto w-full gap-12 px-12"
                         onSubmit={handleSubmit(updateProfile)}

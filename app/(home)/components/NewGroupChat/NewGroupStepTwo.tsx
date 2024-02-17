@@ -10,6 +10,8 @@ import {
 } from 'react-hook-form';
 import EditInfoInput from '../../../components/inputs/EditInfoInput';
 import EditableNoImage from '../ImageComponents/EditableNoImage';
+import useImageUpdate from '@/app/hooks/useImageUpdate';
+import ImageUpdateModal from '../Modal/ImageUpdateModal';
 
 interface NewGroupStepTwoProps {
     imageSrc: string;
@@ -29,32 +31,49 @@ const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
     const optionsList: Option[] = [
         {
             name: 'View Photo',
-            onClick: () => {
-                console.log('hi');
-            },
+            onClick: () => {},
         },
         {
-            name: 'Change Photo',
-            onClick: () => {
-                console.log('hi');
-            },
+            jsxElement: (
+                <label htmlFor="image-btn" className="cursor-pointer">
+                    Change Photo
+                    <input
+                        id="image-btn"
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
+                        multiple={false}
+                        className="hidden"
+                        onChange={(event) => {
+                            const file = event.target.files?.[0] || null;
+                            handleImageChange(file);
+                        }}
+                    />
+                </label>
+            ),
         },
         {
             name: 'Remove Photo',
-            onClick: () => {
-                console.log('hi');
-            },
+            onClick: () => {},
         },
     ];
 
+    const { editedImage, handleImageChange, cancelUpdate } = useImageUpdate();
+
     return (
         <>
-            {imageSrc === '/group.png' ? (
+            <ImageUpdateModal
+                imageId={'image'}
+                setValue={setValue}
+                image={editedImage}
+                cancelUpdate={cancelUpdate}
+            />
+            {imageSrc === null ? (
                 <EditableNoImage
                     id="image"
                     imageSrc={imageSrc}
                     imageHoverText="Add group icon"
                     setValue={setValue}
+                    defaultImage="/group.png"
                 />
             ) : (
                 <InfoImage
