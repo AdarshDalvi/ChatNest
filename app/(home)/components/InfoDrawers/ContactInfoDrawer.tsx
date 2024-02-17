@@ -16,20 +16,20 @@ import InfoWrapper from '../WrapperComponents/InfoWrapper';
 import DrawerWrapper from '../WrapperComponents/Drawer/DrawerWrapper';
 import { MdClear } from 'react-icons/md';
 
-interface UserInfoDrawerProps {
+interface ContactInfoDrawerProps {
     chat: Conversation & {
         users: User[];
     };
     otherUser: User;
-    showUserInfoDrawer: boolean;
-    setShowUserInfoDrawer: Dispatch<SetStateAction<boolean>>;
+    showContactInfoDrawer: boolean;
+    setShowContactInfoDrawer: Dispatch<SetStateAction<boolean>>;
 }
 
-const UserInfoDrawer: React.FC<UserInfoDrawerProps> = ({
+const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
     chat,
     otherUser,
-    showUserInfoDrawer,
-    setShowUserInfoDrawer,
+    showContactInfoDrawer,
+    setShowContactInfoDrawer,
 }) => {
     const [isHovering, setIsHovering] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -50,16 +50,16 @@ const UserInfoDrawer: React.FC<UserInfoDrawerProps> = ({
             .finally(() => setIsLoading(false));
     }, []);
 
-    const closeUserInfoDrawer = () => {
-        setShowUserInfoDrawer(false);
+    const closeContactInfoDrawer = () => {
+        setShowContactInfoDrawer(false);
     };
 
     return (
         <DrawerWrapper
             drawerHeading="Contact info"
             drawerOrigin="origin-right"
-            showDrawer={showUserInfoDrawer}
-            closeDrawer={closeUserInfoDrawer}
+            showDrawer={showContactInfoDrawer}
+            closeDrawer={closeContactInfoDrawer}
             icon={MdClear}
         >
             <InfoWrapper>
@@ -136,4 +136,4 @@ const UserInfoDrawer: React.FC<UserInfoDrawerProps> = ({
     );
 };
 
-export default UserInfoDrawer;
+export default ContactInfoDrawer;

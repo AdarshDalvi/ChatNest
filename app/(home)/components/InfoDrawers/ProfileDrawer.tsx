@@ -3,7 +3,7 @@
 import { User } from '@prisma/client';
 import clsx from 'clsx';
 import { Dispatch, SetStateAction, useState } from 'react';
-import EditInfoInput from './EditInfoInput';
+import EditInfoInput from '../../../components/inputs/EditInfoInput';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import MultilineInput from '@/app/components/inputs/MultilineInput';
 

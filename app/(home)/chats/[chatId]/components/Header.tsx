@@ -1,7 +1,7 @@
 'use client';
 
 import Avatar from '@/app/(home)/components/Avatar';
-import UserInfoDrawer from '@/app/(home)/components/InfoDrawers/UserInfoDrawer';
+import ContactInfoDrawer from '@/app/(home)/components/InfoDrawers/ContactInfoDrawer';
 import useOtherUser from '@/app/hooks/useOther';
 import stopEventPropagation from '@/app/lib/stopEventPropagation';
 import { Conversation, User } from '@prisma/client';
@@ -28,15 +28,15 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
         return 'online';
     }, [chat]);
 
-    const [showUserInfoDrawer, setShowUserInfoDrawer] = useState(false);
+    const [showContactInfoDrawer, setShowContactInfoDrawer] = useState(false);
 
     const handleNavigation = (event: any) => {
         stopEventPropagation(event);
         router.push('/chats');
     };
 
-    const handleUserInfoDrawer = () => {
-        setShowUserInfoDrawer((prevValue) => !prevValue);
+    const handleContactInfoDrawer = () => {
+        setShowContactInfoDrawer((prevValue) => !prevValue);
     };
 
     const handleMenuClick = (event: any) => {
@@ -46,16 +46,16 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
     return (
         <>
             {!chat.isGroup && (
-                <UserInfoDrawer
+                <ContactInfoDrawer
                     chat={chat}
                     otherUser={otherUser}
-                    showUserInfoDrawer={showUserInfoDrawer}
-                    setShowUserInfoDrawer={setShowUserInfoDrawer}
+                    showContactInfoDrawer={showContactInfoDrawer}
+                    setShowContactInfoDrawer={setShowContactInfoDrawer}
                 />
             )}
             <header
                 className="flex py-4 pl-4 pr-3.5  items-center gap-2 bg-primary text-white cursor-pointer"
-                onClick={handleUserInfoDrawer}
+                onClick={handleContactInfoDrawer}
             >
                 <IoArrowBack className="text-4xl" onClick={handleNavigation} />
                 <Avatar user={otherUser} status={false} size="HEADER" />

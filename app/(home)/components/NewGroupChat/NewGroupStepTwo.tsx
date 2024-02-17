@@ -8,8 +8,8 @@ import {
     UseFormRegister,
     UseFormSetValue,
 } from 'react-hook-form';
-import EditInfoInput from '../InfoDrawers/EditInfoInput';
-import NoImage from '../ImageComponents/NoImage';
+import EditInfoInput from '../../../components/inputs/EditInfoInput';
+import EditableNoImage from '../ImageComponents/EditableNoImage';
 
 interface NewGroupStepTwoProps {
     imageSrc: string;
@@ -50,11 +50,9 @@ const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
     return (
         <>
             {imageSrc === '/group.png' ? (
-                <NoImage
+                <EditableNoImage
                     id="image"
                     imageSrc={imageSrc}
-                    editableImage
-                    imageChangeFunction={() => {}}
                     imageHoverText="Add group icon"
                     setValue={setValue}
                 />
