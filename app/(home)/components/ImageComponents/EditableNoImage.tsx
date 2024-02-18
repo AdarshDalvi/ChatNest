@@ -4,22 +4,20 @@ import ImageC from 'next/image';
 import clsx from 'clsx';
 import useMobileView from '@/app/hooks/useMobileView';
 import ImageUpdateModal from '../Modal/ImageUpdateModal';
-import { FieldValues, UseFormSetValue } from 'react-hook-form';
 import useImageUpdate from '@/app/hooks/useImageUpdate';
+import { Dispatch, SetStateAction } from 'react';
 
 type EditableNoImageProps = {
-    id: string;
-    imageSrc: string;
+    imageSrc: string | null;
     imageHoverText: string;
-    setValue: UseFormSetValue<FieldValues>;
+    setImage: Dispatch<SetStateAction<string | null>>;
     defaultImage: string;
 };
 
 const EditableNoImage: React.FC<EditableNoImageProps> = ({
-    id,
     imageSrc,
     imageHoverText,
-    setValue,
+    setImage,
     defaultImage,
 }) => {
     const { mobileView } = useMobileView();
@@ -29,8 +27,7 @@ const EditableNoImage: React.FC<EditableNoImageProps> = ({
     return (
         <>
             <ImageUpdateModal
-                imageId={id}
-                setValue={setValue}
+                setImage={setImage}
                 image={editedImage}
                 cancelUpdate={cancelUpdate}
             />
@@ -48,7 +45,7 @@ const EditableNoImage: React.FC<EditableNoImageProps> = ({
                     className="w-full h-full rounded-full object-cover aspect-square"
                 />
                 <label
-                    htmlFor={id}
+                    htmlFor="image"
                     className="select-none cursor-pointer absolute inset-0 bg-secondary/60 rounded-full flex flex-col gap-1 items-center justify-center"
                 >
                     <BsCameraFill className="text-camIconSize" />

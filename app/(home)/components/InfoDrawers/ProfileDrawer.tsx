@@ -1,21 +1,24 @@
 'use client';
 
+import React, { useCallback, useState } from 'react';
 import { User } from '@prisma/client';
 import clsx from 'clsx';
-import { Dispatch, SetStateAction, useState } from 'react';
-import EditInfoInput from '../../../components/inputs/EditInfoInput';
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { Dispatch, SetStateAction } from 'react';
+import { FieldValues, useForm } from 'react-hook-form';
 import MultilineInput from '@/app/components/inputs/MultilineInput';
-
 import { MdOutlineModeEditOutline } from 'react-icons/md';
-import { Option } from '../OptionsMenu/OptionsMenu';
 import InfoWrapper from '../WrapperComponents/InfoWrapper';
 import InfoImage from '../ImageComponents/InfoImage';
 import DrawerWrapper from '../WrapperComponents/Drawer/DrawerWrapper';
-
 import { FaCheck } from 'react-icons/fa6';
 import { IoArrowBack } from 'react-icons/io5';
 import EditableNoImage from '../ImageComponents/EditableNoImage';
+import axios from 'axios';
+import createSecureUrl from '@/app/lib/secureUrl';
+import toast, { ToastPosition } from 'react-hot-toast';
+import EditInfoInput from '@/app/components/inputs/EditInfoInput';
+import SaveCancelButtons from '../ImageComponents/SaveCancelButtons';
+import useMobileView from '@/app/hooks/useMobileView';
 
 interface ProfileDrawerProps {
     currentUser: User;
@@ -28,23 +31,14 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
     showProfileDrawer,
     setShowProfileDrawer,
 }) => {
-    const optionsList: Option[] = [
-        {
-            name: 'View Photo',
-            onClick: () => {},
-        },
-        { name: 'Change Photo', onClick: () => {} },
-        { name: 'Remove Photo', onClick: () => {} },
-    ];
-
     const {
         register,
         handleSubmit,
         formState: { errors },
+        getValues,
         trigger,
         setFocus,
         reset,
-        watch,
         setValue,
     } = useForm<FieldValues>({
         defaultValues: {
@@ -53,18 +47,95 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             about: currentUser.about || '',
         },
     });
+
     const [aboutDisabled, setAboutDisabled] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [userImage, setUserImage] = useState<string | null>(
+        currentUser.image
+    );
+    const { mobileView } = useMobileView();
 
-    const updateProfile: SubmitHandler<FieldValues> = (data) => {
-        console.log(data);
-    };
-
-    const image = watch('image');
+    const toastPosition: ToastPosition = mobileView
+        ? 'bottom-center'
+        : 'bottom-left';
 
     const closeProfileDrawer = () => {
         reset();
         setAboutDisabled(true);
         setShowProfileDrawer(false);
+    };
+
+    const undoEditImage = () => {
+        setUserImage(currentUser.image);
+    };
+
+    const updateProfile = async (data: FieldValues): Promise<boolean> => {
+        try {
+            const response = await axios.post('/api/profile', data);
+            return response.status === 200;
+        } catch (error: any) {
+            console.log(error);
+            return false;
+        }
+    };
+
+    const updateImage = useCallback(async () => {
+        setLoading(true);
+        const loadingToast = toast.loading('Updating image...', {
+            position: toastPosition,
+        });
+        try {
+            const secureUrl = await createSecureUrl(userImage!);
+            if (secureUrl) {
+                setValue('image', secureUrl);
+                const data = getValues();
+                const success = await updateProfile(data);
+                toast.dismiss(loadingToast);
+                if (success) {
+                    toast.success('Image updated!', {
+                        position: toastPosition,
+                    });
+                }
+            }
+        } catch (error: any) {
+            toast.dismiss(loadingToast);
+            toast.error('Something went wrong!', { position: toastPosition });
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }, [userImage]);
+
+    const capitaliseString = (value: string): string => {
+        const updatedString = value.charAt(0).toUpperCase() + value.slice(1);
+        return updatedString;
+    };
+
+    const updateInputFields = async (key: 'name' | 'about') => {
+        if (key === 'about') {
+            setAboutDisabled(true);
+        }
+
+        const updatedFieldValue = getValues(key);
+        if (currentUser[key] !== updatedFieldValue) {
+            setLoading(true);
+            try {
+                const data = getValues();
+                const success = await updateProfile(data);
+                if (success) {
+                    toast.success(`${capitaliseString(key)} updated!`, {
+                        position: toastPosition,
+                    });
+                }
+            } catch (error: any) {
+                toast.error('Something went wrong!', {
+                    position: toastPosition,
+                });
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        }
     };
 
     return (
@@ -76,24 +147,30 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             showDrawer={showProfileDrawer}
         >
             {showProfileDrawer && (
-                <InfoWrapper className="gap-20">
-                    {image === null ? (
+                <InfoWrapper>
+                    {userImage === null ? (
                         <EditableNoImage
-                            id="image"
                             imageHoverText="Add profile photo"
-                            imageSrc={image}
-                            setValue={setValue}
+                            imageSrc={userImage}
+                            setImage={setUserImage}
                             defaultImage="/user.png"
                         />
                     ) : (
                         <InfoImage
-                            imageSrc={image}
+                            imageSrc={userImage}
                             hoverElementText="change profile photo"
-                            optionsList={optionsList}
+                            setImage={setUserImage}
+                            defaultImage="/user.png"
+                        />
+                    )}
+                    {currentUser.image !== userImage && (
+                        <SaveCancelButtons
+                            cancelUpdate={undoEditImage}
+                            saveUpdate={updateImage}
                         />
                     )}
                     <form
-                        className="flex-1 flex flex-col overflow-y-auto w-full gap-12 px-12"
+                        className="flex-1 flex flex-col overflow-y-auto w-full gap-12 px-12 mt-20"
                         onSubmit={handleSubmit(updateProfile)}
                     >
                         <EditInfoInput
@@ -107,9 +184,10 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                             }}
                             errors={errors}
                             saveButton
-                            saveFunction={() => handleSubmit(updateProfile)()}
+                            saveFunction={() => updateInputFields('name')}
                             trigger={trigger}
                             setFocus={setFocus}
+                            loading={loading}
                         />
 
                         <div className="w-full flex flex-col gap-6">
@@ -121,7 +199,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                             </label>
                             <div
                                 className={clsx(
-                                    'flex gap-1   pb-2.5 items-start',
+                                    'flex gap-1 pb-2.5 items-start',
                                     !aboutDisabled &&
                                         'border-b-gray-400 border-b-2 focus-within:border-cyan-500'
                                 )}
@@ -130,12 +208,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                     id="about"
                                     register={register}
                                     placeHolder="Add About"
-                                    className="w-full
-                                bg-secondary
-                                text-2xl
-                                midPhones:text-[1.7rem]
-                                pr-1
-                                "
+                                    className="w-full bg-secondary text-2xl midPhones:text-[1.7rem] pr-1"
                                     maxLength={130}
                                     disabled={aboutDisabled}
                                 />
@@ -147,14 +220,11 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                 ) : (
                                     <button
                                         type="button"
-                                        onClick={handleSubmit(updateProfile)}
+                                        onClick={() =>
+                                            updateInputFields('about')
+                                        }
                                     >
-                                        <FaCheck
-                                            onClick={() =>
-                                                setAboutDisabled(true)
-                                            }
-                                            className="cursor-pointer text-3xl midPhones:text-4xl"
-                                        />
+                                        <FaCheck className="cursor-pointer text-3xl midPhones:text-4xl" />
                                     </button>
                                 )}
                             </div>

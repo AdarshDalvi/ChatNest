@@ -18,6 +18,7 @@ type SaveButtonProps = RequiredProps & {
     saveFunction: () => void;
     trigger: UseFormTrigger<FieldValues>;
     setFocus: UseFormSetFocus<FieldValues>;
+    loading: boolean;
 };
 
 type WithoutSaveButtonProps = RequiredProps & {
@@ -49,7 +50,8 @@ const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
     } = props as RequiredProps;
 
     if (saveButton) {
-        const { setFocus, trigger, saveFunction } = props as SaveButtonProps;
+        const { setFocus, trigger, saveFunction, loading } =
+            props as SaveButtonProps;
 
         const [disabled, setDisabled] = useState(true);
 
@@ -82,7 +84,7 @@ const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
                         autoComplete="off"
                         type="text"
                         id={id}
-                        disabled={disabled}
+                        disabled={disabled || loading}
                         {...register(id, validationSchema ?? {})}
                         placeholder={placeHolder}
                         maxLength={maxLength}
@@ -102,13 +104,21 @@ const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
                         )}
                     />
                     {disabled ? (
-                        <MdOutlineModeEditOutline
+                        <button
                             onClick={toggleEditMode}
-                            className="absolute bottom-3.5 midPhones:bottom-2.5  cursor-pointer right-0 text-3xl midPhones:text-4xl font-extralight"
-                        />
+                            disabled={loading}
+                            className="absolute bottom-3.5 midPhones:bottom-2.5  cursor-pointer right-0 text-3xl midPhones:text-4xl "
+                        >
+                            <MdOutlineModeEditOutline />
+                        </button>
                     ) : (
-                        <button type="button" onClick={updateInput}>
-                            <FaCheck className="absolute bottom-3.5 midPhones:bottom-2.5   cursor-pointer right-0 text-3xl midPhones:text-4xl font-extralight" />
+                        <button
+                            type="button"
+                            onClick={updateInput}
+                            disabled={loading}
+                            className="absolute bottom-3.5 midPhones:bottom-2.5   cursor-pointer right-0 text-3xl midPhones:text-4xl"
+                        >
+                            <FaCheck />
                         </button>
                     )}
                 </div>

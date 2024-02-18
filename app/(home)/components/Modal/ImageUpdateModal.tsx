@@ -1,4 +1,10 @@
-import { useState, useCallback } from 'react';
+import {
+    useState,
+    useCallback,
+    FormEventHandler,
+    Dispatch,
+    SetStateAction,
+} from 'react';
 import Cropper, { Area } from 'react-easy-crop';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import { MdOutlineRotate90DegreesCcw } from 'react-icons/md';
@@ -9,17 +15,15 @@ import { FieldValues, UseFormSetValue } from 'react-hook-form';
 import createSecureUrl from '@/app/lib/secureUrl';
 
 type ImageUpdateModalProps = {
-    imageId: string;
     image: string | null;
     cancelUpdate: () => void;
-    setValue: UseFormSetValue<FieldValues>;
+    setImage: Dispatch<SetStateAction<string | null>>;
 };
 
 const ImageUpdateModal: React.FC<ImageUpdateModalProps> = ({
-    imageId,
     image,
     cancelUpdate,
-    setValue,
+    setImage,
 }) => {
     if (image === null) {
         return null;
@@ -55,9 +59,6 @@ const ImageUpdateModal: React.FC<ImageUpdateModalProps> = ({
 
     const saveCroppedImage = useCallback(async () => {
         setLoading(true);
-        const loadingToast = toast.loading('Updating image...', {
-            position: 'bottom-center',
-        });
         try {
             const croppedImageBase64 = await getCroppedImg(
                 image,
@@ -65,24 +66,9 @@ const ImageUpdateModal: React.FC<ImageUpdateModalProps> = ({
                 rotation
             );
             if (croppedImageBase64) {
-                toast.dismiss(loadingToast);
-                toast.success('Image updated!', {
-                    position: 'bottom-center',
-                    duration: 3000,
-                });
-                setValue(imageId, croppedImageBase64);
-                // const secure_url = await createSecureUrl(croppedImageBase64);
-                // toast.dismiss(loadingToast);
-                // if (secure_url) {
-                //     toast.success('Image updated!', {
-                //         position: 'bottom-center',
-                //         duration: 3000,
-                //     });
-                //     setValue(imageId, secure_url);
-                // }
+                setImage(croppedImageBase64);
             }
         } catch (error: any) {
-            toast.dismiss(loadingToast);
             toast.error('Something went wrong', { position: 'bottom-center' });
             console.error('Error saving cropped image:', error);
         } finally {
@@ -96,7 +82,7 @@ const ImageUpdateModal: React.FC<ImageUpdateModalProps> = ({
     return (
         <div
             id="image-update"
-            className="fixed top-0 left-0 flex flex-col min-w-[250px] w-screen h-dvh bg-gray-950/75 z-20 items-center justify-center text-white"
+            className="fixed top-0 left-0 flex flex-col min-w-[250px] w-screen h-dvh bg-gray-950/75 z-[60] items-center justify-center text-white"
         >
             <div className="flex-1 flex flex-col justify-center ">
                 <div className="flex items-center py-5 px-4 gap-2 bg-secondary rounded-t-md shadow-[0px_-5px_20px_0px_#00000024]">
