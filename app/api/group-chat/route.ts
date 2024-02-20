@@ -6,7 +6,8 @@ export async function POST(request: Request) {
     try {
         const currentUser = await getCurrentUser();
         const body = await request.json();
-        const { members, name } = body;
+        const { name, image, members } = body;
+        console.log(members);
 
         if (!currentUser?.id || !currentUser.email) {
             return new NextResponse('Unauthorized', { status: 401 });
@@ -16,19 +17,29 @@ export async function POST(request: Request) {
             data: {
                 name,
                 isGroup: true,
+                image: image,
                 users: {
                     connect: [
-                        ...members.map((member: { value: string }) => ({
-                            id: member.value,
+                        ...members.map((member: { id: string }) => ({
+                            id: member.id,
                         })),
                         {
                             id: currentUser.id,
                         },
                     ],
                 },
+                admins: {
+                    connect: [
+                        {
+                            id: currentUser.id,
+                        },
+                    ],
+                },
+                groupCreatedById: currentUser.id,
             },
             include: {
                 users: true,
+                admins: true,
             },
         });
         return NextResponse.json(newGroupConversation);

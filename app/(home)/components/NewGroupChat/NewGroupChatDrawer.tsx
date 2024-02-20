@@ -11,6 +11,10 @@ import DrawerWrapper from '../WrapperComponents/Drawer/DrawerWrapper';
 import { MdClear } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { IoArrowBack } from 'react-icons/io5';
+import axios from 'axios';
+import toast, { ToastPosition } from 'react-hot-toast';
+import useMobileView from '@/app/hooks/useMobileView';
+import { useRouter } from 'next/navigation';
 
 interface NewGroupChatDrawerProps {
     users: User[];
@@ -25,12 +29,12 @@ const NewGroupChatDrawer: React.FC<NewGroupChatDrawerProps> = ({
 }) => {
     const {
         register,
-        watch,
         setValue,
         formState: { errors },
         handleSubmit,
-        getValues,
         reset,
+        trigger,
+        getValues,
     } = useForm<FieldValues>({
         defaultValues: {
             name: '',
@@ -41,11 +45,34 @@ const NewGroupChatDrawer: React.FC<NewGroupChatDrawerProps> = ({
     const [loading, setLoading] = useState(false);
 
     const { currentStepIndex, navigateTo } = useNewgroup();
+    const { mobileView } = useMobileView();
+    const router = useRouter();
 
-    const groupImage = watch('image');
+    const toastPosition: ToastPosition = mobileView
+        ? 'bottom-center'
+        : 'bottom-left';
 
-    const addNewGroup: SubmitHandler<FieldValues> = (data) => {
-        console.log(data);
+    const addNewGroup: SubmitHandler<FieldValues> = async (data) => {
+        const loadingToast = toast.loading('Creating new group...', {
+            position: toastPosition,
+        });
+        try {
+            const response = await axios.post('/api/group-chat', data);
+            console.log(response);
+            toast.dismiss(loadingToast);
+            toast.success('Group created successfully!', {
+                position: toastPosition,
+                duration: 3000,
+            });
+            router.refresh();
+            setShowNewGroupChatDrawer(false);
+        } catch (error: any) {
+            toast.dismiss(loadingToast);
+            toast.error('Something went wrong!');
+            console.log('Error creating group', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const closeGroupChatDrawer = () => {
@@ -87,11 +114,13 @@ const NewGroupChatDrawer: React.FC<NewGroupChatDrawerProps> = ({
                     />
                 ) : (
                     <NewGroupStepTwo
-                        imageSrc={groupImage}
                         register={register}
                         errors={errors}
                         loading={loading}
                         setValue={setValue}
+                        saveFunction={handleSubmit(addNewGroup)}
+                        setLoading={setLoading}
+                        trigger={trigger}
                     />
                 )}
             </form>

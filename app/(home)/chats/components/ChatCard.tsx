@@ -4,14 +4,14 @@ import { FullChatType } from '@/app/types/conversation';
 import CardWrapper from '../../components/WrapperComponents/CardWrapper/CardWrapper';
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Conversation, Message, User } from '@prisma/client';
 import useOtherUser from '@/app/hooks/useOther';
 import { useSession } from 'next-auth/react';
 import Avatar from '@/app/(home)/components/Avatar';
 import clsx from 'clsx';
-import messageTime from '@/app/lib/messageTime';
 import { FaImage } from 'react-icons/fa6';
 import { format } from 'date-fns';
+import capitalizeString from '@/app/lib/capitaliseString';
+import useMobileView from '@/app/hooks/useMobileView';
 
 interface ChatCardProps {
     chat: FullChatType;
@@ -23,6 +23,7 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
     const otherUser = useOtherUser(chat);
     const session = useSession();
     const router = useRouter();
+    const { mobileView } = useMobileView(500);
 
     const handleClick = useCallback(() => {
         router.push(`/chats/${chat.id}`);
@@ -34,41 +35,87 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
         return lastMessage;
     }, [chat.messages]);
 
-    const userEmail = useMemo(() => {
+    const currentUserEmail = useMemo(() => {
         return session.data?.user.email;
     }, [session.data?.user.email]);
 
-    const hasSeen = useMemo(() => {
-        if (!lastMessage) return false;
+    const unseenMessages = useMemo(() => {
+        if (!currentUserEmail || chat.messages.length < 1) return [];
 
-        const seenArray = lastMessage.seen || [];
-        if (!userEmail) return false;
-
-        return (
-            seenArray.filter((user) => user.email === userEmail).length !== 0
+        const hasUnseenMessages = chat.messages.some(
+            (message) =>
+                !message.seen.some(
+                    (seeUser) => seeUser.email === currentUserEmail
+                )
         );
-    }, [lastMessage, userEmail]);
 
-    const lastMessageText = useMemo(() => {
-        if (lastMessage?.image) {
-            return (
-                <div className="flex gap-2 items-center">
-                    <FaImage size={14} />
-                    <p>Image</p>
-                </div>
-            );
+        return hasUnseenMessages ? [false] : []; // Return an array with a false value if there are unseen messages, otherwise return an empty array.
+    }, [currentUserEmail, chat.messages]);
+
+    const lastMessageText: React.ReactNode = useMemo(() => {
+        if (!lastMessage) {
+            if (chat.isGroup) {
+                if (!currentUserEmail) {
+                    return; // Or any placeholder text while data is loading
+                }
+
+                const groupCreatedBy = chat.users.find(
+                    (user) => user.id === chat.groupCreatedById
+                );
+
+                const isCurrentUserGroupCreator =
+                    groupCreatedBy!.email === currentUserEmail;
+                return (
+                    <div className="flex w-full gap-1.5">
+                        {isCurrentUserGroupCreator ? (
+                            <>
+                                <p>You created the group</p>
+                                <p className="flex-1 truncate">{`"${chat.name}"`}</p>
+                            </>
+                        ) : (
+                            <>
+                                <p
+                                    className="truncate"
+                                    style={{
+                                        maxWidth: mobileView
+                                            ? 'calc(100% - 120px)'
+                                            : 'calc(100% - 132px)',
+                                    }}
+                                >
+                                    {`${capitalizeString(
+                                        groupCreatedBy!.name!
+                                    )}`}
+                                </p>
+                                <p>added you to the group</p>
+                            </>
+                        )}
+                    </div>
+                );
+            } else {
+                return <p>Started a conversation</p>;
+            }
+        } else {
+            const senderDisplayName =
+                lastMessage.sender.email === currentUserEmail
+                    ? 'You'
+                    : lastMessage.sender.name;
+
+            if (lastMessage?.image) {
+                const imageCaption = lastMessage.image?.caption || 'Photo';
+                return (
+                    <div className="flex items-center">
+                        {chat.isGroup && <p>{senderDisplayName}</p>}
+                        <FaImage size={mobileView ? 12 : 14} />
+                        <p className="ml-2">{imageCaption}</p>
+                    </div>
+                );
+            } else if (lastMessage?.body) {
+                return <p className="w-full truncate">{lastMessage.body}</p>;
+            }
         }
+    }, [lastMessage, currentUserEmail]);
 
-        if (lastMessage?.body) {
-            return lastMessage.body;
-        }
-
-        return chat.isGroup ? (
-            <p style={{ color: '#9ca3af' }}>{`Created group ${chat.name}`}</p>
-        ) : (
-            <p style={{ color: '#9ca3af' }}>Started a conversation</p>
-        );
-    }, [lastMessage]);
+    const chatCardImg = chat.isGroup ? chat.image : otherUser.image;
 
     return (
         <CardWrapper
@@ -77,23 +124,9 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
             lastElement={lastElement}
         >
             <div className="py-6">
-                <Avatar user={otherUser} status={true} size="CARD" />
+                <Avatar avatarImg={chatCardImg} status={true} size="CARD" />
             </div>
-            <div
-                className="
-                    flex-1
-                    min-w-0
-                    flex
-                    flex-col
-                    justify-center
-                    gap-1
-                    pr-6
-                    border-t-[0.667px]
-                    border-cardBorder
-                    hover:border-none
-                    text-xl
-                    midPhones:text-2xl"
-            >
+            <div className="flex-1 min-w-0 flex flex-col justify-center gap-1 pr-6 border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
                 <div className="flex justify-between">
                     <p>{chat.name || otherUser.name}</p>
                     {lastMessage?.createdAt && (
@@ -102,17 +135,33 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
                         </p>
                     )}
                 </div>
-                <div
-                    className={clsx(
-                        `
-                        text-lg 
-                        midPhones:text-xl 
-                        truncate`,
-                        hasSeen ? 'text-gray-400' : 'white'
+                <div className="flex  justify-between min-h-6 gap-4 w-full items-center">
+                    <div
+                        className={clsx(
+                            'flex-1 min-w-0 text-lg midPhones:text-xl',
+                            unseenMessages.length > 0
+                                ? 'text-white'
+                                : 'text-gray-400'
+                        )}
+                    >
+                        {lastMessageText}
+                    </div>
+                    {unseenMessages.length > 0 && (
+                        <div
+                            className={clsx(
+                                'bg-primary rounded-full text-base midPhones:text-lg',
+                                unseenMessages.length <= 9
+                                    ? 'px-2.5 py-px midPhones:px-[6.7px] midPhones:py-0.5'
+                                    : 'px-2 py-[3px] midPhones:px-[5.3px]',
+                                unseenMessages.length > 99 &&
+                                    'px-[5px] py-[5.4px]'
+                            )}
+                        >
+                            {unseenMessages.length > 99
+                                ? '99+'
+                                : unseenMessages.length}
+                        </div>
                     )}
-                    style={{ width: 'calc(90%)' }}
-                >
-                    {lastMessageText}
                 </div>
             </div>
         </CardWrapper>

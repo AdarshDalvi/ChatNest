@@ -19,6 +19,7 @@ import toast, { ToastPosition } from 'react-hot-toast';
 import EditInfoInput from '@/app/components/inputs/EditInfoInput';
 import SaveCancelButtons from '../ImageComponents/SaveCancelButtons';
 import useMobileView from '@/app/hooks/useMobileView';
+import capitalizeString from '@/app/lib/capitaliseString';
 
 interface ProfileDrawerProps {
     currentUser: User;
@@ -42,9 +43,9 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         setValue,
     } = useForm<FieldValues>({
         defaultValues: {
-            name: currentUser.name || '',
+            name: currentUser?.name || '',
             image: currentUser.image,
-            about: currentUser.about || '',
+            about: currentUser?.about || '',
         },
     });
 
@@ -106,11 +107,6 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         }
     }, [userImage]);
 
-    const capitaliseString = (value: string): string => {
-        const updatedString = value.charAt(0).toUpperCase() + value.slice(1);
-        return updatedString;
-    };
-
     const updateInputFields = async (key: 'name' | 'about') => {
         if (key === 'about') {
             setAboutDisabled(true);
@@ -123,7 +119,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 const data = getValues();
                 const success = await updateProfile(data);
                 if (success) {
-                    toast.success(`${capitaliseString(key)} updated!`, {
+                    toast.success(`${capitalizeString(key)} updated!`, {
                         position: toastPosition,
                     });
                 }

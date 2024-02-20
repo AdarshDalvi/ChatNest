@@ -6,13 +6,20 @@ import Image from 'next/image';
 
 type AvatarSize = 'CARD' | 'CHATBOX' | 'HEADER' | 'INFO';
 
+type AvatarImg = User | string;
+
 interface AvatarProps {
-    user?: User;
+    avatarImg: AvatarImg | null;
     status: boolean;
     size: AvatarSize;
     onClick?: () => void;
 }
-export default function Avatar({ user, status, size, onClick }: AvatarProps) {
+export default function Avatar({
+    avatarImg,
+    status,
+    size,
+    onClick,
+}: AvatarProps) {
     let avatarSize;
 
     if (size === 'CHATBOX') {
@@ -24,6 +31,9 @@ export default function Avatar({ user, status, size, onClick }: AvatarProps) {
         avatarSize = 'w-[40px] h-[40px] midPhones:w-[48px] midPhones:h-[48px]';
     }
 
+    const avatarImage =
+        typeof avatarImg === 'string' ? avatarImg : avatarImg?.image;
+
     return (
         <div
             className={clsx(
@@ -34,7 +44,7 @@ export default function Avatar({ user, status, size, onClick }: AvatarProps) {
             onClick={onClick}
         >
             <Image
-                src={user?.image || '/user.png'}
+                src={avatarImage || '/user.png'}
                 alt={'User Image'}
                 width={status ? 49 : 40}
                 height={status ? 49 : 40}

@@ -1,85 +1,77 @@
 'use client';
 
-import { Option } from '../OptionsMenu/OptionsMenu';
 import InfoImage from '../ImageComponents/InfoImage';
 import {
     FieldErrors,
     FieldValues,
+    UseFormGetValues,
     UseFormRegister,
     UseFormSetValue,
+    UseFormTrigger,
 } from 'react-hook-form';
 import EditInfoInput from '../../../components/inputs/EditInfoInput';
 import EditableNoImage from '../ImageComponents/EditableNoImage';
-import useImageUpdate from '@/app/hooks/useImageUpdate';
-import ImageUpdateModal from '../Modal/ImageUpdateModal';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import createSecureUrl from '@/app/lib/secureUrl';
 
 interface NewGroupStepTwoProps {
-    imageSrc: string;
     register: UseFormRegister<FieldValues>;
     errors: FieldErrors;
     loading: boolean;
     setValue: UseFormSetValue<FieldValues>;
+    saveFunction: () => void;
+    setLoading: Dispatch<SetStateAction<boolean>>;
+    trigger: UseFormTrigger<FieldValues>;
 }
 
 const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
-    imageSrc,
     register,
     errors,
     loading,
     setValue,
+    saveFunction,
+    setLoading,
+    trigger,
 }) => {
-    const optionsList: Option[] = [
-        {
-            name: 'View Photo',
-            onClick: () => {},
-        },
-        {
-            jsxElement: (
-                <label htmlFor="image-btn" className="cursor-pointer">
-                    Change Photo
-                    <input
-                        id="image-btn"
-                        type="file"
-                        accept="image/png, image/jpeg, image/jpg, image/webp"
-                        multiple={false}
-                        className="hidden"
-                        onChange={(event) => {
-                            const file = event.target.files?.[0] || null;
-                            handleImageChange(file);
-                        }}
-                    />
-                </label>
-            ),
-        },
-        {
-            name: 'Remove Photo',
-            onClick: () => {},
-        },
-    ];
+    const [editedImage, setEditedImage] = useState<string | null>(null);
 
-    const { editedImage, handleImageChange, cancelUpdate } = useImageUpdate();
+    const setGroupImageAndCreate = useCallback(async () => {
+        const isValid = await trigger('name', { shouldFocus: true });
+        if (!isValid) return;
+        setLoading(true);
+        try {
+            if (editedImage) {
+                const secureUrl = await createSecureUrl(editedImage);
+                if (secureUrl) {
+                    setValue('image', secureUrl);
+                    saveFunction();
+                } else {
+                    setLoading(false);
+                }
+            } else {
+                saveFunction();
+            }
+        } catch (error: any) {
+            setLoading(false);
+            console.log('error uploading image to cloudinary', error);
+        }
+    }, [editedImage]);
 
     return (
         <>
-            <ImageUpdateModal
-                imageId={'image'}
-                setValue={setValue}
-                image={editedImage}
-                cancelUpdate={cancelUpdate}
-            />
-            {imageSrc === null ? (
+            {editedImage === null ? (
                 <EditableNoImage
-                    id="image"
-                    imageSrc={imageSrc}
+                    imageSrc={editedImage}
                     imageHoverText="Add group icon"
-                    setValue={setValue}
                     defaultImage="/group.png"
+                    setImage={setEditedImage}
                 />
             ) : (
                 <InfoImage
-                    imageSrc={imageSrc}
-                    optionsList={optionsList}
+                    imageSrc={editedImage}
                     hoverElementText="CHANGE GROUP ICON"
+                    setImage={setEditedImage}
+                    defaultImage="/group.png"
                 />
             )}
             <div className="flex flex-col gap-6 w-full px-8 mt-20">
@@ -97,8 +89,9 @@ const NewGroupStepTwo: React.FC<NewGroupStepTwoProps> = ({
                 />
             </div>
             <button
-                type="submit"
+                type="button"
                 className="bg-primary px-10 rounded-sm py-2.5 text-2xl mt-8"
+                onClick={setGroupImageAndCreate}
             >
                 Add
             </button>

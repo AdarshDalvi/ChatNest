@@ -43,6 +43,8 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
         stopEventPropagation(event);
     };
 
+    const avatarImg = chat.isGroup ? chat.image : otherUser;
+
     return (
         <>
             {!chat.isGroup && (
@@ -58,10 +60,10 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
                 onClick={handleContactInfoDrawer}
             >
                 <IoArrowBack className="text-4xl" onClick={handleNavigation} />
-                <Avatar user={otherUser} status={false} size="HEADER" />
+                <Avatar avatarImg={avatarImg} status={false} size="HEADER" />
                 <div className="flex-1 flex flex-col justify-center ml-2">
                     <p className="text-xl midPhones:text-2xl font-medium tracking-wide">
-                        {otherUser.name}
+                        {chat.isGroup ? chat.name : otherUser.name}
                     </p>
                     <p className="text-lg tracking-wide">{statusText}</p>
                 </div>

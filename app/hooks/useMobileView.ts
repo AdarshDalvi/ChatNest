@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-const useMobileView = () => {
+const useMobileView = (width: number = 768) => {
     const [mobileView, setMobileView] = useState(false);
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 768) {
+            if (window.innerWidth < width) {
                 setMobileView(true);
             } else {
                 setMobileView(false);

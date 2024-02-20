@@ -50,7 +50,7 @@ export default function Header({ currentUser, users }: HeaderProps) {
             <header className="absolute min-w-[250px] top-0 left-0 w-full  md:w-[45%] md:max-w-[480px] flex flex-col text-white  pt-4 bg-primary md:border-borderColor md:border-r">
                 <div className="flex items-center mx-[1.6rem] gap-6">
                     <Avatar
-                        user={currentUser}
+                        avatarImg={currentUser}
                         status={false}
                         size="HEADER"
                         onClick={() => {
