@@ -42,14 +42,14 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
     const unseenMessages = useMemo(() => {
         if (!currentUserEmail || chat.messages.length < 1) return [];
 
-        const hasUnseenMessages = chat.messages.some(
-            (message) =>
-                !message.seen.some(
-                    (seeUser) => seeUser.email === currentUserEmail
-                )
-        );
+        const unseenMesages = chat.messages.filter((message) => {
+            const isMessageSeen = message.seen.some(
+                (seenUser) => seenUser.email === currentUserEmail
+            );
+            return !isMessageSeen;
+        });
 
-        return hasUnseenMessages ? [false] : []; // Return an array with a false value if there are unseen messages, otherwise return an empty array.
+        return unseenMesages;
     }, [currentUserEmail, chat.messages]);
 
     const lastMessageText: React.ReactNode = useMemo(() => {

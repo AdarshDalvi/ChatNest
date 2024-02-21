@@ -34,32 +34,31 @@ export async function POST(request: Request, { params }: { params: IParamas }) {
             return new NextResponse('Invalid ID', { status: 400 });
         }
 
-        const lastMessage =
-            conversation.messages[conversation.messages.length - 1];
+        const unseenMessages = conversation.messages.filter((message) => {
+            const isMessageSeen = message.seen.some(
+                (seenUser) => seenUser.email === currentUser.email
+            );
+            return !isMessageSeen;
+        });
 
-        if (!lastMessage) {
+        if (!unseenMessages || unseenMessages.length < 0) {
             return NextResponse.json(conversation);
         }
 
-        //Update Seen of last message
-        const updatedMessage = await prisma.message.update({
+        const updatedMessages = await prisma.message.updateMany({
             where: {
-                id: lastMessage.id,
-            },
-            include: {
-                sender: true,
-                seen: true,
+                id: {
+                    in: unseenMessages.map((message) => message.id),
+                },
             },
             data: {
-                seen: {
-                    connect: {
-                        id: currentUser.id,
-                    },
+                seenIds: {
+                    push: currentUser.id,
                 },
             },
         });
 
-        return NextResponse.json(updatedMessage);
+        return NextResponse.json(updatedMessages);
     } catch (error: any) {
         console.log(error, 'ERROR_MESSAGES_SINGLE_CHAT_CHAT_ID_SEEN');
         return new NextResponse('Internal Error', { status: 500 });
