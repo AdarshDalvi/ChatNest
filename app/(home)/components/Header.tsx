@@ -10,6 +10,8 @@ import { MdOutlineGroupAdd } from 'react-icons/md';
 import { useState } from 'react';
 import ProfileDrawer from './InfoDrawers/ProfileDrawer';
 import NewGroupChatDrawer from './NewGroupChat/NewGroupChatDrawer';
+import useMobileView from '@/app/hooks/useMobileView';
+import useConversation from '@/app/hooks/useConversation';
 
 interface HeaderProps {
     currentUser: User;
@@ -34,6 +36,13 @@ export default function Header({ currentUser, users }: HeaderProps) {
     const [showProfileDrawer, setShowProfileDrawer] = useState(false);
     const [showNewGroupChatDrawer, setShowNewshowNewGroupChatDrawer] =
         useState(false);
+
+    const { mobileView } = useMobileView();
+    const { isOpen } = useConversation();
+
+    if (mobileView && isOpen) {
+        return null;
+    }
 
     return (
         <>

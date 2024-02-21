@@ -53,8 +53,8 @@ const DrawerWrapper: React.FC<DrawerWrapperProps> = ({
                 max-h-dvh
                 text-white
                 flex-col
-                z-40`,
-                isOpen && 'max-md:hidden'
+                z-40`
+                // isOpen && 'max-md:hidden'
             )}
         >
             <header className="flex w-full items-center px-6 midPhones:px-8 gap-8 py-[1.86rem] bg-primary">

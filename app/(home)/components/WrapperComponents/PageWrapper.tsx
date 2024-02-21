@@ -1,8 +1,19 @@
+'use client';
+
+import useConversation from '@/app/hooks/useConversation';
+import useMobileView from '@/app/hooks/useMobileView';
+
 interface PageWrapperProps {
     children: React.ReactNode;
 }
 
 const PageWrapper: React.FC<PageWrapperProps> = ({ children }) => {
+    const { mobileView } = useMobileView();
+    const { isOpen } = useConversation();
+
+    if (mobileView && isOpen) {
+        return null;
+    }
     return (
         <aside
             className="

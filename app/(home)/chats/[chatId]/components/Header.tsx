@@ -2,6 +2,7 @@
 
 import Avatar from '@/app/(home)/components/Avatar';
 import ContactInfoDrawer from '@/app/(home)/components/InfoDrawers/ContactInfoDrawer';
+import GroupInfoDrawer from '@/app/(home)/components/InfoDrawers/GroupInfoDrawer';
 import useOtherUser from '@/app/hooks/useOther';
 import stopEventPropagation from '@/app/lib/stopEventPropagation';
 import { Conversation, User } from '@prisma/client';
@@ -29,6 +30,7 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
     }, [chat]);
 
     const [showContactInfoDrawer, setShowContactInfoDrawer] = useState(false);
+    const [showGroupInfoDrawer, setShowGroupInfoDrawer] = useState(false);
 
     const handleNavigation = (event: any) => {
         stopEventPropagation(event);
@@ -39,6 +41,10 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
         setShowContactInfoDrawer((prevValue) => !prevValue);
     };
 
+    const handleGroupInfoDrawer = () => {
+        setShowGroupInfoDrawer((prevValue) => !prevValue);
+    };
+
     const handleMenuClick = (event: any) => {
         stopEventPropagation(event);
     };
@@ -47,17 +53,27 @@ const ChatScreenHeader: React.FC<ChatScreenHeaderProps> = ({ chat }) => {
 
     return (
         <>
-            {!chat.isGroup && (
+            {!chat.isGroup ? (
                 <ContactInfoDrawer
                     chat={chat}
                     otherUser={otherUser}
                     showContactInfoDrawer={showContactInfoDrawer}
                     setShowContactInfoDrawer={setShowContactInfoDrawer}
                 />
+            ) : (
+                <GroupInfoDrawer
+                    chat={chat}
+                    showGroupInfoDrawer={showGroupInfoDrawer}
+                    setShowGroupInfoDrawer={setShowGroupInfoDrawer}
+                />
             )}
             <header
                 className="flex py-4 pl-4 pr-3.5  items-center gap-2 bg-primary text-white cursor-pointer"
-                onClick={handleContactInfoDrawer}
+                onClick={
+                    !chat.isGroup
+                        ? handleContactInfoDrawer
+                        : handleGroupInfoDrawer
+                }
             >
                 <IoArrowBack className="text-4xl" onClick={handleNavigation} />
                 <Avatar avatarImg={avatarImg} status={false} size="HEADER" />

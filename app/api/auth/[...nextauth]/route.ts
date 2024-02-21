@@ -86,6 +86,17 @@ export const authOptions: AuthOptions = {
                 return true;
             }
         },
+        async jwt({ token }) {
+            // console.log(token);
+            return token;
+        },
+        async session({ token, session }) {
+            if (token.sub && session.user) {
+                session.user.id = token.sub;
+            }
+            console.log(session);
+            return session;
+        },
     },
     debug: process.env.NODE_ENV === 'development',
     secret: process.env.NEXTAUTH_SECRET,
