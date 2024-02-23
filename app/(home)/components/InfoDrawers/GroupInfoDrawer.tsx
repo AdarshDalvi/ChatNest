@@ -58,6 +58,7 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                             imageHoverText="ADD GROUP ICON"
                             imageSrc={chatImage}
                             setImage={setChatImage}
+                            // imageUpdateModalOrigin="right-0"
                         />
                     ) : (
                         <InfoImage

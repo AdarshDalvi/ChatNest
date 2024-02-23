@@ -16,7 +16,7 @@ const ChatId = async ({ params }: { params: ChatIdParams }) => {
         return <div>no Conversation found</div>;
     }
     return (
-        <main className="flex-1 flex flex-col h-dvh min-w-[250px]">
+        <main className="flex-1 flex flex-col h-dvh min-w-[250px] relative">
             <ChatScreenHeader chat={chatDetails} />
             <ChatScreenBody
                 initialMessages={messages}

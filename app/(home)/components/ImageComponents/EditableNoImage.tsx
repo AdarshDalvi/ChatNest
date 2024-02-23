@@ -3,7 +3,9 @@ import { BsCameraFill } from 'react-icons/bs';
 import ImageC from 'next/image';
 import clsx from 'clsx';
 import useMobileView from '@/app/hooks/useMobileView';
-import ImageUpdateModal from '../Modal/ImageUpdateModal';
+import ImageUpdateModal, {
+    ImageUpdateModalOrigin,
+} from '../Modal/ImageUpdateModal';
 import useImageUpdate from '@/app/hooks/useImageUpdate';
 import { Dispatch, SetStateAction } from 'react';
 
@@ -12,6 +14,7 @@ type EditableNoImageProps = {
     imageHoverText: string;
     setImage: Dispatch<SetStateAction<string | null>>;
     defaultImage: string;
+    // imageUpdateModalOrigin: ImageUpdateModalOrigin;
 };
 
 const EditableNoImage: React.FC<EditableNoImageProps> = ({
@@ -19,6 +22,7 @@ const EditableNoImage: React.FC<EditableNoImageProps> = ({
     imageHoverText,
     setImage,
     defaultImage,
+    // imageUpdateModalOrigin,
 }) => {
     const { mobileView } = useMobileView();
 
@@ -30,6 +34,7 @@ const EditableNoImage: React.FC<EditableNoImageProps> = ({
                 setImage={setImage}
                 image={editedImage}
                 cancelUpdate={cancelUpdate}
+                // modalOrigin={imageUpdateModalOrigin}
             />
             <div
                 className={clsx(
