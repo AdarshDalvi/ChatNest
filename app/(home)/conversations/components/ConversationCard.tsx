@@ -3,7 +3,6 @@
 import { FullChatType } from '@/app/types/conversation';
 import CardWrapper from '../../components/WrapperComponents/CardWrapper/CardWrapper';
 import { useCallback, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import useOtherUser from '@/app/hooks/useOther';
 import { useSession } from 'next-auth/react';
 import Avatar from '@/app/(home)/components/Avatar';
@@ -12,22 +11,27 @@ import { FaImage } from 'react-icons/fa6';
 import { format } from 'date-fns';
 import capitalizeString from '@/app/lib/capitaliseString';
 import useMobileView from '@/app/hooks/useMobileView';
+import useConversation from '@/app/hooks/useConversation';
 
-interface ChatCardProps {
+interface ConversationCardProps {
     chat: FullChatType;
     selected?: boolean;
     lastElement: boolean;
 }
 
-const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
+const ConversationCard: React.FC<ConversationCardProps> = ({
+    chat,
+    selected,
+    lastElement,
+}) => {
     const otherUser = useOtherUser(chat);
     const session = useSession();
-    const router = useRouter();
     const { mobileView } = useMobileView(500);
+    const { updateConversationId } = useConversation();
 
     const handleClick = useCallback(() => {
-        router.push(`/chats/${chat.id}`);
-    }, [chat.id, router]);
+        updateConversationId(chat.id);
+    }, []);
 
     const lastMessage = useMemo(() => {
         const messages = chat.messages || [];
@@ -115,7 +119,7 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
         }
     }, [lastMessage, currentUserEmail]);
 
-    const chatCardImg = chat.isGroup ? chat.image : otherUser.image;
+    const ConversationCardImg = chat.isGroup ? chat.image : otherUser.image;
 
     return (
         <CardWrapper
@@ -124,7 +128,11 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
             lastElement={lastElement}
         >
             <div className="py-6">
-                <Avatar avatarImg={chatCardImg} status={true} size="CARD" />
+                <Avatar
+                    avatarImg={ConversationCardImg}
+                    status={true}
+                    size="CARD"
+                />
             </div>
             <div className="flex-1 min-w-0 flex flex-col justify-center gap-1 pr-6 border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
                 <div className="flex justify-between">
@@ -168,4 +176,4 @@ const ChatCard: React.FC<ChatCardProps> = ({ chat, selected, lastElement }) => {
     );
 };
 
-export default ChatCard;
+export default ConversationCard;

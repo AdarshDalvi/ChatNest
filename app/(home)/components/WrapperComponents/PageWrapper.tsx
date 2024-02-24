@@ -9,9 +9,9 @@ interface PageWrapperProps {
 
 const PageWrapper: React.FC<PageWrapperProps> = ({ children }) => {
     const { mobileView } = useMobileView();
-    const { isOpen } = useConversation();
+    const { conversationId } = useConversation();
 
-    if (mobileView && isOpen) {
+    if (mobileView && conversationId) {
         return null;
     }
     return (

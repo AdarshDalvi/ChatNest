@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { FieldValues, UseFormRegister, UseFormReset } from 'react-hook-form';
 import { MdClose } from 'react-icons/md';
 import { Image as ImageInterface } from '@prisma/client';
-import InputSubmitButton from '../../chats/[chatId]/components/FormComponents/SubmitButton';
 import clsx from 'clsx';
+import InputSubmitButton from '../../conversations/conversationId/components/FormComponents/SubmitButton';
 
 type ImageInputModalProps = {
     image: ImageInterface;

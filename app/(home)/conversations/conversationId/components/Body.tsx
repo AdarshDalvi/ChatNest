@@ -18,11 +18,11 @@ const ChatScreenBody: React.FC<ChatScreenBodyProps> = ({
 }) => {
     const [messages, setMessages] = useState(initialMessages);
 
-    const { chatId } = useConversation();
+    const { conversationId } = useConversation();
 
     useEffect(() => {
-        axios.post(`/api/single-chat/${chatId}/seen`);
-    }, [chatId]);
+        axios.post(`/api/single-chat/${conversationId}/seen`);
+    }, [conversationId]);
 
     return (
         <div

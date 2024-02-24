@@ -3,10 +3,10 @@
 import Avatar from '@/app/(home)/components/Avatar';
 import { User } from '@prisma/client';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import CardWrapper from '../../components/WrapperComponents/CardWrapper/CardWrapper';
+import useConversation from '@/app/hooks/useConversation';
 
 interface UserCardProps {
     user: User;
@@ -14,9 +14,8 @@ interface UserCardProps {
 }
 
 const UserCard: React.FC<UserCardProps> = ({ user, lastElement }) => {
-    const router = useRouter();
-
     const [isLoading, setIsLoading] = useState(false);
+    const { updateSelectedPage, updateConversationId } = useConversation();
 
     const handleClick = useCallback(async () => {
         setIsLoading(true);
@@ -24,7 +23,8 @@ const UserCard: React.FC<UserCardProps> = ({ user, lastElement }) => {
             const { data } = await axios.post('/api/single-chat', {
                 userId: user.id,
             });
-            router.push(`/chats/${data.id}`);
+            updateConversationId(data.id);
+            updateSelectedPage('CHATS');
             setIsLoading(false);
         } catch (error) {
             console.log(error);
@@ -32,7 +32,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, lastElement }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [user, router]);
+    }, [user]);
 
     return (
         <CardWrapper handleClick={handleClick} lastElement={lastElement}>

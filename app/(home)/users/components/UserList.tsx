@@ -6,7 +6,7 @@ import UserCard from './UserCard';
 import { useSearchBox } from '@/app/hooks/useSearchBox';
 
 interface UserListProps {
-    users?: User[];
+    users: User[];
 }
 
 function UserList({ users }: UserListProps) {

@@ -7,7 +7,7 @@ export async function POST(request: Request) {
         const currentUser = await getCurrentUser();
         const body = await request.json();
 
-        const { message, image, chatId } = body;
+        const { message, image, conversationId } = body;
 
         if (!currentUser?.id || !currentUser?.email) {
             return new NextResponse('Unauthorized', { status: 401 });
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
                 image: image,
                 conversation: {
                     connect: {
-                        id: chatId,
+                        id: conversationId,
                     },
                 },
                 sender: {
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
         const updatedConversation = await prisma.conversation.update({
             where: {
-                id: chatId,
+                id: conversationId,
             },
             data: {
                 lastMesasgeAt: new Date(),

@@ -1,17 +1,13 @@
-import React from 'react';
+import getChats from '../actions/getChats';
 import { getCurrentUser } from '../actions/getUser';
-import Header from './components/Header';
 import getUsers from '../actions/getUsers';
+import Header from './components/Header';
 
-interface HomePageLayoutProps {
-    children: React.ReactNode;
-}
-
-export default async function HomePageLayout({
-    children,
-}: HomePageLayoutProps) {
+const page = async () => {
     const currentUser = await getCurrentUser();
     const users = await getUsers();
+    const chats = await getChats();
+
     return (
         <>
             <main
@@ -20,12 +16,18 @@ export default async function HomePageLayout({
                     w-full
                     h-full
                     max-w-[1600px]
-                    md:flex
+                    text-white
+                    min-w-[250px]
                     "
             >
-                <Header currentUser={currentUser!} users={users} />
-                {children}
+                <Header
+                    currentUser={currentUser!}
+                    users={users}
+                    chats={chats}
+                />
             </main>
         </>
     );
-}
+};
+
+export default page;

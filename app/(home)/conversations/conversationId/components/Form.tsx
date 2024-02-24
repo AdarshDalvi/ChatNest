@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import createSecureUrl from '@/app/lib/secureUrl';
 
 function Form() {
-    const { chatId } = useConversation();
+    const { conversationId } = useConversation();
 
     const {
         handleSubmit: handleSubmitText,
@@ -30,7 +30,7 @@ function Form() {
 
     const handleTextInputSend: SubmitHandler<FieldValues> = (data) => {
         resetText();
-        axios.post('/api/messages', { ...data, chatId });
+        axios.post('/api/messages', { ...data, conversationId });
     };
 
     const handleImageChange = async (file: File | null) => {
@@ -72,7 +72,7 @@ function Form() {
                             src: secureUrl,
                             caption: data.caption,
                         },
-                        chatId,
+                        conversationId,
                     });
                     toast.dismiss(loadingToast);
                     toast.success('Image sent!', { position: 'bottom-center' });

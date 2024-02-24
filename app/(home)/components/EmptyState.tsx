@@ -1,4 +1,12 @@
+'use client';
+
+import useConversation from '@/app/hooks/useConversation';
+
 export default function EmptyState() {
+    const { conversationId, selectedPage } = useConversation();
+    if (conversationId && selectedPage === 'CHATS') {
+        return null;
+    }
     return (
         <div
             className="

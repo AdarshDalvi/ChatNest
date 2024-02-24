@@ -19,10 +19,15 @@ const getChats = async () => {
             },
             include: {
                 users: true,
+                groupCreatedBy: true,
+                admins: true,
                 messages: {
                     include: {
                         sender: true,
                         seen: true,
+                    },
+                    orderBy: {
+                        createdAt: 'asc',
                     },
                 },
             },

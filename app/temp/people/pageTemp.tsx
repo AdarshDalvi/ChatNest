@@ -1,8 +1,8 @@
 import getUsers from '@/app/actions/getUsers';
 import UserList from './components/UserList';
-import PageWrapper from '../components/WrapperComponents/PageWrapper';
-import EmptyState from '../components/EmptyState';
-import ListWrapper from '../components/WrapperComponents/ListWrapper';
+import EmptyState from '@/app/(home)/components/EmptyState';
+import ListWrapper from '@/app/(home)/components/WrapperComponents/ListWrapper';
+import PageWrapper from '@/app/(home)/components/WrapperComponents/PageWrapper';
 
 export default async function People() {
     const users = await getUsers();

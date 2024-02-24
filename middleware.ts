@@ -6,19 +6,16 @@ export default withAuth(
     async function middleware(req) {
         const pathName = req.nextUrl.pathname;
 
-        //Mangae route protection
+        //Manage route protection
         const isAuth = await getToken({ req });
         const isLoginPage = pathName.startsWith('/login');
         const isRegisterPage = pathName.startsWith('/register');
 
-        const sensitiveRoutes = ['/chats', '/people'];
-        const isAccessingSensitiveRoute = sensitiveRoutes.some((route) =>
-            pathName.startsWith(route)
-        );
+        const isAccessingSensitiveRoute = pathName === '/';
 
         if (isLoginPage || isRegisterPage) {
             if (isAuth) {
-                return NextResponse.redirect(new URL('/chats', req.url));
+                return NextResponse.redirect(new URL('/', req.url));
             }
 
             return NextResponse.next();
@@ -27,13 +24,13 @@ export default withAuth(
         if (!isAuth && isAccessingSensitiveRoute) {
             return NextResponse.redirect(new URL('/login', req.url));
         }
-        if (pathName === '/') {
-            return NextResponse.redirect(new URL('/login', req.url));
-        }
+        // if (pathName === '/') {
+        //     return NextResponse.redirect(new URL('/login', req.url));
+        // }
 
         if (pathName === '/error') {
             if (isAuth) {
-                return NextResponse.redirect(new URL('/chats', req.url));
+                return NextResponse.redirect(new URL('/', req.url));
             }
             return NextResponse.next();
         }
@@ -48,12 +45,5 @@ export default withAuth(
 );
 
 export const config = {
-    matcher: [
-        '/',
-        '/login',
-        '/register',
-        '/chats/:path*',
-        '/people/:path*',
-        '/error',
-    ],
+    matcher: ['/', '/login', '/register', '/error'],
 };

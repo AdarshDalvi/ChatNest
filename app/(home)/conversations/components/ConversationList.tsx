@@ -4,16 +4,18 @@ import SearchBox from '../../components/SearchBox';
 import { FullChatType } from '@/app/types/conversation';
 import { useState } from 'react';
 import useConversation from '@/app/hooks/useConversation';
-import ChatCard from './ChatCard';
+import ConversationCard from './ConversationCard';
 import { useSearchBox } from '@/app/hooks/useSearchBox';
 
-interface ChatListProps {
+interface ConversationListProps {
     initialChats: FullChatType[];
 }
 
-const ChatList: React.FC<ChatListProps> = ({ initialChats }) => {
+const ConversationList: React.FC<ConversationListProps> = ({
+    initialChats,
+}) => {
     const [chats, setChats] = useState(initialChats);
-    const { chatId } = useConversation();
+    const { conversationId } = useConversation();
 
     const { searchText, updateSearchText, clearSearchText } = useSearchBox();
 
@@ -38,10 +40,10 @@ const ChatList: React.FC<ChatListProps> = ({ initialChats }) => {
                 style={{ scrollbarGutter: 'stable' }}
             >
                 {chats.map((chat, index, chats) => (
-                    <ChatCard
+                    <ConversationCard
                         key={chat.id}
                         chat={chat}
-                        selected={chat.id === chatId}
+                        selected={chat.id === conversationId}
                         lastElement={index === chats.length - 1}
                     />
                 ))}
@@ -50,4 +52,4 @@ const ChatList: React.FC<ChatListProps> = ({ initialChats }) => {
     );
 };
 
-export default ChatList;
+export default ConversationList;
