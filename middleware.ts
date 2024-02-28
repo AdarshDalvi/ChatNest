@@ -6,7 +6,7 @@ export default withAuth(
     async function middleware(req) {
         const pathName = req.nextUrl.pathname;
 
-        //Mangae route protection
+        //Manage route protection
         const isAuth = await getToken({ req });
         const isLoginPage = pathName.startsWith('/login');
         const isRegisterPage = pathName.startsWith('/register');
