@@ -2,8 +2,6 @@
 
 import Avatar from '@/app/(home)/components/Avatar';
 import { User } from '@prisma/client';
-import clsx from 'clsx';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GoKebabHorizontal } from 'react-icons/go';
 import { MdOutlineGroupAdd } from 'react-icons/md';
@@ -19,19 +17,19 @@ interface HeaderProps {
 }
 
 export default function Header({ currentUser, users }: HeaderProps) {
-    const pathname = usePathname();
-    const links = [
-        {
-            key: 'cknskcns',
-            name: 'Chats',
-            href: '/chats',
-        },
-        {
-            key: 'ckcscass',
-            name: 'People',
-            href: '/people',
-        },
-    ];
+    // const pathname = usePathname();
+    // const links = [
+    //     {
+    //         key: 'cknskcns',
+    //         name: 'Chats',
+    //         href: '/chats',
+    //     },
+    //     {
+    //         key: 'ckcscass',
+    //         name: 'People',
+    //         href: '/people',
+    //     },
+    // ];
 
     const [showProfileDrawer, setShowProfileDrawer] = useState(false);
     const [showNewGroupChatDrawer, setShowNewshowNewGroupChatDrawer] =
@@ -74,24 +72,25 @@ export default function Header({ currentUser, users }: HeaderProps) {
                     />
                     <GoKebabHorizontal className="text-3xl lg:text-[2rem] rotate-90 cursor-pointer" />
                 </div>
-                <nav className="mt-8 relative flex justify-center text-center  text-lg md:text-xl font-medium tracking-wider">
-                    {links.map((link) => {
-                        const isActive = pathname.includes(link.href);
-                        return (
-                            <Link
-                                key={link.key}
-                                href={link.href}
-                                className={clsx(
-                                    `main-nav-item flex-1 cursor-pointer`,
-                                    isActive && 'active '
-                                )}
-                            >
-                                {link.name}
-                            </Link>
-                        );
-                    })}
-                </nav>
             </header>
         </>
     );
 }
+
+// <nav className="mt-8 relative flex justify-center text-center  text-lg md:text-xl font-medium tracking-wider">
+//     {links.map((link) => {
+//         const isActive = pathname.includes(link.href);
+//         return (
+//             <Link
+//                 key={link.key}
+//                 href={link.href}
+//                 className={clsx(
+//                     `main-nav-item flex-1 cursor-pointer`,
+//                     isActive && 'active '
+//                 )}
+//             >
+//                 {link.name}
+//             </Link>
+//         );
+//     })}
+// </nav>

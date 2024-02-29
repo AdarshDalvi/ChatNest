@@ -32,11 +32,19 @@ export async function POST(request: Request) {
             return NextResponse.json(existingConversations[0]);
         }
 
+        const otherUser = await prisma.user.findUnique({
+            where: {
+                id: userId,
+            },
+        });
+
         const newConversation = await prisma.conversation.create({
             data: {
                 users: {
                     connect: [{ id: currentUser.id }, { id: userId }],
                 },
+                name: otherUser!.name,
+                image: otherUser!.image,
             },
             include: {
                 users: true,
