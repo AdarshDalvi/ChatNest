@@ -13,6 +13,7 @@ interface DrawerProps extends WrapperProps {
     icon: IconType;
     iconRight?: boolean;
     subHeading?: string;
+    disabled: boolean;
 }
 
 const Drawer: React.FC<DrawerProps> = ({
@@ -24,6 +25,7 @@ const Drawer: React.FC<DrawerProps> = ({
     closeDrawer,
     icon: Icon,
     iconRight,
+    disabled,
 }) => {
     if (!showDrawer) {
         return null;
@@ -38,13 +40,18 @@ const Drawer: React.FC<DrawerProps> = ({
             )}
         >
             <header className="flex w-full items-center px-6 midPhones:px-8 gap-8 py-[1.86rem] bg-primary">
-                <Icon
+                <button
+                    disabled={disabled}
+                    type="button"
                     className={clsx(
-                        'text-3xl midPhones:text-4xl  font-medium cursor-pointer',
-                        iconRight && 'order-3 justify-self-end ml-auto '
+                        'text-3xl midPhones:text-4xl  font-medium',
+                        iconRight && 'order-3 justify-self-end ml-auto ',
+                        disabled && 'cursor-not-allowed'
                     )}
                     onClick={closeDrawer}
-                />
+                >
+                    <Icon />
+                </button>
                 <div className="flex flex-col gap-1">
                     <h3 className="text-2xl midPhones:text-[1.8rem]">
                         {drawerHeading}

@@ -1,4 +1,12 @@
+'use client';
+import useConversation from '@/app/hooks/useConversation';
+
 const EmptyState = () => {
+    const { conversationId } = useConversation();
+
+    if (conversationId) {
+        return null;
+    }
     return (
         <div
             className="max-md:hidden 

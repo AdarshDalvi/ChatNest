@@ -1,3 +1,5 @@
+'use client';
+
 import { useSearchBox } from '@/app/hooks/useSearchBox';
 import SearchBox from '../components/SearchBox';
 import UserCard from '../components/UserCard';
@@ -11,13 +13,15 @@ type NewConversationStepOneProps = {
         stepIndex?: StepIndex
     ) => void;
     users: User[];
-    startNewSingleConversation: () => void;
+    startNewSingleConversation: (user: User) => void;
+    disabled: boolean;
 };
 
 const NewConversationStepOne: React.FC<NewConversationStepOneProps> = ({
     switchNewConversationMode,
     users,
     startNewSingleConversation,
+    disabled,
 }) => {
     const { searchText, clearSearchText, updateSearchText } = useSearchBox();
 
@@ -25,6 +29,7 @@ const NewConversationStepOne: React.FC<NewConversationStepOneProps> = ({
         <NewConversationStepsWrapper>
             <div className="pl-2 w-full">
                 <SearchBox
+                    disabled={disabled}
                     placeholder="Search name, email or phone"
                     searchText={searchText}
                     handleChange={updateSearchText}
@@ -33,6 +38,7 @@ const NewConversationStepOne: React.FC<NewConversationStepOneProps> = ({
             </div>
             <div className="overflow-y-auto flex-1 w-full">
                 <UserCard
+                    disabled={disabled}
                     img="/group.png"
                     customInfo="New group"
                     onCardClick={() =>
@@ -46,9 +52,10 @@ const NewConversationStepOne: React.FC<NewConversationStepOneProps> = ({
                 {users.map((user, index) => {
                     return (
                         <UserCard
+                            disabled={disabled}
                             key={user.id}
                             user={user}
-                            onCardClick={startNewSingleConversation}
+                            onCardClick={() => startNewSingleConversation(user)}
                             lastElement={index === users.length - 1}
                         />
                     );

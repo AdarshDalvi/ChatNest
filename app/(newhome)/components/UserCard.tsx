@@ -5,6 +5,7 @@ import Avatar from './Avatar';
 type CommonCardProps = {
     onCardClick: () => void;
     lastElement?: boolean;
+    disabled?: boolean;
 };
 
 type CustomCardProps = {
@@ -21,6 +22,7 @@ type UserCardProps = CommonCardProps & (DefaultCardProps | CustomCardProps);
 const UserCard: React.FC<UserCardProps> = ({
     onCardClick,
     lastElement,
+    disabled,
     ...props
 }) => {
     const { img, customInfo } = props as CustomCardProps;
@@ -29,11 +31,15 @@ const UserCard: React.FC<UserCardProps> = ({
     const cardImage = img ? img : user;
 
     return (
-        <CardWrapper handleClick={onCardClick} lastElement={lastElement}>
+        <CardWrapper
+            handleClick={onCardClick}
+            lastElement={lastElement}
+            disabled={disabled}
+        >
             <div className="py-5">
                 <Avatar size="CARD" avatarImg={cardImage} status={false} />
             </div>
-            <div className="flex-1 flex flex-col justify-center border-t-[0.667px] border-t-cardBorder pr-6">
+            <div className="flex-1 self-stretch flex flex-col items-start justify-center border-t-[0.667px] border-t-cardBorder pr-6">
                 {customInfo ? (
                     customInfo
                 ) : (

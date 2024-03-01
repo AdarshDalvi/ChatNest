@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { ChangeEvent } from 'react';
 import { MdOutlineClear } from 'react-icons/md';
 
@@ -8,6 +9,7 @@ interface SearchBoxProps {
     searchText: string;
     handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
     clearSearchText: () => void;
+    disabled?: boolean;
 }
 
 const SearchBox: React.FC<SearchBoxProps> = ({
@@ -15,13 +17,16 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     searchText,
     handleChange,
     clearSearchText,
+    disabled,
 }) => {
     return (
         <div className="relative w-full px-4 ">
             <input
+                disabled={disabled}
                 name="searchText"
                 type="text"
-                className="
+                className={clsx(
+                    `
                     autofill:bg-searchBoxBg
                     w-full 
                     text-xl
@@ -33,7 +38,9 @@ const SearchBox: React.FC<SearchBoxProps> = ({
                     pr-12
                     rounded-xl
                     placeholder:text-placeHolderColor
-                    "
+                    `,
+                    disabled && 'cursor-not-allowed'
+                )}
                 placeholder={placeholder}
                 value={searchText}
                 onChange={handleChange}

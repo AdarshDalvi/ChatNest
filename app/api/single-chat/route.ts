@@ -1,12 +1,17 @@
 import prisma from '@/app/lib/prismadb';
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/app/actions/getUser';
+import { User } from '@prisma/client';
+
+interface UserRequestBody {
+    user: User;
+}
 
 export async function POST(request: Request) {
     try {
         const currentUser = await getCurrentUser();
-        const body = await request.json();
-        const { userId } = body;
+        const body: UserRequestBody = await request.json();
+        const { user } = body;
 
         if (!currentUser?.id || !currentUser.email) {
             return new NextResponse('Unauthorized', { status: 401 });
@@ -17,12 +22,12 @@ export async function POST(request: Request) {
                 OR: [
                     {
                         userIds: {
-                            equals: [currentUser.id, userId],
+                            equals: [currentUser.id, user.id],
                         },
                     },
                     {
                         userIds: {
-                            equals: [userId, currentUser.id],
+                            equals: [user.id, currentUser.id],
                         },
                     },
                 ],
@@ -32,19 +37,13 @@ export async function POST(request: Request) {
             return NextResponse.json(existingConversations[0]);
         }
 
-        const otherUser = await prisma.user.findUnique({
-            where: {
-                id: userId,
-            },
-        });
-
         const newConversation = await prisma.conversation.create({
             data: {
                 users: {
-                    connect: [{ id: currentUser.id }, { id: userId }],
+                    connect: [{ id: currentUser.id }, { id: user.id }],
                 },
-                name: otherUser!.name,
-                image: otherUser!.image,
+                name: user.name,
+                image: user.image,
             },
             include: {
                 users: true,

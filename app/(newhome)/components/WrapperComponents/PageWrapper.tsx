@@ -1,7 +1,17 @@
+'use client';
+import useConversation from '@/app/hooks/useConversation';
+import useMobileView from '@/app/hooks/useMobileView';
+
 export type WrapperProps = {
     children: React.ReactNode;
 };
 const PageWrapper: React.FC<WrapperProps> = ({ children }) => {
+    const { mobileView } = useMobileView();
+    const { conversationId } = useConversation();
+
+    if (mobileView && conversationId) {
+        return null;
+    }
     return (
         <aside
             className="

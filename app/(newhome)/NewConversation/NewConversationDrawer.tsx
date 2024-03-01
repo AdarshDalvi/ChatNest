@@ -12,10 +12,12 @@ import NewConversationStepOne from './NewConversationStepOne';
 import NewConversationStepTwo from './NewConversationStepTwo';
 import NewConversationStepThree from './NewConversationStepThree';
 import './NewConversationDrawer.scss';
+import axios from 'axios';
 
 export type DefaultGroupFormValues = {
     members: User[];
     name: string;
+    image: string | null;
 };
 
 export type NewConversationMode = 'SINGLE-CONVERSATION' | 'GROUP-CONVERSATION';
@@ -33,6 +35,7 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
     setShowNewConversationDrawer,
 }) => {
     const [currentStepIndex, setCurrentStepIndex] = useState<StepIndex>(1);
+    const [loading, setLoading] = useState<boolean>(false);
     const [conversationMode, setConversationMode] =
         useState<NewConversationMode>('SINGLE-CONVERSATION');
 
@@ -47,6 +50,7 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
         defaultValues: {
             members: [],
             name: '',
+            image: null,
         },
     });
 
@@ -79,8 +83,16 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
         setCurrentStepIndex(stepIndex);
     }, []);
 
-    const startNewConversation = () => {
-        // Logic for starting new conversation
+    const startNewSingleConversation = async (user: User) => {
+        setLoading(true);
+        try {
+            const { data } = await axios.post('/api/single-chat', { user });
+            console.log(data);
+        } catch (error: any) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const closeDrawerFunction = isStepOne
@@ -100,11 +112,13 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
             iconRight={isStepOne}
             drawerHeading={drawerHeading}
             drawerOrigin="origin-left"
+            disabled={loading}
         >
             {isStepOne && (
                 <NewConversationStepOne
+                    disabled={loading}
                     users={users}
-                    startNewSingleConversation={startNewConversation}
+                    startNewSingleConversation={startNewSingleConversation}
                     switchNewConversationMode={switchNewChatMode}
                 />
             )}
