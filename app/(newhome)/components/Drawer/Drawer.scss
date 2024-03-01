@@ -1,0 +1,31 @@
+#side-drawer-origin-left {
+    animation: slide-in-from-left 0.3s forwards;
+}
+
+@keyframes slide-in-from-left {
+    0% {
+        opacity: 0;
+        transform-origin: left;
+        transform: translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+#side-drawer-origin-right {
+    animation: slide-in-from-right 0.3s forwards;
+}
+
+@keyframes slide-in-from-right {
+    0% {
+        opacity: 0;
+        transform-origin: right;
+        transform: translateX(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

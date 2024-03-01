@@ -11,7 +11,7 @@ import { FaImage } from 'react-icons/fa6';
 import { format } from 'date-fns';
 import capitalizeString from '@/app/lib/capitaliseString';
 import useMobileView from '@/app/hooks/useMobileView';
-import CardWrapper from '../WrapperComponents/CardWrapper/CardWrapper';
+import CardWrapper from '../components/WrapperComponents/CardWrapper/CardWrapper';
 
 interface ConversationCardProps {
     chat: FullChatType;

@@ -21,6 +21,7 @@ const CardWrapper: React.FC<CardWrapperProps> = ({
                 w-full
                 flex
                 cursor-pointer
+                text-xl midPhones:text-2xl
                 pl-6
                 gap-6`,
                 !selected && 'hover:bg-cardHoverColor',

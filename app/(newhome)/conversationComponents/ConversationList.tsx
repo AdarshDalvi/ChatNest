@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import useConversation from '@/app/hooks/useConversation';
 import { useSearchBox } from '@/app/hooks/useSearchBox';
 import ConversationCard from './ConversationCard';
-import SearchBox from '../SearchBox';
+import SearchBox from '../components/SearchBox';
 
 interface ConversationListProps {
     initialChats: FullChatType[];
@@ -46,7 +46,6 @@ const ConversationList: React.FC<ConversationListProps> = ({
     return (
         <>
             <SearchBox
-                id="search-text"
                 placeholder="Search or start a new chat"
                 searchText={searchText}
                 handleChange={updateSearchText}

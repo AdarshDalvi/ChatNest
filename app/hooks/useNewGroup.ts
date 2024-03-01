@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { useState } from 'react';
 
 export const useNewgroup = () => {
     const [currentStepIndex, setCurrentStepIndex] = useState<0 | 1>(0);

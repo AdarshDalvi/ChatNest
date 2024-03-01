@@ -4,7 +4,6 @@ import { ChangeEvent } from 'react';
 import { MdOutlineClear } from 'react-icons/md';
 
 interface SearchBoxProps {
-    id: string;
     placeholder: string;
     searchText: string;
     handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -12,7 +11,6 @@ interface SearchBoxProps {
 }
 
 const SearchBox: React.FC<SearchBoxProps> = ({
-    id,
     placeholder,
     searchText,
     handleChange,
@@ -21,7 +19,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     return (
         <div className="relative w-full px-4 ">
             <input
-                name={id}
+                name="searchText"
                 type="text"
                 className="
                     autofill:bg-searchBoxBg
