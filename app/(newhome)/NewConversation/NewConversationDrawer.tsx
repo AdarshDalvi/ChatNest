@@ -5,7 +5,7 @@ import { IconType } from 'react-icons';
 import { MdClear } from 'react-icons/md';
 import { IoArrowBack } from 'react-icons/io5';
 import { User } from '@prisma/client';
-import { useForm } from 'react-hook-form';
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 
 import Drawer from '../components/Drawer/Drawer';
 import NewConversationStepOne from './NewConversationStepOne';
@@ -16,8 +16,9 @@ import axios from 'axios';
 import useConversation from '@/app/hooks/useConversation';
 import toast from 'react-hot-toast';
 import getToastPosition from '@/app/lib/getToastPosition';
+import DrawerChildrenWrapper from '../components/Drawer/DrawerChildrenWrapper';
 
-export type DefaultGroupFormValues = {
+export type DefaultGroupFormValues = FieldValues & {
     members: User[];
     name: string;
     image: string | null;
@@ -49,6 +50,7 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
         setValue,
         getValues,
         formState: { errors },
+        handleSubmit,
     } = useForm<DefaultGroupFormValues>({
         defaultValues: {
             members: [],
@@ -61,6 +63,8 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
         setShowNewConversationDrawer(false);
     };
     const { updateConversationId } = useConversation();
+
+    const toastPosition = getToastPosition();
 
     const isStepOne: boolean = currentStepIndex === 1;
     const isStepTwo: boolean = currentStepIndex === 2;
@@ -95,9 +99,34 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
             closeNewConversationDrawer();
         } catch (error: any) {
             toast.error('Something went wrong!', {
-                position: getToastPosition(),
+                position: toastPosition,
             });
             console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const createNewGroup: SubmitHandler<DefaultGroupFormValues> = async (
+        data
+    ) => {
+        const loadingToast = toast.loading('Creating new group...', {
+            position: toastPosition,
+        });
+        try {
+            const response = await axios.post('/api/group-chat', data);
+            toast.dismiss(loadingToast);
+            if (response.status === 200) {
+                toast.success('Group created successfully!', {
+                    position: toastPosition,
+                    duration: 3000,
+                });
+            }
+            setShowNewConversationDrawer(false);
+        } catch (error: any) {
+            toast.dismiss(loadingToast);
+            toast.error('Something went wrong!');
+            console.log('Error creating group', error);
         } finally {
             setLoading(false);
         }
@@ -122,23 +151,35 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
             drawerOrigin="origin-left"
             disabled={loading}
         >
-            {isStepOne && (
-                <NewConversationStepOne
-                    disabled={loading}
-                    users={users}
-                    startNewSingleConversation={startNewSingleConversation}
-                    switchNewConversationMode={switchNewChatMode}
-                />
-            )}
-            {isStepTwo && (
-                <NewConversationStepTwo
-                    users={users}
-                    navigateTo={updateCurrentStepIndex}
-                    getValues={getValues}
-                    setValue={setValue}
-                />
-            )}
-            {isStepThree && <NewConversationStepThree />}
+            <DrawerChildrenWrapper handleSubmit={handleSubmit(createNewGroup)}>
+                {isStepOne && (
+                    <NewConversationStepOne
+                        disabled={loading}
+                        users={users}
+                        startNewSingleConversation={startNewSingleConversation}
+                        switchNewConversationMode={switchNewChatMode}
+                    />
+                )}
+                {isStepTwo && (
+                    <NewConversationStepTwo
+                        users={users}
+                        navigateTo={updateCurrentStepIndex}
+                        getValues={getValues}
+                        setValue={setValue}
+                    />
+                )}
+                {isStepThree && (
+                    <NewConversationStepThree
+                        trigger={trigger}
+                        register={register}
+                        setValue={setValue}
+                        errors={errors}
+                        loading={loading}
+                        setLoading={setLoading}
+                        saveFunction={handleSubmit(createNewGroup)}
+                    />
+                )}
+            </DrawerChildrenWrapper>
         </Drawer>
     );
 };

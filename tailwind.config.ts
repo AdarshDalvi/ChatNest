@@ -10,7 +10,6 @@ const config: Config = {
         extend: {
             colors: {
                 primary: '#0F4C75',
-                // primary: 'rgb(14 116 144)',
                 secondary: '#1B262C',
                 borderColor: '#2c6b94',
                 cardBorder: '#2c4049',

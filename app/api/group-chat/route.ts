@@ -42,7 +42,7 @@ export async function POST(request: Request) {
                 admins: true,
             },
         });
-        return NextResponse.json(newGroupConversation);
+        return NextResponse.json(newGroupConversation, { status: 200 });
     } catch (error: any) {
         console.log(error, 'ERROR_MESSAGES_GROUP_CHAT');
         return new NextResponse(`Internal Error ${error}`, { status: 500 });

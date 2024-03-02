@@ -3,7 +3,7 @@
 import { useSearchBox } from '@/app/hooks/useSearchBox';
 import SearchBox from '../components/SearchBox';
 import UserCard from '../components/UserCard';
-import NewConversationStepsWrapper from './components/NewConversationStepsWrapper';
+import NewConversationStepsWrapper from '../components/Drawer/DrawerChildrenWrapper';
 import { NewConversationMode, StepIndex } from './NewConversationDrawer';
 import { User } from '@prisma/client';
 
@@ -26,7 +26,7 @@ const NewConversationStepOne: React.FC<NewConversationStepOneProps> = ({
     const { searchText, clearSearchText, updateSearchText } = useSearchBox();
 
     return (
-        <NewConversationStepsWrapper>
+        <>
             <div className="pl-2 w-full">
                 <SearchBox
                     disabled={disabled}
@@ -61,7 +61,7 @@ const NewConversationStepOne: React.FC<NewConversationStepOneProps> = ({
                     );
                 })}
             </div>
-        </NewConversationStepsWrapper>
+        </>
     );
 };
 

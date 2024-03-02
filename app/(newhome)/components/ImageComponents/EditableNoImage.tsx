@@ -7,20 +7,18 @@ import { BsCameraFill } from 'react-icons/bs';
 import ImageUpdateModal from './Modals/ImageUpdateModal';
 
 type EditableNoImageProps = {
-    imageSrc: string | null;
     textOverImage: string;
     setImage: Dispatch<SetStateAction<string | null>>;
     defaultImage: string;
 };
 
 const EditableNoImage: React.FC<EditableNoImageProps> = ({
-    imageSrc,
     defaultImage,
     textOverImage,
     setImage,
 }) => {
     const { mobileView } = useMobileView();
-    const { editedImage, handleImageChange, cancelUpdate, imageModalRef } =
+    const { inputImage, handleImageChange, cancelUpdate, imageModalRef } =
         useImageUpdate();
 
     return (
@@ -28,7 +26,7 @@ const EditableNoImage: React.FC<EditableNoImageProps> = ({
             <ImageUpdateModal
                 imageModalRef={imageModalRef}
                 cancelImageUpdate={cancelUpdate}
-                image={editedImage}
+                image={inputImage}
                 fallbackImage="/group.png"
                 setImage={setImage}
             />
@@ -39,7 +37,7 @@ const EditableNoImage: React.FC<EditableNoImageProps> = ({
                 )}
             >
                 <Image
-                    src={imageSrc || defaultImage}
+                    src={defaultImage}
                     height={200}
                     width={200}
                     alt="placeholder group image"

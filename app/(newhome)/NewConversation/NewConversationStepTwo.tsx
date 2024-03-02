@@ -1,18 +1,12 @@
 import { useSearchBox } from '@/app/hooks/useSearchBox';
 import SearchBox from '../components/SearchBox';
-import NewConversationStepsWrapper from './components/NewConversationStepsWrapper';
 import { User } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import NewGroupUserCard from './components/NewGroupUserCard';
 import NewGroupSelectedMemberCard from './components/NewGroupSelectedMemberCard';
 import { IoArrowForward } from 'react-icons/io5';
 import { DefaultGroupFormValues, StepIndex } from './NewConversationDrawer';
-import {
-    UseFormGetValues,
-    UseFormReset,
-    UseFormSetValue,
-    useForm,
-} from 'react-hook-form';
+import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
 type NewConversationStepTwoProps = {
     users: User[];
@@ -83,7 +77,7 @@ const NewConversationStepTwo: React.FC<NewConversationStepTwoProps> = ({
     };
 
     return (
-        <NewConversationStepsWrapper>
+        <>
             <div className="pl-2 w-full">
                 <SearchBox
                     placeholder="Search name, email or phone"
@@ -138,7 +132,7 @@ const NewConversationStepTwo: React.FC<NewConversationStepTwoProps> = ({
                     <IoArrowForward className="text-[2.5rem]" />
                 </button>
             )}
-        </NewConversationStepsWrapper>
+        </>
     );
 };
 

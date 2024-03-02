@@ -126,7 +126,12 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
             lastElement={lastElement}
         >
             <div className="py-6">
-                <Avatar avatarImg={chatCardImg} status={true} size="CARD" />
+                <Avatar
+                    avatarImg={chatCardImg}
+                    status={true}
+                    size="CARD"
+                    isGroup={chat.isGroup}
+                />
             </div>
             <div className="flex-1 self-stretch  items-start justify-center flex flex-col min-w-0 gap-1 pr-6 border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
                 <div className="flex w-full justify-between">

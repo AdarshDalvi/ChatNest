@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { ModalDialgRef } from '../(newhome)/components/WrapperComponents/ModalWrapper';
 
 const useImageUpdate = () => {
-    const [editedImage, setEditedImage] = useState<string | null>(null);
+    const [inputImage, setInputImage] = useState<string | null>(null);
     const imageModalRef = useRef<ModalDialgRef>(null);
 
     const handleImageChange = async (file: File | null) => {
@@ -16,7 +16,7 @@ const useImageUpdate = () => {
         reader.onloadend = () => {
             const image = new Image();
             image.onload = () => {
-                setEditedImage(image.src);
+                setInputImage(image.src);
                 if (imageModalRef.current) {
                     imageModalRef.current.openModal();
                 }
@@ -27,14 +27,14 @@ const useImageUpdate = () => {
     };
 
     const cancelUpdate = () => {
-        setEditedImage(null);
+        setInputImage(null);
         if (imageModalRef.current) {
             imageModalRef.current.closeModal();
         }
     };
 
     return {
-        editedImage,
+        inputImage,
         handleImageChange,
         cancelUpdate,
         imageModalRef,

@@ -7,6 +7,7 @@ import { FaCheck } from 'react-icons/fa6';
 import {
     FieldErrors,
     FieldValues,
+    Path,
     RegisterOptions,
     UseFormRegister,
     UseFormSetFocus,
@@ -27,28 +28,32 @@ type WithoutSaveButtonProps = RequiredProps & {
 };
 
 type RequiredProps = {
-    id: string;
     label: string;
     placeHolder: string;
     maxLength?: number;
-    validationSchema: RegisterOptions<FieldValues, string> | undefined | {};
-    register: UseFormRegister<FieldValues>;
-    errors: FieldErrors;
 };
 
-type EditInfoInputProps = SaveButtonProps | WithoutSaveButtonProps;
+type FormProps<T extends FieldValues> = {
+    id: Path<T>;
+    register: UseFormRegister<T>;
+    errors: FieldErrors<T>;
+    validationSchema: RegisterOptions<T, Path<T>> | undefined | {};
+};
 
-const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
-    const {
-        id,
-        label,
-        errors,
-        register,
-        placeHolder,
-        maxLength,
-        validationSchema,
-    } = props as RequiredProps;
+type EditInfoInputProps<T extends FieldValues> = FormProps<T> &
+    (SaveButtonProps | WithoutSaveButtonProps);
 
+const EditInfoInput = <T extends FieldValues>({
+    saveButton,
+    id,
+    label,
+    placeHolder,
+    validationSchema,
+    errors,
+    register,
+    maxLength,
+    ...props
+}: EditInfoInputProps<T>) => {
     if (saveButton) {
         const { setFocus, trigger, saveFunction, loading } =
             props as SaveButtonProps;

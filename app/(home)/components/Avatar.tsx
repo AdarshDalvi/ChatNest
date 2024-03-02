@@ -13,12 +13,14 @@ interface AvatarProps {
     status: boolean;
     size: AvatarSize;
     onClick?: () => void;
+    isGroup?: boolean | null;
 }
 export default function Avatar({
     avatarImg,
     status,
     size,
     onClick,
+    isGroup,
 }: AvatarProps) {
     let avatarSize;
 
@@ -34,6 +36,8 @@ export default function Avatar({
     const avatarImage =
         typeof avatarImg === 'string' ? avatarImg : avatarImg?.image;
 
+    const fallbackImage = isGroup === true ? '/group.png' : '/user.png';
+
     return (
         <div
             className={clsx(
@@ -44,7 +48,7 @@ export default function Avatar({
             onClick={onClick}
         >
             <Image
-                src={avatarImage || '/user.png'}
+                src={avatarImage || fallbackImage}
                 alt={'User Image'}
                 width={status ? 49 : 40}
                 height={status ? 49 : 40}
