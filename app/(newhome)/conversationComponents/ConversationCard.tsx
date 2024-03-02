@@ -1,6 +1,6 @@
 'use client';
 
-import { FullChatType } from '@/app/types/conversation';
+import { FullConversationType } from '@/app/types/conversation';
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import useOtherUser from '@/app/hooks/useOther';
@@ -14,7 +14,7 @@ import useMobileView from '@/app/hooks/useMobileView';
 import CardWrapper from '../components/WrapperComponents/CardWrapper/CardWrapper';
 
 interface ConversationCardProps {
-    chat: FullChatType;
+    chat: FullConversationType;
     selected?: boolean;
     lastElement: boolean;
 }

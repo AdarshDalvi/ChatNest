@@ -6,12 +6,20 @@ import { MdOutlineGroupAdd } from 'react-icons/md';
 import Avatar from './Avatar';
 import { useState } from 'react';
 import NewConversationDrawer from '../NewConversation/NewConversationDrawer';
+import { FullConversationType } from '@/app/types/conversation';
+import ListWrapper from './WrapperComponents/ListWrapper';
+import ConversationList from '../conversationComponents/ConversationList';
 
 type HeaderProps = {
     currentUser: User;
     users: User[];
+    conversations: FullConversationType[];
 };
-const Header: React.FC<HeaderProps> = ({ currentUser, users }) => {
+const Header: React.FC<HeaderProps> = ({
+    currentUser,
+    users,
+    conversations,
+}) => {
     const [showNewConversationDrawer, setShowNewConversationDrawer] =
         useState<boolean>(false);
     return (
@@ -40,6 +48,26 @@ const Header: React.FC<HeaderProps> = ({ currentUser, users }) => {
                     <GoKebabHorizontal className="text-3xl  rotate-90 cursor-pointer" />
                 </div>
             </header>
+            {conversations.length < 1 ? (
+                <div
+                    className="flex flex-col justify-center items-center gap-4"
+                    style={{ height: 'calc(100dvh - 60px)' }}
+                >
+                    <p className="text-2xl">No chats found! Start a new one.</p>
+                    <button
+                        className="bg-primary px-8 py-2 text-xl rounded-md"
+                        onClick={() => {
+                            setShowNewConversationDrawer(true);
+                        }}
+                    >
+                        New chat
+                    </button>
+                </div>
+            ) : (
+                <ListWrapper height={'calc(100dvh - 60px)'}>
+                    <ConversationList initialConversation={conversations} />
+                </ListWrapper>
+            )}
         </>
     );
 };

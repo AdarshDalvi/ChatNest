@@ -1,24 +1,23 @@
-import getChats from '../actions/getChats';
+import getConversations from '../actions/getConversations';
 import { getCurrentUser } from '../actions/getUser';
 import getUsers from '../actions/getUsers';
 import EmptyState from './components/EmptyState';
 import Header from './components/Header';
-import ListWrapper from './components/WrapperComponents/ListWrapper';
 import PageWrapper from './components/WrapperComponents/PageWrapper';
-import ConversationList from './conversationComponents/ConversationList';
 
 const layout = async () => {
     const currentUser = await getCurrentUser();
-    const chats = await getChats();
+    const conversations = await getConversations();
     const users = await getUsers();
 
     return (
         <main className="flex relative w-full h-full max-w-[1600px] text-white">
             <PageWrapper>
-                <Header currentUser={currentUser!} users={users} />
-                <ListWrapper height={'calc(100dvh - 60px)'}>
-                    <ConversationList initialChats={chats} />
-                </ListWrapper>
+                <Header
+                    currentUser={currentUser!}
+                    users={users}
+                    conversations={conversations}
+                />
             </PageWrapper>
             <EmptyState />
         </main>

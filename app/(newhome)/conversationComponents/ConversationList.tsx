@@ -1,6 +1,6 @@
 'use client';
 
-import { FullChatType } from '@/app/types/conversation';
+import { FullConversationType } from '@/app/types/conversation';
 import { useEffect, useState } from 'react';
 import useConversation from '@/app/hooks/useConversation';
 import { useSearchBox } from '@/app/hooks/useSearchBox';
@@ -8,40 +8,40 @@ import ConversationCard from './ConversationCard';
 import SearchBox from '../components/SearchBox';
 
 interface ConversationListProps {
-    initialChats: FullChatType[];
+    initialConversation: FullConversationType[];
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({
-    initialChats,
+    initialConversation,
 }) => {
-    const [filteredChats, setFilteredChats] = useState(initialChats);
-    const { chatId } = useConversation();
+    const [filteredConversations, setFilteredConversations] =
+        useState(initialConversation);
+    const { conversationId } = useConversation();
 
     const { searchText, updateSearchText, clearSearchText } = useSearchBox();
 
     useEffect(() => {
-        const filterChats = () => {
-            setFilteredChats((prevChats) => {
+        const filterConversations = () => {
+            setFilteredConversations((prevConversations) => {
                 if (searchText === '') {
-                    return initialChats;
+                    return initialConversation;
                 }
 
-                const updatedChats: FullChatType[] = filteredChats.filter(
-                    (chat) => {
+                const updatedConversations: FullConversationType[] =
+                    filteredConversations.filter((chat) => {
                         const sameName = chat.name
                             ?.toLowerCase()
                             .includes(searchText.toLowerCase());
 
                         return sameName;
-                    }
-                );
+                    });
 
-                return updatedChats;
+                return updatedConversations;
             });
         };
 
-        filterChats();
-    }, [searchText, initialChats]);
+        filterConversations();
+    }, [searchText, initialConversation]);
 
     return (
         <>
@@ -62,14 +62,18 @@ const ConversationList: React.FC<ConversationListProps> = ({
                     flex-col"
                 style={{ scrollbarGutter: 'stable' }}
             >
-                {filteredChats.map((chat, index, filteredChats) => (
-                    <ConversationCard
-                        key={chat.id}
-                        chat={chat}
-                        selected={chat.id === chatId}
-                        lastElement={index === filteredChats.length - 1}
-                    />
-                ))}
+                {filteredConversations.map(
+                    (chat, index, filteredConversations) => (
+                        <ConversationCard
+                            key={chat.id}
+                            chat={chat}
+                            selected={chat.id === conversationId}
+                            lastElement={
+                                index === filteredConversations.length - 1
+                            }
+                        />
+                    )
+                )}
             </div>
         </>
     );

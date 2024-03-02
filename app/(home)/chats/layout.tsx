@@ -1,4 +1,4 @@
-import getChats from '@/app/actions/getChats';
+import getChats from '@/app/actions/getConversations';
 import ListWrapper from '../components/WrapperComponents/ListWrapper';
 import PageWrapper from '../components/WrapperComponents/PageWrapper';
 import ChatList from './components/ChatList';

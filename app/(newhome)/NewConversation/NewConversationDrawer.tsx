@@ -13,6 +13,9 @@ import NewConversationStepTwo from './NewConversationStepTwo';
 import NewConversationStepThree from './NewConversationStepThree';
 import './NewConversationDrawer.scss';
 import axios from 'axios';
+import useConversation from '@/app/hooks/useConversation';
+import toast from 'react-hot-toast';
+import getToastPosition from '@/app/lib/getToastPosition';
 
 export type DefaultGroupFormValues = {
     members: User[];
@@ -57,6 +60,7 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
     const closeNewConversationDrawer = () => {
         setShowNewConversationDrawer(false);
     };
+    const { updateConversationId } = useConversation();
 
     const isStepOne: boolean = currentStepIndex === 1;
     const isStepTwo: boolean = currentStepIndex === 2;
@@ -87,8 +91,12 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
         setLoading(true);
         try {
             const { data } = await axios.post('/api/single-chat', { user });
-            console.log(data);
+            updateConversationId(data.id);
+            closeNewConversationDrawer();
         } catch (error: any) {
+            toast.error('Something went wrong!', {
+                position: getToastPosition(),
+            });
             console.log(error);
         } finally {
             setLoading(false);
