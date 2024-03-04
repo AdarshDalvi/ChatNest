@@ -14,6 +14,12 @@ const getChatDetailsById = async (chatId: string) => {
             },
             include: {
                 users: true,
+                messages: {
+                    include: {
+                        seen: true,
+                        sender: true,
+                    },
+                },
             },
         });
 

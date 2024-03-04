@@ -1,10 +1,10 @@
 import { useRef } from 'react';
-import { ModalDialgRef } from '../(home)/components/WrapperComponents/ModalWrapper';
+import { ModalDialgRef } from '../(newhome)/components/WrapperComponents/ModalWrapper';
 
 export default function useModalDialog() {
     const modalDialogRef = useRef<ModalDialgRef>(null);
-    const openDialog = () => modalDialogRef.current!.open();
-    const closeDialog = () => modalDialogRef.current!.close();
+    const openDialog = () => modalDialogRef.current!.openModal();
+    const closeDialog = () => modalDialogRef.current!.closeModal();
 
     return { modalDialogRef, openDialog, closeDialog };
 }

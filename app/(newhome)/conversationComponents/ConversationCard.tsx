@@ -2,8 +2,6 @@
 
 import { FullConversationType } from '@/app/types/conversation';
 import { useCallback, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import useOtherUser from '@/app/hooks/useOther';
 import { useSession } from 'next-auth/react';
 import Avatar from '@/app/(home)/components/Avatar';
 import clsx from 'clsx';
@@ -12,6 +10,7 @@ import { format } from 'date-fns';
 import capitalizeString from '@/app/lib/capitaliseString';
 import useMobileView from '@/app/hooks/useMobileView';
 import CardWrapper from '../components/WrapperComponents/CardWrapper/CardWrapper';
+import useConversation from '@/app/hooks/useConversation';
 
 interface ConversationCardProps {
     chat: FullConversationType;
@@ -25,12 +24,12 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
     lastElement,
 }) => {
     const session = useSession();
-    const router = useRouter();
     const { mobileView } = useMobileView(500);
+    const { updateConversationId } = useConversation();
 
     const handleClick = useCallback(() => {
-        // router.push(`/chats/${chat.id}`);
-    }, [chat.id, router]);
+        updateConversationId(chat.id);
+    }, [chat.id]);
 
     const lastMessage = useMemo(() => {
         const messages = chat.messages || [];
