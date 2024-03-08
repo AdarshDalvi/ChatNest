@@ -15,6 +15,7 @@ import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import GroupMemberCard from './components/GroupMemberCard';
 
 import { IoExitOutline, IoPersonAdd } from 'react-icons/io5';
+import axios from 'axios';
 
 interface GroupInfoDrawerProps {
     conversation: Conversation & {
@@ -38,13 +39,19 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
         register,
         formState: { errors },
         handleSubmit,
+        getValues,
         trigger,
         reset,
+        watch,
     } = useForm<FieldValues>({
         defaultValues: {
             name: conversation.name,
+            members: conversation.users,
+            image: conversation.image,
         },
     });
+
+    const members: User[] = watch('members');
 
     const currentUser = useMemo(() => {
         return session.data?.user;
@@ -67,11 +74,11 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
         if (!currentUser || !currentUser.id) {
             return [];
         }
-        const currentUserGroupMember = conversation.users.find(
+        const currentUserGroupMember = members.find(
             (user) => user.id === currentUser.id
         );
         currentUserGroupMember!.name = 'You';
-        const groupMembersWithoutCurrentUser = conversation.users.filter(
+        const groupMembersWithoutCurrentUser = members.filter(
             (user) => user.id !== currentUser.id
         );
 
@@ -80,9 +87,55 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
             ...groupMembersWithoutCurrentUser,
         ];
         return updatedGroupMembers;
-    }, [currentUser]);
+    }, [currentUser, members]);
 
-    const updateGroup: SubmitHandler<FieldValues> = (data) => {};
+    function areArraysEqual(arr1: User[], arr2: User[]) {
+        // Check if the arrays have the same length
+        if (arr1.length !== arr2.length) {
+            return false;
+        }
+
+        // Convert arr2 to a Set for faster lookup
+        const set2 = new Set(arr2.map((user) => user.id));
+
+        // Check if all IDs from arr1 exist in arr2
+        for (const user of arr1) {
+            if (!set2.has(user.id)) {
+                return false;
+            }
+        }
+
+        // If all IDs from arr1 exist in arr2, return true
+        return true;
+    }
+
+    const updateGroup: SubmitHandler<FieldValues> = async (
+        data
+    ): Promise<boolean> => {
+        try {
+            const response = await axios.patch(
+                `/api/group-chat/${conversation.id}`,
+                data
+            );
+            return response.status === 200;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    };
+
+    const updateGroupInfo = async (key: 'name' | 'users' | 'image') => {
+        const fieldValue = getValues(key);
+        const isFieldChanged = fieldValue !== conversation[key];
+        const data = getValues();
+
+        if (isFieldChanged || key === 'users') {
+            const success = await updateGroup(data);
+            if (success) {
+                // Handle success if needed
+            }
+        }
+    };
 
     return (
         <Drawer
@@ -134,7 +187,7 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                     errors={errors}
                     placeHolder="Group name"
                     register={register}
-                    saveFunction={handleSubmit(updateGroup)}
+                    saveFunction={() => updateGroupInfo('name')}
                     validationSchema={{
                         required: 'Group name cannot be empty!',
                     }}
@@ -146,17 +199,19 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                         editOffWidth: '',
                     }}
                 />
-                <div className="px-8 w-full mt-16">
-                    <button
-                        type="button"
-                        className="w-full flex hover:bg-cardHoverColor gap-6 items-center text-2xl py-4 px-3"
-                    >
-                        <div className="text-4xl bg-primary p-3.5 rounded-full">
-                            <IoPersonAdd />
-                        </div>
-                        <p>Add member</p>
-                    </button>
-                </div>
+                {isCurrentUserAdmin && (
+                    <div className="px-8 w-full mt-16">
+                        <button
+                            type="button"
+                            className="w-full flex hover:bg-cardHoverColor gap-6 items-center text-2xl py-4 px-3"
+                        >
+                            <div className="text-4xl bg-primary p-3.5 rounded-full">
+                                <IoPersonAdd />
+                            </div>
+                            <p>Add member</p>
+                        </button>
+                    </div>
+                )}
                 {groupMembers && groupMembers.length > 0 && (
                     <div className="flex flex-col w-full px-8">
                         <div className="flex justify-between">
@@ -168,7 +223,7 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                             </button>
                         </div>
                         <div className="flex flex-col  min-w-0 mt-8">
-                            {groupMembers.slice(0, 1).map((member, index) => {
+                            {groupMembers.slice(0, 10).map((member, index) => {
                                 const isMemberAdmin =
                                     conversation.adminsIds.findIndex(
                                         (adminId) => adminId === member!.id
@@ -184,12 +239,12 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                                 );
                             })}
                         </div>
-                        {groupMembers.length > 1 && (
+                        {groupMembers.length > 9 && (
                             <button
                                 type="button"
                                 className="text-start hover:bg-cardHoverColor text-2xl px-8 py-6 text-cyan-400"
                             >
-                                View all {` (${groupMembers.length - 1} more)`}
+                                View all {` (${groupMembers.length - 9} more)`}
                             </button>
                         )}
                     </div>
