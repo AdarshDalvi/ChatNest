@@ -34,7 +34,7 @@ const Drawer: React.FC<DrawerProps> = ({
         <aside
             id={`side-drawer-${drawerOrigin}`}
             className={clsx(
-                'z-10 absolute w-full flex flex-col h-dvh min-w-[250px]',
+                'z-20 absolute w-full flex flex-col h-dvh min-w-[250px]',
                 drawerOrigin === 'origin-left' &&
                     'md:w-[45%] md:max-w-[480px] md:border-r md:border-r-borderColor'
             )}

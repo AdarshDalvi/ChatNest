@@ -8,6 +8,8 @@ import { BsCameraFill } from 'react-icons/bs';
 import OptionsMenu, { Option } from '../OptionsMenu';
 import useOptionsMenu from '@/app/hooks/useOptionsMenu';
 import ImageInput from './ImageInput';
+import ImageViewModal from './Modals/ImageViewModal';
+import useModalDialog from '@/app/hooks/useModalDialog';
 // import openUserGallery from '@/app/lib/openUserGallery';
 // import ImageInput, { ImageInputRef } from './ImageInput';
 
@@ -37,11 +39,17 @@ const InfoImage: React.FC<InfoImageProps> = ({
     const optionsList: Option[] = [
         {
             name: 'View Photo',
-            onClick: () => {},
+            onClick: () => {
+                openDialog();
+                closeOptionsMenu();
+            },
         },
         {
             jsxElement: (
-                <ImageInput afterChangeFunction={updateInfoImage}>
+                <ImageInput
+                    afterChangeFunction={updateInfoImage}
+                    buttonClassNames="hover:bg-gray-800 py-4 px-12 text-center w-full"
+                >
                     Change Photo
                 </ImageInput>
             ),
@@ -52,8 +60,15 @@ const InfoImage: React.FC<InfoImageProps> = ({
         },
     ];
 
+    const { modalDialogRef, openDialog, closeDialog } = useModalDialog();
+
     return (
         <>
+            <ImageViewModal
+                imageModalRef={modalDialogRef}
+                image={imageSrc}
+                closeModal={closeDialog}
+            />
             <ImageUpdateModal
                 image={inputImage}
                 cancelImageUpdate={cancelUpdate}
@@ -86,7 +101,7 @@ const InfoImage: React.FC<InfoImageProps> = ({
                 <button
                     type="button"
                     onClick={toggleOptionsMenu}
-                    className="select-none cursor-pointer absolute inset-0 bg-secondary/40 rounded-full flex flex-col gap-1 items-center justify-center"
+                    className="select-none cursor-pointer absolute inset-0 bg-gray-900/60 rounded-full flex flex-col gap-1 items-center justify-center"
                 >
                     <BsCameraFill className="text-camIconSize" />
                     <p className="text-sm smallMobiles:text-base midPhones:text-xl uppercase text-center">

@@ -81,15 +81,16 @@ const ImageUpdateModal: React.FC<ImageUpdateModalProps> = ({
             setLoading(false);
             cancelImageUpdate();
         }
-    }, [image, croppedAreaPixels, rotation]);
+    }, [croppedAreaPixels, rotation]);
 
     return (
         <ModalWrapper
             ref={imageModalRef}
             clickOutsideToClose
             clickOutsideToCloseFunction={cancelImageUpdate}
+            animation={false}
         >
-            <div className="flex flex-col items-center w-[85dvw] midPhones:max-w-[450px] bg-secondary rounded-md">
+            <div className="flex flex-col items-center w-[95%] midPhones:max-w-[450px] bg-secondary rounded-md">
                 <div className="w-full text-2xl md:text-3xl py-5 px-4">
                     Drag the image to adjust
                 </div>

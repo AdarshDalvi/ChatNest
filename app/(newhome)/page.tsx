@@ -1,7 +1,3 @@
-import React from 'react';
-
-const page = () => {
-    return null;
-};
+const page = () => <></>;
 
 export default page;

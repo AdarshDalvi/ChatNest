@@ -40,7 +40,9 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
         return isAdmin;
     }, [currentUser]);
 
-    const [chatImage, setChatImage] = useState<string | null>(chat.image);
+    const [conversationImage, setChatImage] = useState<string | null>(
+        chat.image
+    );
 
     return (
         <DrawerWrapper
@@ -56,13 +58,13 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                         <EditableNoImage
                             defaultImage="/group.png"
                             imageHoverText="ADD GROUP ICON"
-                            imageSrc={chatImage}
+                            imageSrc={conversationImage}
                             setImage={setChatImage}
                         />
                     ) : (
                         <InfoImage
                             defaultImage="/group.png"
-                            imageSrc={chatImage}
+                            imageSrc={conversationImage}
                             hoverElementText="CHANGE GROUP ICON"
                             setImage={setChatImage}
                         />

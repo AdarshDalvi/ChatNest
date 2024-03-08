@@ -2,12 +2,15 @@
 
 import stopEventPropagation from '@/app/lib/stopEventPropagation';
 import { Conversation, User } from '@prisma/client';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { GoKebabHorizontal } from 'react-icons/go';
 import { IoArrowBack } from 'react-icons/io5';
 import Avatar from '../../components/Avatar';
-import useConversation from '@/app/hooks/useConversation';
+import { useRouter } from 'next/navigation';
+import GroupInfoDrawer from '../Drawers/GroupInfoDrawer';
+import ContactInfoDrawer from '../Drawers/ContactInfoDrawer';
+import useOtherUser from '@/app/hooks/useOther';
 
 interface ConversationScreenHeaderProps {
     conversation: Conversation & {
@@ -26,19 +29,23 @@ const ConversationScreenHeader: React.FC<ConversationScreenHeaderProps> = ({
         return 'online';
     }, [conversation]);
 
-    const { updateConversationId } = useConversation();
+    const router = useRouter();
+    const [showContactInfoDrawer, setShowContactInfoDrawer] = useState(false);
+    const [showGroupInfoDrawer, setShowGroupInfoDrawer] = useState(false);
+
+    const otherUser = useOtherUser(conversation);
 
     const handleNavigation = (event: any) => {
         stopEventPropagation(event);
-        updateConversationId(null);
+        router.push('/');
     };
 
     const handleContactInfoDrawer = () => {
-        // setShowContactInfoDrawer((prevValue) => !prevValue);
+        setShowContactInfoDrawer((prevValue) => !prevValue);
     };
 
     const handleGroupInfoDrawer = () => {
-        // setShowGroupInfoDrawer((prevValue) => !prevValue);
+        setShowGroupInfoDrawer((prevValue) => !prevValue);
     };
 
     const handleMenuClick = (event: any) => {
@@ -49,6 +56,20 @@ const ConversationScreenHeader: React.FC<ConversationScreenHeaderProps> = ({
 
     return (
         <>
+            {conversation.isGroup ? (
+                <GroupInfoDrawer
+                    showGroupInfoDrawer={showGroupInfoDrawer}
+                    setShowGroupInfoDrawer={setShowGroupInfoDrawer}
+                    conversation={conversation}
+                />
+            ) : (
+                <ContactInfoDrawer
+                    showContactInfoDrawer={showContactInfoDrawer}
+                    setShowContactInfoDrawer={setShowContactInfoDrawer}
+                    conversation={conversation}
+                    otherUser={otherUser}
+                />
+            )}
             <header
                 className="flex py-4 pl-4 pr-3.5  items-center gap-2 bg-primary text-white cursor-pointer z-10"
                 onClick={

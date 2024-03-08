@@ -10,6 +10,7 @@ export default function ToastContext() {
                     fontSize: 'clamp( 10px , 0.6rem + 2vw,1.6rem)',
                     background: 'black',
                     color: 'white',
+                    zIndex: '100',
                 },
             }}
         />

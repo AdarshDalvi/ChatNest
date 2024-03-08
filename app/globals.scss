@@ -8,6 +8,30 @@
     box-sizing: border-box;
 }
 
+dialog {
+    inset: 0;
+    max-width: 100dvw !important;
+    width: 100dvw;
+    max-height: 100dvh !important;
+    height: 100dvh;
+}
+
+#modal-wrapper {
+    animation: fade-in 0.25s ease-out forwards;
+
+    @keyframes fade-in {
+        0% {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}
+
 html {
     font-size: 62.5%;
 }
@@ -176,12 +200,4 @@ body {
     border-top: 13px solid #0f4c75;
     border-top-right-radius: 3px;
     border-right: 8px solid transparent;
-}
-
-#chat-body {
-    height: calc(100% - 55px);
-
-    @media (min-width: 500px) {
-        height: calc(100% - 60px);
-    }
 }

@@ -10,58 +10,49 @@ import { format } from 'date-fns';
 import capitalizeString from '@/app/lib/capitaliseString';
 import useMobileView from '@/app/hooks/useMobileView';
 import CardWrapper from '../components/WrapperComponents/CardWrapper/CardWrapper';
-import useConversation from '@/app/hooks/useConversation';
+import getUnseenMessages from '@/app/actions/getUnseenMessages';
+import { useRouter } from 'next/navigation';
 
 interface ConversationCardProps {
-    chat: FullConversationType;
+    conversation: FullConversationType;
     selected?: boolean;
     lastElement: boolean;
 }
 
 const ConversationCard: React.FC<ConversationCardProps> = ({
-    chat,
+    conversation,
     selected,
     lastElement,
 }) => {
     const session = useSession();
     const { mobileView } = useMobileView(500);
-    const { updateConversationId } = useConversation();
+
+    const router = useRouter();
 
     const handleClick = useCallback(() => {
-        updateConversationId(chat.id);
-    }, [chat.id]);
+        router.push(`/${conversation.id}`);
+    }, [conversation.id]);
 
     const lastMessage = useMemo(() => {
-        const messages = chat.messages || [];
+        const messages = conversation.messages || [];
         const lastMessage = messages[messages.length - 1];
         return lastMessage;
-    }, [chat.messages]);
+    }, [conversation.messages]);
 
     const currentUserEmail = useMemo(() => {
         return session.data?.user.email;
     }, [session.data?.user.email]);
 
-    const unseenMessages = useMemo(() => {
-        if (!currentUserEmail || chat.messages.length < 1) return [];
-
-        const unseenMesages = chat.messages.filter((message) => {
-            const isMessageSeen = message.seen.some(
-                (seenUser) => seenUser.email === currentUserEmail
-            );
-            return !isMessageSeen;
-        });
-
-        return unseenMesages;
-    }, [currentUserEmail, chat.messages]);
+    const unseenMessages = getUnseenMessages(currentUserEmail, conversation);
 
     const lastMessageText: React.ReactNode = useMemo(() => {
         if (!currentUserEmail) {
             return; // Or any placeholder text while data is loading
         }
         if (!lastMessage) {
-            if (chat.isGroup) {
-                const groupCreatedBy = chat.users.find(
-                    (user) => user.id === chat.groupCreatedById
+            if (conversation.isGroup) {
+                const groupCreatedBy = conversation.users.find(
+                    (user) => user.id === conversation.groupCreatedById
                 );
 
                 const isCurrentUserGroupCreator =
@@ -71,7 +62,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
                         {isCurrentUserGroupCreator ? (
                             <>
                                 <p>You created the group</p>
-                                <p className="flex-1 truncate">{`"${chat.name}"`}</p>
+                                <p className="flex-1 truncate">{`"${conversation.name}"`}</p>
                             </>
                         ) : (
                             <>
@@ -98,15 +89,20 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
         } else {
             const senderDisplayName =
                 lastMessage.sender.email === currentUserEmail
-                    ? 'You'
+                    ? 'You:'
                     : lastMessage.sender.name;
 
             if (lastMessage?.image) {
                 const imageCaption = lastMessage.image?.caption || 'Photo';
                 return (
                     <div className="flex items-center">
-                        {chat.isGroup && <p>{senderDisplayName}</p>}
-                        <FaImage size={mobileView ? 12 : 14} />
+                        {conversation.isGroup && <p>{senderDisplayName}</p>}
+                        <FaImage
+                            size={mobileView ? 12 : 14}
+                            style={{
+                                marginLeft: conversation.isGroup ? '2px' : '',
+                            }}
+                        />
                         <p className="ml-2">{imageCaption}</p>
                     </div>
                 );
@@ -116,7 +112,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
         }
     }, [lastMessage, currentUserEmail]);
 
-    const chatCardImg = chat.image;
+    const conversationCardImg = conversation.image;
 
     return (
         <CardWrapper
@@ -126,15 +122,15 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
         >
             <div className="py-6">
                 <Avatar
-                    avatarImg={chatCardImg}
+                    avatarImg={conversationCardImg}
                     status={true}
                     size="CARD"
-                    isGroup={chat.isGroup}
+                    isGroup={conversation.isGroup}
                 />
             </div>
             <div className="flex-1 self-stretch  items-start justify-center flex flex-col min-w-0 gap-1 pr-6 border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
                 <div className="flex w-full justify-between">
-                    <p>{chat.name}</p>
+                    <p>{conversation.name}</p>
                     {lastMessage?.createdAt && (
                         <p className="text-lg text-gray-400">
                             {format(lastMessage.createdAt, 'p')}
@@ -172,7 +168,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
             </div>
             {/* <div className="flex-1 self-stretch items-start min-w-0 flex flex-col justify-center gap-1 pr-6 border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
                 <div className="flex justify-between">
-                    <p>{chat.name}</p>
+                    <p>{conversation.name}</p>
                     {lastMessage?.createdAt && (
                         <p className="text-lg text-gray-400">
                             {format(lastMessage.createdAt, 'p')}

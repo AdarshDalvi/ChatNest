@@ -1,35 +1,26 @@
-// import { useParams } from 'next/navigation';
-// import { useMemo } from 'react';
-
-import { useContext } from 'react';
-import { ConversationContext } from '../context/ConversationContext';
+import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
 
 const useConversation = () => {
-    const { conversationId, updateConversationId } =
-        useContext(ConversationContext);
-    return {
-        conversationId,
-        updateConversationId,
-    };
-    // const params = useParams();
+    const params = useParams();
 
-    // const chatId = useMemo(() => {
-    //     if (!params?.chatId) {
-    //         return '';
-    //     }
+    const conversationId = useMemo(() => {
+        if (!params?.conversationId) {
+            return '';
+        }
 
-    //     return params.chatId as string;
-    // }, [params?.chatId]);
+        return params.conversationId as string;
+    }, [params?.conversationId]);
 
-    // const isOpen = useMemo(() => !!chatId, [chatId]);
+    const isOpen = useMemo(() => !!conversationId, [conversationId]);
 
-    // return useMemo(
-    //     () => ({
-    //         isOpen,
-    //         chatId,
-    //     }),
-    //     [isOpen, chatId]
-    // );
+    return useMemo(
+        () => ({
+            isOpen,
+            conversationId,
+        }),
+        [isOpen, conversationId]
+    );
 };
 
 export default useConversation;

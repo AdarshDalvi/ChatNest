@@ -2,11 +2,13 @@ import { Ref, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 type NoClickOutSideToCloseModalProps = {
     children: React.ReactNode;
+    animation?: boolean;
     clickOutSideToClose?: never;
 };
 
 type ClickOutsideToCloseModalProps = {
     children: React.ReactNode;
+    animation?: boolean;
     clickOutsideToClose: true;
     clickOutsideToCloseFunction: () => void;
 };
@@ -21,7 +23,7 @@ export interface ModalDialgRef {
 }
 
 const ModalWrapper = (
-    { children, ...props }: ModalProps,
+    { children, animation = true, ...props }: ModalProps,
     ref: Ref<ModalDialgRef>
 ) => {
     const modalDialogRef = useRef<HTMLDialogElement>(null);
@@ -35,31 +37,59 @@ const ModalWrapper = (
         };
     });
 
+    const wrapperDivRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
-        if (modalDialogRef.current && clickOutsideToClose) {
-            const dialogElement = modalDialogRef.current;
-            const closeDialog = (event: MouseEvent) => {
-                if (event.target === dialogElement) {
-                    dialogElement.close();
+        const dialogElement = modalDialogRef.current;
+        const wrapperDiv = wrapperDivRef.current;
+
+        if (dialogElement) {
+            const handleBackToCloseModal = (event: PopStateEvent) => {
+                event.preventDefault();
+                dialogElement.close();
+                if (clickOutsideToCloseFunction) {
                     clickOutsideToCloseFunction();
                 }
             };
 
-            dialogElement.addEventListener('click', closeDialog);
+            const closeByClickingOutside = (event: MouseEvent) => {
+                if (wrapperDiv && event.target === wrapperDiv) {
+                    dialogElement.close();
+                    if (clickOutsideToCloseFunction) {
+                        clickOutsideToCloseFunction();
+                    }
+                }
+            };
+
+            window.addEventListener('popstate', handleBackToCloseModal);
+            if (clickOutsideToClose) {
+                dialogElement.addEventListener('click', closeByClickingOutside);
+            }
 
             return () => {
-                dialogElement.removeEventListener('click', closeDialog);
+                window.removeEventListener('popstate', handleBackToCloseModal);
+                if (clickOutsideToClose) {
+                    dialogElement.removeEventListener(
+                        'click',
+                        closeByClickingOutside
+                    );
+                }
             };
         }
     }, []);
 
     return (
         <dialog
-            id="modal-wrapper"
+            id={animation ? 'modal-wrapper' : ''}
             ref={modalDialogRef}
             className="backdrop:bg-black/60 bg-transparent outline-none text-white"
         >
-            {children}
+            <div
+                ref={wrapperDivRef}
+                className="flex flex-col h-full w-full items-center justify-center relative"
+            >
+                {children}
+            </div>
         </dialog>
     );
 };

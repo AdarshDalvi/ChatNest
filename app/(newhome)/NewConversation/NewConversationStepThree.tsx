@@ -81,7 +81,7 @@ const NewConversationStepThree: React.FC<NewConversationStepThreeProps> = ({
                         required: 'Group name cannot be empty!',
                     }}
                     errors={errors}
-                    loading={loading}
+                    disabled={loading}
                 />
             </div>
             <button

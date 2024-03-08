@@ -31,6 +31,7 @@ const ImageInput = ({
                 className="hidden"
                 onChange={(event) => {
                     const file = event.target.files?.[0] || null;
+                    event.target.value = '';
                     afterChangeFunction(file);
                 }}
             />

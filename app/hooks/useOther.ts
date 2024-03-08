@@ -1,9 +1,11 @@
 import { useSession } from 'next-auth/react';
 import { useMemo } from 'react';
-import { FullChatType } from '../types/conversation';
+import { FullConversationType } from '../types/conversation';
 import { User } from '@prisma/client';
 
-const useOtherUser = (conversation: FullChatType | { users: User[] }) => {
+const useOtherUser = (
+    conversation: FullConversationType | { users: User[] }
+) => {
     const session = useSession();
     const otherUser = useMemo(() => {
         const currentUserEmail = session?.data?.user.email;

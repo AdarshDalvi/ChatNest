@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import primsa from '@/app/lib/prismadb';
 
 interface IParamas {
-    chatId?: string;
+    conversationId: string;
 }
 
 export async function DELETE(
@@ -11,15 +11,15 @@ export async function DELETE(
     { params }: { params: IParamas }
 ) {
     try {
-        const { chatId } = params;
+        const { conversationId } = params;
         const currentUser = await getCurrentUser();
-        if (!currentUser?.id || !currentUser?.email) {
+        if (!currentUser || !currentUser.id || !currentUser.email) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
         const existingChat = await primsa.conversation.findUnique({
             where: {
-                id: chatId,
+                id: conversationId,
             },
             include: {
                 users: true,
@@ -32,7 +32,7 @@ export async function DELETE(
 
         const deletedChat = await prisma?.conversation.deleteMany({
             where: {
-                id: chatId,
+                id: conversationId,
                 userIds: {
                     hasSome: [currentUser.id],
                 },

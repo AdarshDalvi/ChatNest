@@ -5,8 +5,7 @@ import { FieldValues, UseFormRegister } from 'react-hook-form';
 import { MdClose } from 'react-icons/md';
 import clsx from 'clsx';
 import { Image as ImageInterface } from '@prisma/client';
-import useConversation from '@/app/hooks/useConversation';
-import InputSubmitButton from '@/app/(newhome)/ConversationDetails/components/FormComponents/SubmitButton';
+import InputSubmitButton from '@/app/(newhome)/[conversationId]/conversationIdComponents/FormComponents/SubmitButton';
 
 type ImageInputModalProps = {
     image: ImageInterface | null;

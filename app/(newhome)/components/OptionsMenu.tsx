@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import React from 'react';
 
 type LabelledOption = {
     name: string;
@@ -6,7 +7,10 @@ type LabelledOption = {
 };
 
 type CustomOption = {
-    jsxElement: React.ReactNode;
+    jsxElement: React.ReactElement<
+        any,
+        string | React.JSXElementConstructor<any>
+    >;
 };
 
 export type Option = LabelledOption | CustomOption;
@@ -30,15 +34,20 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({
                 showOptionsMenu && 'flex opacity-100 scale-100'
             )}
         >
-            {optionsList.map((option, index) => (
-                <div
-                    key={index}
-                    onClick={'name' in option ? option.onClick : undefined}
-                    className="cursor-pointer hover:bg-gray-800 py-4 px-12 text-center w-full"
-                >
-                    {'name' in option ? option.name : option.jsxElement}
-                </div>
-            ))}
+            {optionsList.map((option, index) => {
+                const isJsxElement = 'jsxElement' in option;
+                return isJsxElement ? (
+                    React.cloneElement(option.jsxElement, { key: index })
+                ) : (
+                    <div
+                        key={index}
+                        onClick={option.onClick}
+                        className="cursor-pointer hover:bg-gray-800 py-4 px-12 text-center w-full"
+                    >
+                        {option.name}
+                    </div>
+                );
+            })}
         </div>
     );
 };

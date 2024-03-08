@@ -2,9 +2,9 @@
 import useConversation from '@/app/hooks/useConversation';
 
 const EmptyState = () => {
-    const { conversationId } = useConversation();
+    const { isOpen } = useConversation();
 
-    if (conversationId) {
+    if (isOpen) {
         return null;
     }
     return (

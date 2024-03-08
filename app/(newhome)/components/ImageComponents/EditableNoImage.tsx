@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Dispatch, SetStateAction } from 'react';
 import { BsCameraFill } from 'react-icons/bs';
 import ImageUpdateModal from './Modals/ImageUpdateModal';
+import ImageInput from './ImageInput';
 
 type EditableNoImageProps = {
     textOverImage: string;
@@ -43,26 +44,15 @@ const EditableNoImage: React.FC<EditableNoImageProps> = ({
                     alt="placeholder group image"
                     className="w-full h-full rounded-full object-cover aspect-square"
                 />
-                <label
-                    htmlFor="image"
-                    className="select-none cursor-pointer absolute inset-0 bg-secondary/60 rounded-full flex flex-col gap-1 items-center justify-center"
+                <ImageInput
+                    afterChangeFunction={handleImageChange}
+                    buttonClassNames="select-none cursor-pointer absolute inset-0 bg-gray-900/60 rounded-full flex flex-col gap-1 items-center justify-center"
                 >
                     <BsCameraFill className="text-camIconSize" />
                     <p className="text-sm smallMobiles:text-base midPhones:text-xl uppercase text-center">
                         {textOverImage}
                     </p>
-                    <input
-                        id="image"
-                        type="file"
-                        accept="image/png, image/jpeg, image/jpg, image/webp"
-                        multiple={false}
-                        className="hidden"
-                        onChange={(event) => {
-                            const file = event.target.files?.[0] || null;
-                            handleImageChange(file);
-                        }}
-                    />
-                </label>
+                </ImageInput>
             </div>
         </>
     );

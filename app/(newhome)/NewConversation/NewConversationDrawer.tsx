@@ -62,7 +62,6 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
     const closeNewConversationDrawer = () => {
         setShowNewConversationDrawer(false);
     };
-    const { updateConversationId } = useConversation();
 
     const toastPosition = getToastPosition();
 
@@ -95,7 +94,6 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
         setLoading(true);
         try {
             const { data } = await axios.post('/api/single-chat', { user });
-            updateConversationId(data.id);
             closeNewConversationDrawer();
         } catch (error: any) {
             toast.error('Something went wrong!', {

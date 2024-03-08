@@ -1,12 +1,13 @@
 import getConversations from '../actions/getConversations';
 import { getCurrentUser } from '../actions/getUser';
 import getUsers from '../actions/getUsers';
-import ConversationDetails from './ConversationDetails/ConversationDetails';
 import EmptyState from './components/EmptyState';
 import Header from './components/Header';
-import PageWrapper from './components/WrapperComponents/PageWrapper';
+import PageWrapper, {
+    WrapperProps,
+} from './components/WrapperComponents/PageWrapper';
 
-const layout = async () => {
+const ChatLayout: React.FC<WrapperProps> = async ({ children }) => {
     const currentUser = await getCurrentUser();
     const conversations = await getConversations();
     const users = await getUsers();
@@ -21,9 +22,9 @@ const layout = async () => {
                 />
             </PageWrapper>
             <EmptyState />
-            <ConversationDetails initialConversations={conversations} />
+            {children}
         </main>
     );
 };
 
-export default layout;
+export default ChatLayout;

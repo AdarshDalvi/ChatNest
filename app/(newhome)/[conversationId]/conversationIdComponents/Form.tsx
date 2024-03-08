@@ -111,6 +111,7 @@ function Form({ conversationId }: { conversationId: string }) {
                     id="message"
                     register={registerText}
                     handleImageChange={handleImageChange}
+                    sendTextOnEnter={handleSubmitText(handleTextInputSend)}
                 />
             </form>
         </>

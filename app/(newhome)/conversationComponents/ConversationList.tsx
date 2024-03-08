@@ -63,11 +63,11 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 style={{ scrollbarGutter: 'stable' }}
             >
                 {filteredConversations.map(
-                    (chat, index, filteredConversations) => (
+                    (conversation, index, filteredConversations) => (
                         <ConversationCard
-                            key={chat.id}
-                            chat={chat}
-                            selected={chat.id === conversationId}
+                            key={conversation.id}
+                            conversation={conversation}
+                            selected={conversation.id === conversationId}
                             lastElement={
                                 index === filteredConversations.length - 1
                             }

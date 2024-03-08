@@ -10,27 +10,30 @@ import {
     Path,
     RegisterOptions,
     UseFormRegister,
-    UseFormSetFocus,
     UseFormTrigger,
 } from 'react-hook-form';
 
 type SaveButtonProps = RequiredProps & {
-    saveButton: true;
+    saveButton?: true;
     saveFunction: () => void;
     trigger: UseFormTrigger<FieldValues>;
-    setFocus: UseFormSetFocus<FieldValues>;
-    loading: boolean;
+    disabled: boolean;
 };
 
 type WithoutSaveButtonProps = RequiredProps & {
     saveButton?: never;
-    loading: boolean;
+    disabled: boolean;
 };
 
 type RequiredProps = {
-    label: string;
+    label?: string;
     placeHolder: string;
     maxLength?: number;
+    fullWidth?: boolean;
+    customWidth?: {
+        editOffWidth: string;
+        editOnWidth: string;
+    };
 };
 
 type FormProps<T extends FieldValues> = {
@@ -52,27 +55,27 @@ const EditInfoInput = <T extends FieldValues>({
     errors,
     register,
     maxLength,
+    fullWidth = true,
+    customWidth,
     ...props
 }: EditInfoInputProps<T>) => {
     if (saveButton) {
-        const { setFocus, trigger, saveFunction, loading } =
-            props as SaveButtonProps;
+        const { trigger, saveFunction, disabled } = props as SaveButtonProps;
 
-        const [disabled, setDisabled] = useState(true);
+        const [editable, setEditable] = useState(true);
 
         const toggleEditMode = () => {
-            if (disabled) {
-                setDisabled(false);
-                setFocus(id);
+            if (editable) {
+                setEditable(false);
             } else {
-                setDisabled(true);
+                setEditable(true);
             }
         };
 
         const updateInput = async () => {
             const isValid = await trigger(id, { shouldFocus: true });
             if (isValid) {
-                setDisabled(true);
+                setEditable(true);
                 if (saveFunction) {
                     saveFunction();
                 }
@@ -80,16 +83,27 @@ const EditInfoInput = <T extends FieldValues>({
         };
 
         return (
-            <div className="w-full flex flex-col">
-                <label htmlFor={id} className="text-cyan-500 text-xl">
-                    {label}
-                </label>
+            <div
+                className={clsx(
+                    'flex flex-col',
+                    fullWidth
+                        ? 'w-full'
+                        : !editable
+                        ? customWidth?.editOnWidth
+                        : customWidth?.editOffWidth
+                )}
+            >
+                {label && (
+                    <label htmlFor={id} className="text-cyan-500 text-xl">
+                        {label}
+                    </label>
+                )}
                 <div className="relative w-full mt-6">
                     <input
                         autoComplete="off"
                         type="text"
                         id={id}
-                        disabled={disabled || loading}
+                        disabled={editable || disabled}
                         {...register(id, validationSchema ?? {})}
                         placeholder={placeHolder}
                         maxLength={maxLength}
@@ -104,14 +118,14 @@ const EditInfoInput = <T extends FieldValues>({
                         border-b-2
                         border-b-gray-400
                         focus:border-cyan-500`,
-                            disabled && 'border-none',
+                            editable && 'border-none',
                             errors && errors[id] && ' focus:border-red-500'
                         )}
                     />
-                    {disabled ? (
+                    {editable ? (
                         <button
                             onClick={toggleEditMode}
-                            disabled={loading}
+                            disabled={disabled}
                             className="absolute bottom-3.5 midPhones:bottom-2.5  cursor-pointer right-0 text-3xl midPhones:text-4xl "
                         >
                             <MdOutlineModeEditOutline />
@@ -120,7 +134,7 @@ const EditInfoInput = <T extends FieldValues>({
                         <button
                             type="button"
                             onClick={updateInput}
-                            disabled={loading}
+                            disabled={disabled}
                             className="absolute bottom-3.5 midPhones:bottom-2.5   cursor-pointer right-0 text-3xl midPhones:text-4xl"
                         >
                             <FaCheck />
@@ -135,7 +149,7 @@ const EditInfoInput = <T extends FieldValues>({
             </div>
         );
     } else {
-        const { loading } = props as WithoutSaveButtonProps;
+        const { disabled } = props as WithoutSaveButtonProps;
 
         return (
             <div className="w-full flex flex-col">
@@ -147,7 +161,7 @@ const EditInfoInput = <T extends FieldValues>({
                         autoComplete="off"
                         type="text"
                         id={id}
-                        disabled={loading}
+                        disabled={disabled}
                         {...register(id, validationSchema)}
                         placeholder={placeHolder}
                         maxLength={maxLength}
