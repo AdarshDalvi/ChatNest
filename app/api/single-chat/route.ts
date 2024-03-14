@@ -21,12 +21,12 @@ export async function POST(request: Request) {
             where: {
                 OR: [
                     {
-                        userIds: {
+                        memberIds: {
                             equals: [currentUser.id, user.id],
                         },
                     },
                     {
-                        userIds: {
+                        memberIds: {
                             equals: [user.id, currentUser.id],
                         },
                     },
@@ -39,14 +39,14 @@ export async function POST(request: Request) {
 
         const newConversation = await prisma.conversation.create({
             data: {
-                users: {
+                members: {
                     connect: [{ id: currentUser.id }, { id: user.id }],
                 },
                 name: user.name,
                 image: user.image,
             },
             include: {
-                users: true,
+                members: true,
             },
         });
 

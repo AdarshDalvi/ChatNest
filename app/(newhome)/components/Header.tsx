@@ -10,6 +10,12 @@ import { FullConversationType } from '@/app/types/conversation';
 import ListWrapper from './WrapperComponents/ListWrapper';
 import ConversationList from '../conversationComponents/ConversationList';
 import ProfileInfoDrawer from './Drawer/ProfileInfoDrawer';
+import OptionsMenu, { Option } from './OptionsMenu';
+import { signOut } from 'next-auth/react';
+import useOptionsMenu from '@/app/hooks/useOptionsMenu';
+import ConfirmationDialog from './DialogComponents/ConfirmationDialog';
+import ModalWrapper from './WrapperComponents/ModalWrapper';
+import useModalDialog from '@/app/hooks/useModalDialog';
 
 type HeaderProps = {
     currentUser: User;
@@ -24,6 +30,25 @@ const Header: React.FC<HeaderProps> = ({
     const [showNewConversationDrawer, setShowNewConversationDrawer] =
         useState<boolean>(false);
     const [showProfileDrawer, setShowProfileDrawer] = useState<boolean>(false);
+
+    const { ref, showOptionsMenu, toggleOptionsMenu } = useOptionsMenu();
+
+    const { closeDialog, modalDialogRef, openDialog } = useModalDialog();
+
+    const optionsList: Option[] = [
+        {
+            name: 'Profile',
+            onClick: () => setShowProfileDrawer(true),
+        },
+        {
+            name: 'Delete Chats',
+            onClick: () => {},
+        },
+        {
+            name: 'Log out',
+            onClick: openDialog,
+        },
+    ];
     return (
         <>
             <NewConversationDrawer
@@ -36,7 +61,16 @@ const Header: React.FC<HeaderProps> = ({
                 showProfileDrawer={showProfileDrawer}
                 setShowProfileDrawer={setShowProfileDrawer}
             />
-            <header className="w-full flex flex-col text-white  pt-4 pb-4 bg-primary ">
+            <ModalWrapper ref={modalDialogRef}>
+                <ConfirmationDialog
+                    closeModal={closeDialog}
+                    modalHeading="Log out?"
+                    modalMessage="Are you sure you want to log out?"
+                    confirmAction={() => signOut()}
+                    isLoading={false}
+                />
+            </ModalWrapper>
+            <header className="w-full flex flex-col text-white  pt-4 pb-4 bg-primary">
                 <div className="flex items-center mx-[1.6rem] gap-6">
                     <Avatar
                         avatarImg={currentUser}
@@ -52,7 +86,19 @@ const Header: React.FC<HeaderProps> = ({
                             setShowNewConversationDrawer(true);
                         }}
                     />
-                    <GoKebabHorizontal className="text-3xl  rotate-90 cursor-pointer" />
+                    <div
+                        className="text-3xl cursor-pointer  relative"
+                        ref={ref}
+                        onClick={toggleOptionsMenu}
+                    >
+                        <OptionsMenu
+                            optionsList={optionsList}
+                            showOptionsMenu={showOptionsMenu}
+                            className="top-[130%] right-3 origin-top-right min-w-[140px]"
+                            textPosition="text-start"
+                        />
+                        <GoKebabHorizontal className="rotate-90" />
+                    </div>
                 </div>
             </header>
             {conversations.length < 1 ? (

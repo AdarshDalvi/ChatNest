@@ -9,7 +9,7 @@ type NoClickOutSideToCloseModalProps = {
 type ClickOutsideToCloseModalProps = {
     children: React.ReactNode;
     animation?: boolean;
-    clickOutsideToClose: true;
+    clickOutsideToClose: boolean;
     clickOutsideToCloseFunction: () => void;
 };
 

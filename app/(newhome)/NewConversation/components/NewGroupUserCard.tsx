@@ -26,7 +26,7 @@ const NewGroupUserCard: React.FC<NewGroupUserCardProps> = ({
                     </div>
                 )}
             </div>
-            <div className="flex-1 self-stretch items-start flex flex-col pr-6 justify-center border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
+            <div className="flex-1 select-none self-stretch items-start flex flex-col pr-6 justify-center border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
                 <p>{user.name}</p>
                 {user.about ? <p>{user.about}</p> : <p>&nbsp;</p>}
             </div>

@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     try {
         const currentUser = await getCurrentUser();
         const body = await request.json();
-        const { name, image, members } = body;
+        const { name, image, members, groupDescription } = body;
         console.log(members);
 
         if (!currentUser?.id || !currentUser.email) {
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
                 name,
                 isGroup: true,
                 image: image,
-                users: {
+                members: {
                     connect: [
                         ...members.map((member: { id: string }) => ({
                             id: member.id,
@@ -28,6 +28,7 @@ export async function POST(request: Request) {
                         },
                     ],
                 },
+                groupDescription,
                 admins: {
                     connect: [
                         {
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
                 groupCreatedById: currentUser.id,
             },
             include: {
-                users: true,
+                members: true,
                 admins: true,
             },
         });

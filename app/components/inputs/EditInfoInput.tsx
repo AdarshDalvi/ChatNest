@@ -30,10 +30,7 @@ type RequiredProps = {
     placeHolder: string;
     maxLength?: number;
     fullWidth?: boolean;
-    customWidth?: {
-        editOffWidth: string;
-        editOnWidth: string;
-    };
+    customWidth?: string;
 };
 
 type FormProps<T extends FieldValues> = {
@@ -86,11 +83,7 @@ const EditInfoInput = <T extends FieldValues>({
             <div
                 className={clsx(
                     'flex flex-col',
-                    fullWidth
-                        ? 'w-full'
-                        : !editable
-                        ? customWidth?.editOnWidth
-                        : customWidth?.editOffWidth
+                    fullWidth ? 'w-full' : customWidth
                 )}
             >
                 {label && (
@@ -126,7 +119,7 @@ const EditInfoInput = <T extends FieldValues>({
                         <button
                             onClick={toggleEditMode}
                             disabled={disabled}
-                            className="absolute bottom-3.5 midPhones:bottom-2.5  cursor-pointer right-0 text-3xl midPhones:text-4xl "
+                            className="absolute bottom-3.5 midPhones:bottom-2.5  right-0 text-3xl midPhones:text-4xl "
                         >
                             <MdOutlineModeEditOutline />
                         </button>

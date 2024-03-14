@@ -14,12 +14,14 @@ import useOtherUser from '@/app/hooks/useOther';
 
 interface ConversationScreenHeaderProps {
     conversation: Conversation & {
-        users: User[];
+        members: User[];
     };
+    users: User[];
 }
 
 const ConversationScreenHeader: React.FC<ConversationScreenHeaderProps> = ({
     conversation,
+    users,
 }) => {
     const statusText = useMemo(() => {
         if (conversation?.isGroup) {
@@ -61,6 +63,7 @@ const ConversationScreenHeader: React.FC<ConversationScreenHeaderProps> = ({
                     showGroupInfoDrawer={showGroupInfoDrawer}
                     setShowGroupInfoDrawer={setShowGroupInfoDrawer}
                     conversation={conversation}
+                    users={users}
                 />
             ) : (
                 <ContactInfoDrawer

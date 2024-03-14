@@ -7,34 +7,43 @@ import InfoImage from '@/app/(newhome)/components/ImageComponents/InfoImage';
 import { Conversation, User } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
-import { MdClear, MdSearch } from 'react-icons/md';
+import { MdClear, MdOutlineModeEditOutline, MdSearch } from 'react-icons/md';
 import ViewOnlyImage from './components/ViewOnlyImage';
 import SaveCancelButtons from '../../components/SaveCancelButtons';
-import EditInfoInput from '@/app/components/inputs/EditInfoInput';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import GroupMemberCard from './components/GroupMemberCard';
 
 import { IoExitOutline, IoPersonAdd } from 'react-icons/io5';
 import axios from 'axios';
+import { FaCheck } from 'react-icons/fa6';
+import clsx from 'clsx';
+import useModalDialog from '@/app/hooks/useModalDialog';
+import ModalWrapper from '../../components/WrapperComponents/ModalWrapper';
+import NewMemberModal from './components/NewMemberModal';
 
 interface GroupInfoDrawerProps {
     conversation: Conversation & {
-        users: User[];
+        members: User[];
     };
     showGroupInfoDrawer: boolean;
     setShowGroupInfoDrawer: Dispatch<SetStateAction<boolean>>;
+    users: User[];
 }
 
 const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
     conversation,
     showGroupInfoDrawer,
     setShowGroupInfoDrawer,
+    users,
 }) => {
     const session = useSession();
     const [loading, setLoading] = useState(false);
     const [conversationImage, setConversationImage] = useState<string | null>(
         conversation.image
     );
+    const [editname, setEditname] = useState(false);
+    const [tempGroupMembers, setTempGroupMember] = useState<User[]>([]);
+
     const {
         register,
         formState: { errors },
@@ -46,7 +55,7 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
     } = useForm<FieldValues>({
         defaultValues: {
             name: conversation.name,
-            members: conversation.users,
+            members: conversation.members,
             image: conversation.image,
         },
     });
@@ -68,6 +77,9 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
     const closeGroupInfoDrawer = () => {
         reset();
         setShowGroupInfoDrawer(false);
+        if (editname) {
+            setEditname(false);
+        }
     };
 
     const groupMembers = useMemo(() => {
@@ -89,26 +101,6 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
         return updatedGroupMembers;
     }, [currentUser, members]);
 
-    function areArraysEqual(arr1: User[], arr2: User[]) {
-        // Check if the arrays have the same length
-        if (arr1.length !== arr2.length) {
-            return false;
-        }
-
-        // Convert arr2 to a Set for faster lookup
-        const set2 = new Set(arr2.map((user) => user.id));
-
-        // Check if all IDs from arr1 exist in arr2
-        for (const user of arr1) {
-            if (!set2.has(user.id)) {
-                return false;
-            }
-        }
-
-        // If all IDs from arr1 exist in arr2, return true
-        return true;
-    }
-
     const updateGroup: SubmitHandler<FieldValues> = async (
         data
     ): Promise<boolean> => {
@@ -124,143 +116,183 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
         }
     };
 
-    const updateGroupInfo = async (key: 'name' | 'users' | 'image') => {
-        const fieldValue = getValues(key);
-        const isFieldChanged = fieldValue !== conversation[key];
-        const data = getValues();
-
-        if (isFieldChanged || key === 'users') {
-            const success = await updateGroup(data);
-            if (success) {
-                // Handle success if needed
-            }
+    const updateGroupName = async () => {
+        const isValid = await trigger('name', { shouldFocus: true });
+        if (isValid) {
+            setEditname(false);
         }
     };
 
+    const { modalDialogRef, openDialog, closeDialog } = useModalDialog();
     return (
-        <Drawer
-            icon={MdClear}
-            drawerOrigin="origin-right"
-            drawerHeading="Group info"
-            closeDrawer={closeGroupInfoDrawer}
-            showDrawer={showGroupInfoDrawer}
-            disabled={loading}
-        >
-            <DrawerChildrenWrapper>
-                {isCurrentUserAdmin ? (
-                    conversationImage === null ? (
-                        <EditableNoImage
-                            defaultImage="/group.png"
-                            textOverImage="ADD GROUP ICON"
-                            setImage={setConversationImage}
-                        />
+        <>
+            <ModalWrapper ref={modalDialogRef} clickOutsideToClose>
+                <NewMemberModal
+                    closeDialog={closeDialog}
+                    nonGroupMembers={users.filter(
+                        (user) =>
+                            !groupMembers.some(
+                                (groupMember) => groupMember?.id === user.id
+                            )
+                    )}
+                />
+            </ModalWrapper>
+            <Drawer
+                icon={MdClear}
+                drawerOrigin="origin-right"
+                drawerHeading="Group info"
+                closeDrawer={closeGroupInfoDrawer}
+                showDrawer={showGroupInfoDrawer}
+                disabled={loading}
+            >
+                <DrawerChildrenWrapper>
+                    {isCurrentUserAdmin ? (
+                        conversationImage === null ? (
+                            <EditableNoImage
+                                defaultImage="/group.png"
+                                textOverImage="ADD GROUP ICON"
+                                setImage={setConversationImage}
+                            />
+                        ) : (
+                            <InfoImage
+                                fallbackImage="/group.png"
+                                imageSrc={conversationImage}
+                                overImageText="CHANGE GROUP ICON"
+                                setImage={setConversationImage}
+                            />
+                        )
                     ) : (
-                        <InfoImage
-                            fallbackImage="/group.png"
+                        <ViewOnlyImage
                             imageSrc={conversationImage}
-                            overImageText="CHANGE GROUP ICON"
-                            setImage={setConversationImage}
-                        />
-                    )
-                ) : (
-                    <ViewOnlyImage
-                        imageSrc={conversationImage}
-                        fallbackImage="/group.png"
-                        isGroup
-                    />
-                )}
-                {isCurrentUserAdmin &&
-                    conversationImage !== conversation.image && (
-                        <SaveCancelButtons
-                            saveUpdate={() => {}}
-                            cancelUpdate={() =>
-                                setConversationImage(
-                                    (prevImage) => conversation.image
-                                )
-                            }
+                            fallbackImage="/group.png"
+                            isGroup
                         />
                     )}
-                <EditInfoInput
-                    disabled={!isCurrentUserAdmin ? true : false}
-                    saveButton={isCurrentUserAdmin ? true : undefined}
-                    id="name"
-                    errors={errors}
-                    placeHolder="Group name"
-                    register={register}
-                    saveFunction={() => updateGroupInfo('name')}
-                    validationSchema={{
-                        required: 'Group name cannot be empty!',
-                    }}
-                    trigger={trigger}
-                    maxLength={30}
-                    fullWidth={false}
-                    customWidth={{
-                        editOnWidth: 'w-[70%]',
-                        editOffWidth: '',
-                    }}
-                />
-                {isCurrentUserAdmin && (
-                    <div className="px-8 w-full mt-16">
+                    {isCurrentUserAdmin &&
+                        conversationImage !== conversation.image && (
+                            <SaveCancelButtons
+                                saveUpdate={() => {}}
+                                cancelUpdate={() =>
+                                    setConversationImage(
+                                        (prevImage) => conversation.image
+                                    )
+                                }
+                            />
+                        )}
+                    {!editname ? (
+                        <div className="flex justify-center w-full text-3xl midPhones:text-[2rem] mt-2">
+                            <div className="relative flex items-center">
+                                <p>{conversation.name}</p>
+                                {isCurrentUserAdmin && (
+                                    <button
+                                        className="absolute -right-12 bottom-1"
+                                        onClick={() => setEditname(true)}
+                                    >
+                                        <MdOutlineModeEditOutline />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="w-[70%] relative mt-4">
+                                <input
+                                    {...register('name', {
+                                        required: `Group name can't be empty!`,
+                                    })}
+                                    placeholder="Enter group name"
+                                    spellCheck={false}
+                                    className={clsx(
+                                        'w-full outline-none bg-secondary text-2xl midPhones:text-[1.7rem] pb-2.5 border-b-2 border-b-gray-400 focus:border-cyan-500',
+                                        errors &&
+                                            errors['name'] &&
+                                            'focus:border-red-500'
+                                    )}
+                                    maxLength={30}
+                                />
+                                <button
+                                    className="absolute bottom-3.5 midPhones:bottom-2.5  right-0 text-3xl midPhones:text-4xl  "
+                                    onClick={updateGroupName}
+                                >
+                                    <FaCheck />
+                                </button>
+                            </div>
+                            {errors && errors['name']?.message && (
+                                <p className="text-red-500 text-lg text-start w-[70%]">
+                                    {errors['name'].message.toString()}
+                                </p>
+                            )}
+                        </>
+                    )}
+
+                    {isCurrentUserAdmin && (
+                        <div className="px-8 w-full mt-16">
+                            <button
+                                onClick={openDialog}
+                                type="button"
+                                className="w-full flex hover:bg-cardHoverColor gap-6 items-center text-2xl py-4 px-3"
+                            >
+                                <div className="text-4xl bg-primary p-3.5 rounded-full">
+                                    <IoPersonAdd />
+                                </div>
+                                <p>Add member</p>
+                            </button>
+                        </div>
+                    )}
+                    {groupMembers && groupMembers.length > 0 && (
+                        <div className="flex flex-col w-full px-8">
+                            <div className="flex justify-between">
+                                <p className="text-xl midPhones:text-2xl">
+                                    {conversation.members.length} members
+                                </p>
+                                <button type="button" className="text-3xl">
+                                    <MdSearch />
+                                </button>
+                            </div>
+                            <div className="flex flex-col  min-w-0 mt-8">
+                                {groupMembers
+                                    .slice(0, 10)
+                                    .map((member, index) => {
+                                        const isMemberAdmin =
+                                            conversation.adminsIds.findIndex(
+                                                (adminId) =>
+                                                    adminId === member!.id
+                                            ) !== -1;
+
+                                        return (
+                                            <GroupMemberCard
+                                                key={member!.id}
+                                                user={member!}
+                                                onCardClick={() => {}}
+                                                isAdmin={isMemberAdmin}
+                                            />
+                                        );
+                                    })}
+                            </div>
+                            {groupMembers.length > 9 && (
+                                <button
+                                    type="button"
+                                    className="text-start hover:bg-cardHoverColor text-2xl px-8 py-6 text-cyan-400"
+                                >
+                                    View all{' '}
+                                    {` (${groupMembers.length - 9} more)`}
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="flex w-full px-8">
                         <button
                             type="button"
-                            className="w-full flex hover:bg-cardHoverColor gap-6 items-center text-2xl py-4 px-3"
+                            className="w-full text-start flex items-center text-rose-500 hover:bg-cardHoverColor py-4 px-3 gap-4"
                         >
-                            <div className="text-4xl bg-primary p-3.5 rounded-full">
-                                <IoPersonAdd />
-                            </div>
-                            <p>Add member</p>
+                            <IoExitOutline className="text-5xl" />
+                            <p className="text-2xl">Exit group</p>
                         </button>
                     </div>
-                )}
-                {groupMembers && groupMembers.length > 0 && (
-                    <div className="flex flex-col w-full px-8">
-                        <div className="flex justify-between">
-                            <p className="text-xl midPhones:text-2xl">
-                                {conversation.users.length} members
-                            </p>
-                            <button type="button" className="text-3xl">
-                                <MdSearch />
-                            </button>
-                        </div>
-                        <div className="flex flex-col  min-w-0 mt-8">
-                            {groupMembers.slice(0, 10).map((member, index) => {
-                                const isMemberAdmin =
-                                    conversation.adminsIds.findIndex(
-                                        (adminId) => adminId === member!.id
-                                    ) !== -1;
-
-                                return (
-                                    <GroupMemberCard
-                                        key={member!.id}
-                                        user={member!}
-                                        onCardClick={() => {}}
-                                        isAdmin={isMemberAdmin}
-                                    />
-                                );
-                            })}
-                        </div>
-                        {groupMembers.length > 9 && (
-                            <button
-                                type="button"
-                                className="text-start hover:bg-cardHoverColor text-2xl px-8 py-6 text-cyan-400"
-                            >
-                                View all {` (${groupMembers.length - 9} more)`}
-                            </button>
-                        )}
-                    </div>
-                )}
-
-                <div className="flex w-full px-8">
-                    <button
-                        type="button"
-                        className="w-full text-start flex items-center text-rose-500 hover:bg-cardHoverColor py-4 px-3 gap-4"
-                    >
-                        <IoExitOutline className="text-5xl" />
-                        <p className="text-2xl">Exit group</p>
-                    </button>
-                </div>
-            </DrawerChildrenWrapper>
-        </Drawer>
+                </DrawerChildrenWrapper>
+            </Drawer>
+        </>
     );
 };
 

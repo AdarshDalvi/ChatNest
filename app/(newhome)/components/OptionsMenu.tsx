@@ -19,12 +19,14 @@ interface OptionsMenuProps {
     className?: string;
     showOptionsMenu: boolean;
     optionsList: Option[];
+    textPosition?: string;
 }
 
 const OptionsMenu: React.FC<OptionsMenuProps> = ({
     optionsList,
     showOptionsMenu,
     className,
+    textPosition = 'text-center',
 }) => {
     return (
         <div
@@ -42,7 +44,10 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({
                     <div
                         key={index}
                         onClick={option.onClick}
-                        className="cursor-pointer hover:bg-gray-800 py-4 px-12 text-center w-full"
+                        className={clsx(
+                            'cursor-pointer hover:bg-gray-800 py-4 px-12  w-full',
+                            textPosition
+                        )}
                     >
                         {option.name}
                     </div>

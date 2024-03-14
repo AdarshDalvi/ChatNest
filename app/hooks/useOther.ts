@@ -4,17 +4,17 @@ import { FullConversationType } from '../types/conversation';
 import { User } from '@prisma/client';
 
 const useOtherUser = (
-    conversation: FullConversationType | { users: User[] }
+    conversation: FullConversationType | { members: User[] }
 ) => {
     const session = useSession();
     const otherUser = useMemo(() => {
         const currentUserEmail = session?.data?.user.email;
 
-        const otherUser = conversation.users.filter(
+        const otherUser = conversation.members.filter(
             (user) => user.email !== currentUserEmail
         );
         return otherUser;
-    }, [session.data?.user.email, conversation.users]);
+    }, [session.data?.user.email, conversation.members]);
 
     return otherUser[0];
 };

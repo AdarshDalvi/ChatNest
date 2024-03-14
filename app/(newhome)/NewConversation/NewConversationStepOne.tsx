@@ -3,22 +3,18 @@
 import { useSearchBox } from '@/app/hooks/useSearchBox';
 import SearchBox from '../components/SearchBox';
 import UserCard from '../components/UserCard';
-import NewConversationStepsWrapper from '../components/Drawer/DrawerChildrenWrapper';
-import { NewConversationMode, StepIndex } from './NewConversationDrawer';
+import { StepIndex } from './NewConversationDrawer';
 import { User } from '@prisma/client';
 
 type NewConversationStepOneProps = {
-    switchNewConversationMode: (
-        mode: NewConversationMode,
-        stepIndex?: StepIndex
-    ) => void;
+    updateCurrentStepIndex: (stepIndex: StepIndex) => void;
     users: User[];
     startNewSingleConversation: (user: User) => void;
     disabled: boolean;
 };
 
 const NewConversationStepOne: React.FC<NewConversationStepOneProps> = ({
-    switchNewConversationMode,
+    updateCurrentStepIndex,
     users,
     startNewSingleConversation,
     disabled,
@@ -41,9 +37,7 @@ const NewConversationStepOne: React.FC<NewConversationStepOneProps> = ({
                     disabled={disabled}
                     img="/group.png"
                     customInfo="New group"
-                    onCardClick={() =>
-                        switchNewConversationMode('GROUP-CONVERSATION', 2)
-                    }
+                    onCardClick={() => updateCurrentStepIndex(2)}
                     lastElement
                 />
                 <h3 className="text-2xl text-cyan-500 uppercase my-12 px-6 tracking-wide">

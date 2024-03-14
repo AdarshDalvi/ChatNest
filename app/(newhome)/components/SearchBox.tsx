@@ -27,11 +27,11 @@ const SearchBox: React.FC<SearchBoxProps> = ({
                 type="text"
                 className={clsx(
                     `
-                    autofill:bg-searchBoxBg
+                    autofill:bg-[#35505e]
                     w-full 
                     text-xl
                     midPhones:text-2xl
-                    bg-searchBoxBg
+                    bg-[#35505e]
                     py-3
                     focus:outline-none
                     pl-4

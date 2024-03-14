@@ -13,12 +13,12 @@ const getConversations = async () => {
                 lastMesasgeAt: 'desc',
             },
             where: {
-                userIds: {
+                memberIds: {
                     has: currentUser.id,
                 },
             },
             include: {
-                users: true,
+                members: true,
                 messages: {
                     include: {
                         sender: true,
@@ -29,6 +29,7 @@ const getConversations = async () => {
         });
         return conversations;
     } catch (error) {
+        console.log(error, 'ERROR IN GET CONVERSATIONS');
         return [];
     }
 };

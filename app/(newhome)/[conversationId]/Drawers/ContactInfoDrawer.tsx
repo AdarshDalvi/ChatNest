@@ -17,7 +17,7 @@ import toast from 'react-hot-toast';
 
 interface ContactInfoDrawerProps {
     conversation: Conversation & {
-        users: User[];
+        members: User[];
     };
     showContactInfoDrawer: boolean;
     setShowContactInfoDrawer: Dispatch<SetStateAction<boolean>>;

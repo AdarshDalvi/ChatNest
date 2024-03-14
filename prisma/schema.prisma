@@ -64,6 +64,7 @@ model Conversation {
   name          String?
   isGroup       Boolean?
   image         String?
+  groupDescription String?
 
   messagesIds String[]  @db.ObjectId
   messages    Message[]

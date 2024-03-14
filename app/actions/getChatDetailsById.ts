@@ -17,7 +17,7 @@ const getChatDetailsById = async (conversationId: string | null) => {
                 id: conversationId,
             },
             include: {
-                users: true,
+                members: true,
                 messages: {
                     include: {
                         seen: true,

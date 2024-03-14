@@ -85,6 +85,7 @@ const MultilineInput: React.FC<MultilineInputProps> = ({
         event: React.KeyboardEvent<HTMLTextAreaElement>
     ) => {
         if (event.key === 'Enter' && !event.shiftKey && textAreaRef.current) {
+            event.preventDefault();
             onEnterEvent!();
             textAreaRef.current.style.height = 'auto';
         }

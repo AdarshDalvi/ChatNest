@@ -2,19 +2,24 @@ import getChatDetailsById from '@/app/actions/getChatDetailsById';
 import ConversationScreenBody from './conversationIdComponents/Body';
 import ConversationScreenHeader from './conversationIdComponents/Header';
 import Form from './conversationIdComponents/Form';
+import getUsers from '@/app/actions/getUsers';
 
 interface ConversationIdParams {
     conversationId: string;
 }
 const ConversationId = async ({ params }: { params: ConversationIdParams }) => {
     const conversation = await getChatDetailsById(params.conversationId);
+    const users = await getUsers();
     if (!conversation) {
         return null;
     }
     return (
         <main className="flex-1 flex flex-col h-dvh min-w-[250px] bg-secondary relative">
             <div className="bg-chatBody bg-fixed h-full w-full opacity-5 absolute left-0 top-0 z-0"></div>
-            <ConversationScreenHeader conversation={conversation} />
+            <ConversationScreenHeader
+                conversation={conversation}
+                users={users}
+            />
             <ConversationScreenBody
                 isGroup={conversation.isGroup}
                 conversation={conversation}

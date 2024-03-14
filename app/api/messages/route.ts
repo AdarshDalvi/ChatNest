@@ -52,7 +52,7 @@ export async function POST(request: Request) {
                 },
             },
             include: {
-                users: true,
+                members: true,
                 messages: {
                     include: {
                         seen: true,

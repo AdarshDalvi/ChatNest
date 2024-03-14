@@ -51,8 +51,8 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
         }
         if (!lastMessage) {
             if (conversation.isGroup) {
-                const groupCreatedBy = conversation.users.find(
-                    (user) => user.id === conversation.groupCreatedById
+                const groupCreatedBy = conversation.members.find(
+                    (member) => member.id === conversation.groupCreatedById
                 );
 
                 const isCurrentUserGroupCreator =
@@ -112,7 +112,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
         }
     }, [lastMessage, currentUserEmail]);
 
-    const conversationCardImg = conversation.image;
+    const conversationCardImg = conversation?.image;
 
     return (
         <CardWrapper
@@ -166,44 +166,6 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
                     )}
                 </div>
             </div>
-            {/* <div className="flex-1 self-stretch items-start min-w-0 flex flex-col justify-center gap-1 pr-6 border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
-                <div className="flex justify-between">
-                    <p>{conversation.name}</p>
-                    {lastMessage?.createdAt && (
-                        <p className="text-lg text-gray-400">
-                            {format(lastMessage.createdAt, 'p')}
-                        </p>
-                    )}
-                </div>
-                <div className="flex self-start  justify-between min-h-6 gap-4 w-full items-center">
-                    <div
-                        className={clsx(
-                            'flex-1 min-w-0 text-lg midPhones:text-xl',
-                            unseenMessages.length > 0
-                                ? 'text-white'
-                                : 'text-gray-400'
-                        )}
-                    >
-                        {lastMessageText}
-                    </div>
-                    {unseenMessages.length > 0 && (
-                        <div
-                            className={clsx(
-                                'bg-primary rounded-full text-base midPhones:text-lg',
-                                unseenMessages.length <= 9
-                                    ? 'px-2.5 py-px midPhones:px-[6.7px] midPhones:py-0.5'
-                                    : 'px-2 py-[3px] midPhones:px-[5.3px]',
-                                unseenMessages.length > 99 &&
-                                    'px-[5px] py-[5.4px]'
-                            )}
-                        >
-                            {unseenMessages.length > 99
-                                ? '99+'
-                                : unseenMessages.length}
-                        </div>
-                    )}
-                </div>
-            </div> */}
         </CardWrapper>
     );
 };
