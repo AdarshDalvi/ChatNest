@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
-import useMobileView from '@/app/hooks/useMobileView';
 import capitalizeString from '@/app/lib/capitaliseString';
 import getToastPosition from '@/app/lib/getToastPosition';
 import createSecureUrl from '@/app/lib/secureUrl';

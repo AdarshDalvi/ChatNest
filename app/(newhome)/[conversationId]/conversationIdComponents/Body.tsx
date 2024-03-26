@@ -5,7 +5,6 @@ import {
     FullMessageType,
 } from '@/app/types/conversation';
 import { useEffect, useMemo, useState } from 'react';
-import useConversation from '@/app/hooks/useConversation';
 import MessageBox from './BodyComponents/MessageBox';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';

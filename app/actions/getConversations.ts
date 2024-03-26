@@ -19,6 +19,7 @@ const getConversations = async () => {
             },
             include: {
                 members: true,
+                groupCreatedBy: true,
                 messages: {
                     include: {
                         sender: true,

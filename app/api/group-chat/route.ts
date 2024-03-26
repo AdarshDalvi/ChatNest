@@ -7,7 +7,6 @@ export async function POST(request: Request) {
         const currentUser = await getCurrentUser();
         const body = await request.json();
         const { name, image, members, groupDescription } = body;
-        console.log(members);
 
         if (!currentUser?.id || !currentUser.email) {
             return new NextResponse('Unauthorized', { status: 401 });
@@ -15,9 +14,10 @@ export async function POST(request: Request) {
 
         const newGroupConversation = await prisma.conversation.create({
             data: {
-                name,
                 isGroup: true,
-                image: image,
+                groupName: name,
+                groupIcon: image,
+                groupDescription,
                 members: {
                     connect: [
                         ...members.map((member: { id: string }) => ({
@@ -28,7 +28,6 @@ export async function POST(request: Request) {
                         },
                     ],
                 },
-                groupDescription,
                 admins: {
                     connect: [
                         {

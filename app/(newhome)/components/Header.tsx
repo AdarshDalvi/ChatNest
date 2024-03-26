@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({
 
     const { ref, showOptionsMenu, toggleOptionsMenu } = useOptionsMenu();
 
-    const { closeDialog, modalDialogRef, openDialog } = useModalDialog();
+    const [modalDialogRef, openDialog, closeDialog] = useModalDialog();
 
     const optionsList: Option[] = [
         {
@@ -49,10 +49,12 @@ const Header: React.FC<HeaderProps> = ({
             onClick: openDialog,
         },
     ];
+
+    const filteredUsers = users.filter((user) => user.id !== currentUser.id);
     return (
         <>
             <NewConversationDrawer
-                users={users}
+                users={filteredUsers}
                 showNewConversationDrawer={showNewConversationDrawer}
                 setShowNewConversationDrawer={setShowNewConversationDrawer}
             />
@@ -68,6 +70,8 @@ const Header: React.FC<HeaderProps> = ({
                     modalMessage="Are you sure you want to log out?"
                     confirmAction={() => signOut()}
                     isLoading={false}
+                    confirmText="Log out"
+                    accent
                 />
             </ModalWrapper>
             <header className="w-full flex flex-col text-white  pt-4 pb-4 bg-primary">
@@ -118,7 +122,11 @@ const Header: React.FC<HeaderProps> = ({
                 </div>
             ) : (
                 <ListWrapper height={'calc(100dvh - 60px)'}>
-                    <ConversationList initialConversation={conversations} />
+                    <ConversationList
+                        initialConversation={conversations}
+                        currentUser={currentUser}
+                        users={users}
+                    />
                 </ListWrapper>
             )}
         </>

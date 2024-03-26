@@ -15,11 +15,11 @@ const getUsers = async () => {
             orderBy: {
                 createdAt: 'desc',
             },
-            where: {
-                NOT: {
-                    email: session.user.email,
-                },
-            },
+            // where: {
+            //     // NOT: {
+            //     //     email: session.user.email,
+            //     // },
+            // },
         });
         return users;
     } catch (error: any) {

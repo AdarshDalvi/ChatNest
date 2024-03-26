@@ -60,7 +60,7 @@ const InfoImage: React.FC<InfoImageProps> = ({
         },
     ];
 
-    const { modalDialogRef, openDialog, closeDialog } = useModalDialog();
+    const [modalDialogRef, openDialog, closeDialog] = useModalDialog();
 
     return (
         <>

@@ -8,7 +8,7 @@ import { GoKebabHorizontal } from 'react-icons/go';
 import { IoArrowBack } from 'react-icons/io5';
 import Avatar from '../../components/Avatar';
 import { useRouter } from 'next/navigation';
-import GroupInfoDrawer from '../Drawers/GroupInfoDrawer';
+import GroupInfoDrawer from '../Drawers/GroupInfoDrawer/GroupInfoDrawer';
 import ContactInfoDrawer from '../Drawers/ContactInfoDrawer';
 import useOtherUser from '@/app/hooks/useOther';
 
@@ -54,7 +54,12 @@ const ConversationScreenHeader: React.FC<ConversationScreenHeaderProps> = ({
         stopEventPropagation(event);
     };
 
-    const avatarImg = conversation.image;
+    const avatarImg = conversation.isGroup
+        ? conversation.groupIcon
+        : otherUser.image;
+    const conversationName = conversation.isGroup
+        ? conversation.groupName
+        : otherUser.name;
 
     return (
         <>
@@ -85,7 +90,7 @@ const ConversationScreenHeader: React.FC<ConversationScreenHeaderProps> = ({
                 <Avatar avatarImg={avatarImg} status={false} size="HEADER" />
                 <div className="flex-1 flex flex-col justify-center ml-2">
                     <p className="text-xl midPhones:text-2xl font-medium tracking-wide">
-                        {conversation.name}
+                        {conversationName}
                     </p>
                     <p className="text-lg tracking-wide">{statusText}</p>
                 </div>

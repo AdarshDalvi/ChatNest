@@ -3,6 +3,7 @@ import ConversationScreenBody from './conversationIdComponents/Body';
 import ConversationScreenHeader from './conversationIdComponents/Header';
 import Form from './conversationIdComponents/Form';
 import getUsers from '@/app/actions/getUsers';
+import { redirect } from 'next/navigation';
 
 interface ConversationIdParams {
     conversationId: string;
@@ -11,7 +12,7 @@ const ConversationId = async ({ params }: { params: ConversationIdParams }) => {
     const conversation = await getChatDetailsById(params.conversationId);
     const users = await getUsers();
     if (!conversation) {
-        return null;
+        redirect('/');
     }
     return (
         <main className="flex-1 flex flex-col h-dvh min-w-[250px] bg-secondary relative">

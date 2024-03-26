@@ -12,17 +12,21 @@ import useMobileView from '@/app/hooks/useMobileView';
 import CardWrapper from '../components/WrapperComponents/CardWrapper/CardWrapper';
 import getUnseenMessages from '@/app/actions/getUnseenMessages';
 import { useRouter } from 'next/navigation';
+import useOtherUser from '@/app/hooks/useOther';
+import { User } from '@prisma/client';
 
 interface ConversationCardProps {
     conversation: FullConversationType;
     selected?: boolean;
     lastElement: boolean;
+    users: User[];
 }
 
 const ConversationCard: React.FC<ConversationCardProps> = ({
     conversation,
     selected,
     lastElement,
+    users,
 }) => {
     const session = useSession();
     const { mobileView } = useMobileView(500);
@@ -45,24 +49,28 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
 
     const unseenMessages = getUnseenMessages(currentUserEmail, conversation);
 
+    const otherUser = !conversation.isGroup
+        ? useOtherUser(conversation)
+        : undefined;
+
     const lastMessageText: React.ReactNode = useMemo(() => {
         if (!currentUserEmail) {
             return; // Or any placeholder text while data is loading
         }
         if (!lastMessage) {
             if (conversation.isGroup) {
-                const groupCreatedBy = conversation.members.find(
-                    (member) => member.id === conversation.groupCreatedById
+                const groupCreatedBy = users.find(
+                    (user) => user.id === conversation.groupCreatedById
                 );
 
                 const isCurrentUserGroupCreator =
-                    groupCreatedBy!.email === currentUserEmail;
+                    groupCreatedBy?.email === currentUserEmail;
                 return (
                     <div className="flex w-full gap-1.5">
                         {isCurrentUserGroupCreator ? (
                             <>
                                 <p>You created the group</p>
-                                <p className="flex-1 truncate">{`"${conversation.name}"`}</p>
+                                <p className="flex-1 truncate">{`"${conversation.groupName}"`}</p>
                             </>
                         ) : (
                             <>
@@ -75,7 +83,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
                                     }}
                                 >
                                     {`${capitalizeString(
-                                        groupCreatedBy!.name!
+                                        groupCreatedBy?.name || ''
                                     )}`}
                                 </p>
                                 <p>added you to the group</p>
@@ -112,7 +120,9 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
         }
     }, [lastMessage, currentUserEmail]);
 
-    const conversationCardImg = conversation?.image;
+    const conversationCardImg = conversation.isGroup
+        ? conversation.groupIcon
+        : otherUser?.image ?? null;
 
     return (
         <CardWrapper
@@ -130,7 +140,11 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
             </div>
             <div className="flex-1 self-stretch  items-start justify-center flex flex-col min-w-0 gap-1 pr-6 border-t-[0.667px] border-cardBorder hover:border-none text-xl midPhones:text-2xl">
                 <div className="flex w-full justify-between">
-                    <p>{conversation.name}</p>
+                    <p>
+                        {conversation.isGroup
+                            ? conversation.groupName
+                            : otherUser?.name}
+                    </p>
                     {lastMessage?.createdAt && (
                         <p className="text-lg text-gray-400">
                             {format(lastMessage.createdAt, 'p')}

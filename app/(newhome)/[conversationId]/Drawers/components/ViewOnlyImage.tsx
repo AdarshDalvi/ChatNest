@@ -33,7 +33,7 @@ const ViewOnlyImage: React.FC<ViewOnlyImageProps> = ({
         }
     };
 
-    const { modalDialogRef, openDialog, closeDialog } = useModalDialog();
+    const [modalDialogRef, openDialog, closeDialog] = useModalDialog();
     return (
         <>
             <ImageViewModal

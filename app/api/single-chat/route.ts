@@ -42,8 +42,6 @@ export async function POST(request: Request) {
                 members: {
                     connect: [{ id: currentUser.id }, { id: user.id }],
                 },
-                name: user.name,
-                image: user.image,
             },
             include: {
                 members: true,

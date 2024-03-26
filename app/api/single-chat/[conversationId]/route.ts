@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/app/actions/getUser';
 import { NextResponse } from 'next/server';
-import primsa from '@/app/lib/prismadb';
+import prisma from '@/app/lib/prismadb';
 
 interface IParamas {
     conversationId: string;
@@ -17,12 +17,12 @@ export async function DELETE(
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        const existingChat = await primsa.conversation.findUnique({
+        const existingChat = await prisma.conversation.findUnique({
             where: {
                 id: conversationId,
             },
             include: {
-                users: true,
+                members: true,
             },
         });
 
@@ -30,10 +30,10 @@ export async function DELETE(
             return new NextResponse('Invalid ID', { status: 400 });
         }
 
-        const deletedChat = await prisma?.conversation.deleteMany({
+        const deletedChat = await prisma.conversation.deleteMany({
             where: {
                 id: conversationId,
-                userIds: {
+                memberIds: {
                     hasSome: [currentUser.id],
                 },
             },

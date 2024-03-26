@@ -1,4 +1,3 @@
-import { useSearchBox } from '@/app/hooks/useSearchBox';
 import SearchBox from '../components/SearchBox';
 import { User } from '@prisma/client';
 import { useEffect, useState } from 'react';
@@ -7,6 +6,8 @@ import NewGroupSelectedMemberCard from './components/NewGroupSelectedMemberCard'
 import { IoArrowForward } from 'react-icons/io5';
 import { DefaultGroupFormValues, StepIndex } from './NewConversationDrawer';
 import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
+import useUserSearch from '@/app/hooks/useUserSearch';
+import NoResultsFound from '../components/NoResultsFound';
 
 type NewConversationStepTwoProps = {
     users: User[];
@@ -23,37 +24,11 @@ const NewConversationStepTwo: React.FC<NewConversationStepTwoProps> = ({
 }) => {
     const members = getValues('members');
 
-    const { searchText, clearSearchText, updateSearchText } = useSearchBox();
+    const { searchText, clearSearchText, updateSearchText, filteredUsers } =
+        useUserSearch(users);
     const [selectedMembers, setSelectedMembers] = useState<User[] | []>(
         members
     );
-    const [filteredUsers, setFilterdUsers] = useState<User[] | []>([]);
-
-    useEffect(() => {
-        const filterUsers = () => {
-            setFilterdUsers((prevUsers) => {
-                if (searchText === '') {
-                    return users;
-                }
-                const newFilteredUsers: User[] = users.filter((user) => {
-                    const sameName = user.name
-                        ?.toLowerCase()
-                        .includes(searchText.toLowerCase());
-                    const sameEmail = user.email
-                        ?.toLowerCase()
-                        .includes(searchText.toLowerCase());
-                    const sameNumber = user.phone
-                        ?.toString()
-                        .toLowerCase()
-                        .includes(searchText.toLowerCase());
-
-                    return sameName || sameEmail || sameNumber;
-                });
-                return newFilteredUsers;
-            });
-        };
-        filterUsers();
-    }, [searchText, users]);
 
     const addDeleteGroupMember = (user: User) => {
         const selected = selectedMembers.findIndex(
@@ -107,20 +82,24 @@ const NewConversationStepTwo: React.FC<NewConversationStepTwoProps> = ({
                 className="flex-1 w-full min-h-0 overflow-y-auto"
                 style={{ scrollbarGutter: 'stable' }}
             >
-                {filteredUsers.map((user, index, users) => {
-                    const selected = selectedMembers.findIndex(
-                        (member) => member.id === user.id
-                    );
-                    return (
-                        <NewGroupUserCard
-                            key={user.id}
-                            user={user}
-                            onClick={() => addDeleteGroupMember(user)}
-                            lastElement={index === users.length - 1}
-                            selected={selected !== -1}
-                        />
-                    );
-                })}
+                {filteredUsers.length > 0 ? (
+                    filteredUsers.map((user, index, users) => {
+                        const selected = selectedMembers.findIndex(
+                            (member) => member.id === user.id
+                        );
+                        return (
+                            <NewGroupUserCard
+                                key={user.id}
+                                user={user}
+                                onClick={() => addDeleteGroupMember(user)}
+                                lastElement={index === users.length - 1}
+                                selected={selected !== -1}
+                            />
+                        );
+                    })
+                ) : (
+                    <NoResultsFound noResultText="No users found" />
+                )}
             </div>
             {selectedMembers.length > 0 && (
                 <button

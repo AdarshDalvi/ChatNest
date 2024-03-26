@@ -35,7 +35,7 @@ const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
     };
 
     const [loading, setLoading] = useState(false);
-    const { openDialog, modalDialogRef, closeDialog } = useModalDialog();
+    const [modalDialogRef, openDialog, closeDialog] = useModalDialog();
 
     const router = useRouter();
 
@@ -73,15 +73,16 @@ const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
                     modalMessage="Are you sure you want to delete this chat? This action
                         cannot be undone."
                     confirmAction={confirmDeleteAction}
+                    confirmText={'Delete'}
                 />
             </ModalWrapper>
             <DrawerChildrenWrapper>
                 <ViewOnlyImage
-                    imageSrc={conversation.image}
+                    imageSrc={otherUser.image}
                     fallbackImage="/user.png"
                 />
                 <p className="text-xl smallMobiles:text-2xl midPhones:text-3xl lg:text-4xl mt-6">
-                    {conversation.name}
+                    {otherUser.name}
                 </p>
                 <button
                     className="flex flex-col items-center mt-4 gap-2 hover:opacity-80"

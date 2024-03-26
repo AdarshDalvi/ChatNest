@@ -3,13 +3,13 @@ import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prismadb';
 
 interface IParamas {
-    chatId?: string;
+    conversationId?: string;
 }
 
 export async function POST(request: Request, { params }: { params: IParamas }) {
     try {
         const currentUser = await getCurrentUser();
-        const { chatId } = params;
+        const { conversationId } = params;
 
         if (!currentUser?.id || !currentUser?.email) {
             return new NextResponse('Unauthorized', { status: 401 });
@@ -18,7 +18,7 @@ export async function POST(request: Request, { params }: { params: IParamas }) {
         // Find Existing Conversation
         const conversation = await prisma.conversation.findUnique({
             where: {
-                id: chatId,
+                id: conversationId,
             },
             include: {
                 messages: {
@@ -26,7 +26,7 @@ export async function POST(request: Request, { params }: { params: IParamas }) {
                         seen: true,
                     },
                 },
-                users: true,
+                members: true,
             },
         });
 

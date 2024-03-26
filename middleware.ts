@@ -11,7 +11,7 @@ export default withAuth(
         const isLoginPage = pathName === '/login';
         const isRegisterPage = pathName === '/register';
 
-        const isAccessingSensitiveRoute = pathName === '/';
+        const isAccessingSensitiveRoute = pathName.includes('/');
 
         if (isLoginPage || isRegisterPage) {
             if (isAuth) {
@@ -42,5 +42,5 @@ export default withAuth(
 );
 
 export const config = {
-    matcher: ['/', '/login', '/register', '/error'],
+    matcher: ['/', '/:conversationId', '/login', '/register', '/error'],
 };

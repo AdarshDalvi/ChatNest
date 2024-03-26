@@ -45,7 +45,13 @@ const UserCard: React.FC<UserCardProps> = ({
                 ) : (
                     <>
                         <p>{user.name}</p>
-                        <p>{user.about}</p>
+                        {user.about ? (
+                            <p className="text-lg midPhones:text-xl text-gray-400">
+                                {user.about}
+                            </p>
+                        ) : (
+                            <p>&nbsp;</p>
+                        )}
                     </>
                 )}
             </div>
