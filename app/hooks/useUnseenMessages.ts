@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { FullMessageType } from '../types/conversation';
 
-const getUnseenMessages = (
+const useUnseenMessages = (
     currentUserEmail: string | null | undefined,
     messages: FullMessageType[]
 ) => {
@@ -21,4 +21,4 @@ const getUnseenMessages = (
     return unseenMessages;
 };
 
-export default getUnseenMessages;
+export default useUnseenMessages;

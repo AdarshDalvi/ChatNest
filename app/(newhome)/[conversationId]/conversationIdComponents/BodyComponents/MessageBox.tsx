@@ -32,7 +32,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
 
     const previousMessageSameUser = useMemo(() => {
         return previousMessage?.sender?.email === message.sender?.email;
-    }, [previousMessage?.sender?.email]);
+    }, [previousMessage?.sender?.email, message?.sender?.email]);
 
     let alignment;
 
@@ -76,8 +76,6 @@ const MessageBox: React.FC<MessageBoxProps> = ({
     const seenList = (message.seen || [])
         .filter((user) => user.email !== message?.sender?.email)
         .map((user) => user.name);
-
-    console.log(seenList);
 
     if (isGroup) {
         return (

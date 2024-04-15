@@ -72,7 +72,7 @@ const ConversationScreenBody: React.FC<ConversationScreenBodyProps> = ({
             pusherClient.unbind('messages:new', newMessageHandler);
             pusherClient.unbind('messages:update', updateMessagesHandler);
         };
-    }, []);
+    }, [conversationId]);
 
     return (
         <div className="flex-1 w-full  py-2 overflow-y-auto">

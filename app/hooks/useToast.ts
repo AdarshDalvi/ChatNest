@@ -1,7 +1,7 @@
 import { ToastPosition } from 'react-hot-toast';
-import useMobileView from '../hooks/useMobileView';
+import useMobileView from './useMobileView';
 
-const getToastPosition = (): ToastPosition => {
+const useToast = (): ToastPosition => {
     const { mobileView } = useMobileView();
 
     const toastPosition: ToastPosition = mobileView
@@ -10,4 +10,4 @@ const getToastPosition = (): ToastPosition => {
     return toastPosition;
 };
 
-export default getToastPosition;
+export default useToast;

@@ -9,11 +9,11 @@ import { format } from 'date-fns';
 import capitalizeString from '@/app/lib/capitaliseString';
 import useMobileView from '@/app/hooks/useMobileView';
 import CardWrapper from '../components/WrapperComponents/CardWrapper/CardWrapper';
-import getUnseenMessages from '@/app/actions/getUnseenMessages';
 import { useRouter } from 'next/navigation';
 import useOtherUser from '@/app/hooks/useOther';
 import { User } from '@prisma/client';
 import Avatar from '../components/Avatar';
+import useUnseenMessages from '@/app/hooks/useUnseenMessages';
 
 interface ConversationCardProps {
     conversation: FullConversationType;
@@ -47,7 +47,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
         return session.data?.user.email;
     }, [session.data?.user.email]);
 
-    const unseenMessages = getUnseenMessages(
+    const unseenMessages = useUnseenMessages(
         currentUserEmail,
         conversation.messages
     );

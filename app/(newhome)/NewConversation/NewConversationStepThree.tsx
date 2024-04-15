@@ -13,8 +13,8 @@ import InfoImage from '../components/ImageComponents/InfoImage';
 import EditInfoInput from '@/app/components/inputs/EditInfoInput';
 import createSecureUrl from '@/app/lib/secureUrl';
 import toast from 'react-hot-toast';
-import getToastPosition from '@/app/lib/getToastPosition';
 import axios from 'axios';
+import useToast from '@/app/hooks/useToast';
 
 type NewConversationStepThreeProps = {
     trigger: UseFormTrigger<DefaultGroupFormValues>;
@@ -39,7 +39,7 @@ const NewConversationStepThree: React.FC<NewConversationStepThreeProps> = ({
 }) => {
     const [editedImage, setEditedImage] = useState<string | null>(null);
 
-    const toastPosition = getToastPosition();
+    const toastPosition = useToast();
 
     const createNewGroup: SubmitHandler<DefaultGroupFormValues> = async (
         data

@@ -14,8 +14,8 @@ import NewConversationStepThree from './NewConversationStepThree';
 import './NewConversationDrawer.scss';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import getToastPosition from '@/app/lib/getToastPosition';
 import DrawerChildrenWrapper from '../components/Drawer/DrawerChildrenWrapper';
+import useToast from '@/app/hooks/useToast';
 
 export type DefaultGroupFormValues = FieldValues & {
     members: User[];
@@ -60,7 +60,7 @@ const NewConversationDrawer: React.FC<NewConversationDrawerProps> = ({
         setShowNewConversationDrawer(false);
     };
 
-    const toastPosition = getToastPosition();
+    const toastPosition = useToast();
 
     const isStepOne: boolean = currentStepIndex === 1;
     const isStepTwo: boolean = currentStepIndex === 2;

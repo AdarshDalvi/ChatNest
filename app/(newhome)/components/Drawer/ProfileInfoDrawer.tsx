@@ -8,7 +8,6 @@ import {
 } from 'react';
 
 import capitalizeString from '@/app/lib/capitaliseString';
-import getToastPosition from '@/app/lib/getToastPosition';
 import createSecureUrl from '@/app/lib/secureUrl';
 import { User } from '@prisma/client';
 
@@ -30,6 +29,7 @@ import { MdClear, MdOutlineModeEditOutline } from 'react-icons/md';
 import { FaCheck } from 'react-icons/fa6';
 import { useSession } from 'next-auth/react';
 import { pusherClient } from '@/app/lib/pusher';
+import useToast from '@/app/hooks/useToast';
 
 type ProfileInfoDrawerProps = {
     currentUser: User;
@@ -101,7 +101,7 @@ const ProfileInfoDrawer: React.FC<ProfileInfoDrawerProps> = ({
         };
     }, [pusherKey]);
 
-    const toastPosition = getToastPosition();
+    const toastPosition = useToast();
 
     const closeProfileDrawer = () => {
         setValue('name', currentUser.name);

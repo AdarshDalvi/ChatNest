@@ -39,7 +39,7 @@ const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
 
     const router = useRouter();
 
-    const confirmDeleteAction = useCallback(async () => {
+    const confirmDeleteAction = async () => {
         setLoading(true);
         try {
             const data = await axios.delete(
@@ -52,7 +52,7 @@ const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
             closeDialog();
             setLoading(false);
         }
-    }, []);
+    };
 
     return (
         <Drawer
