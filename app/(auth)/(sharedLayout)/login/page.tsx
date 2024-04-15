@@ -13,7 +13,7 @@ import { MdEmail, MdPhone } from 'react-icons/md';
 
 type LoginWith = 'NONE' | 'EMAIL' | 'PHONE';
 
-export default function page() {
+export default function LoginPage() {
     const {
         register,
         setValue,
