@@ -10,8 +10,26 @@
 
 dialog {
     inset: 0;
-    width: 100vw;
-    height: 100vh;
+    max-width: 100dvw !important;
+    width: 100dvw;
+    max-height: 100dvh !important;
+    height: 100dvh;
+}
+
+#modal-wrapper {
+    animation: fade-in 0.25s ease-out forwards;
+
+    @keyframes fade-in {
+        0% {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 }
 
 html {
@@ -184,10 +202,26 @@ body {
     border-right: 8px solid transparent;
 }
 
-#chat-body {
-    height: calc(100% - 55px);
+.loader {
+    background-color: rgb(156 163 175);
+    animation: skeleton 1s infinite alternate;
+}
 
-    @media (min-width: 500px) {
-        height: calc(100% - 60px);
+@keyframes skeleton {
+    to {
+        opacity: 0.7;
+    }
+}
+
+.spinner {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }

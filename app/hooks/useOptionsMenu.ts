@@ -6,7 +6,6 @@ const useOptionsMenu = () => {
     const [showOptionsMenu, setShowOptionsMenu] = useState<boolean>(false);
 
     const handleClickOutside = () => {
-        setIsHovering(false);
         setShowOptionsMenu(false);
     };
 
@@ -16,15 +15,15 @@ const useOptionsMenu = () => {
         setShowOptionsMenu((prevState) => !prevState);
     };
 
-    const { handleImageHover, isHovering, setIsHovering } =
-        useImageHoverWithOptions(showOptionsMenu);
+    const closeOptionsMenu = () => {
+        setShowOptionsMenu(false);
+    };
 
     return {
         ref,
         showOptionsMenu,
         toggleOptionsMenu,
-        isHovering,
-        handleImageHover,
+        closeOptionsMenu,
     };
 };
 

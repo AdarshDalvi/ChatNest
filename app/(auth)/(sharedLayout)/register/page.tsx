@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-export default function page() {
+export default function RegisterPage() {
     const {
         register,
         setValue,

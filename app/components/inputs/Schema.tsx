@@ -59,12 +59,4 @@ function generateSchema({
     return schema;
 }
 
-// class ValidationSchema {
-//     fieldName: string;
-//     constructor(fName?: string) {
-//         this.fieldName = fName || 'This field';
-//     }
-
-// }
-
 export default generateSchema;

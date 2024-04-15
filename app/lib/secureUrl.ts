@@ -1,8 +1,11 @@
 import axios from 'axios';
 
 const createSecureUrl = async (
-    base64String: string
+    base64String: string | null
 ): Promise<string | null> => {
+    if (base64String === null) {
+        return null;
+    }
     try {
         const formData = new FormData();
         formData.append('file', base64String);

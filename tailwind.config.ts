@@ -10,7 +10,6 @@ const config: Config = {
         extend: {
             colors: {
                 primary: '#0F4C75',
-                // primary: 'rgb(14 116 144)',
                 secondary: '#1B262C',
                 borderColor: '#2c6b94',
                 cardBorder: '#2c4049',
@@ -36,6 +35,21 @@ const config: Config = {
             },
             fontSize: {
                 camIconSize: 'clamp(1.2rem,1rem + 1.3vw,3rem)',
+            },
+            animation: {
+                displayIn: 'display-In 0.2s',
+            },
+            keyframes: {
+                'display-In': {
+                    '0%': {
+                        opacity: '0',
+                        transform: 'scale(0)',
+                    },
+                    '100%': {
+                        opacity: '1',
+                        transform: 'scale(1)',
+                    },
+                },
             },
         },
     },

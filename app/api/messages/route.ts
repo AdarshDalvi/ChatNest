@@ -1,13 +1,14 @@
 import { getCurrentUser } from '@/app/actions/getUser';
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prismadb';
+import { pusherServer } from '@/app/lib/pusher';
 
 export async function POST(request: Request) {
     try {
         const currentUser = await getCurrentUser();
         const body = await request.json();
 
-        const { message, image, chatId } = body;
+        const { message, image, conversationId } = body;
 
         if (!currentUser?.id || !currentUser?.email) {
             return new NextResponse('Unauthorized', { status: 401 });
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
                 image: image,
                 conversation: {
                     connect: {
-                        id: chatId,
+                        id: conversationId,
                     },
                 },
                 sender: {
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
 
         const updatedConversation = await prisma.conversation.update({
             where: {
-                id: chatId,
+                id: conversationId,
             },
             data: {
                 lastMesasgeAt: new Date(),
@@ -52,13 +53,27 @@ export async function POST(request: Request) {
                 },
             },
             include: {
-                users: true,
+                members: true,
                 messages: {
                     include: {
                         seen: true,
                     },
                 },
             },
+        });
+
+        await pusherServer.trigger(conversationId!, 'messages:new', newMessage);
+        const lastMesasge =
+            updatedConversation.messages[
+                updatedConversation.messages.length - 1
+            ];
+        updatedConversation.members.map((member) => {
+            if (member.email) {
+                pusherServer.trigger(member.email, 'conversation:update', {
+                    id: conversationId,
+                    messages: [lastMesasge],
+                });
+            }
         });
 
         return NextResponse.json(newMessage);
