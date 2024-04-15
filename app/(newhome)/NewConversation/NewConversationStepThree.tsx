@@ -44,7 +44,6 @@ const NewConversationStepThree: React.FC<NewConversationStepThreeProps> = ({
     const createNewGroup: SubmitHandler<DefaultGroupFormValues> = async (
         data
     ): Promise<boolean> => {
-        console.log(data);
         try {
             const response = await axios.post('/api/group-chat', data);
             return true;

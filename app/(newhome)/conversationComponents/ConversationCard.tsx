@@ -3,7 +3,6 @@
 import { FullConversationType } from '@/app/types/conversation';
 import { useCallback, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
-import Avatar from '@/app/(home)/components/Avatar';
 import clsx from 'clsx';
 import { FaImage } from 'react-icons/fa6';
 import { format } from 'date-fns';
@@ -14,6 +13,7 @@ import getUnseenMessages from '@/app/actions/getUnseenMessages';
 import { useRouter } from 'next/navigation';
 import useOtherUser from '@/app/hooks/useOther';
 import { User } from '@prisma/client';
+import Avatar from '../components/Avatar';
 
 interface ConversationCardProps {
     conversation: FullConversationType;
@@ -47,11 +47,12 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
         return session.data?.user.email;
     }, [session.data?.user.email]);
 
-    const unseenMessages = getUnseenMessages(currentUserEmail, conversation);
+    const unseenMessages = getUnseenMessages(
+        currentUserEmail,
+        conversation.messages
+    );
 
-    const otherUser = !conversation.isGroup
-        ? useOtherUser(conversation)
-        : undefined;
+    const otherUser = useOtherUser(conversation);
 
     const lastMessageText: React.ReactNode = useMemo(() => {
         if (!currentUserEmail) {
@@ -96,9 +97,9 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
             }
         } else {
             const senderDisplayName =
-                lastMessage.sender.email === currentUserEmail
+                lastMessage.sender?.email === currentUserEmail
                     ? 'You:'
-                    : lastMessage.sender.name;
+                    : lastMessage.sender?.name;
 
             if (lastMessage?.image) {
                 const imageCaption = lastMessage.image?.caption || 'Photo';
@@ -123,6 +124,23 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
     const conversationCardImg = conversation.isGroup
         ? conversation.groupIcon
         : otherUser?.image ?? null;
+
+    const hasSeen = useMemo(() => {
+        if (!lastMessage) {
+            return false;
+        }
+
+        const seenArray = lastMessage?.seen || [];
+
+        if (!currentUserEmail) {
+            return false;
+        }
+
+        return (
+            seenArray.filter((user) => user.email === currentUserEmail)
+                .length !== 0
+        );
+    }, [currentUserEmail, lastMessage]);
 
     return (
         <CardWrapper
@@ -155,14 +173,16 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
                     <div
                         className={clsx(
                             'flex-1 text-start min-w-0 text-lg midPhones:text-xl',
-                            unseenMessages.length > 0
+                            !lastMessage
+                                ? 'text-gray-400'
+                                : !hasSeen
                                 ? 'text-white'
                                 : 'text-gray-400'
                         )}
                     >
                         {lastMessageText}
                     </div>
-                    {unseenMessages.length > 0 && (
+                    {unseenMessages?.length > 0 && (
                         <div
                             className={clsx(
                                 'bg-primary rounded-full text-base midPhones:text-lg',

@@ -68,8 +68,7 @@ const GroupMemberCard: React.FC<GroupMemberCardProps> = ({
                     ) : (
                         <>&nbsp;</>
                     )}
-                    {/* (showOptionsMenu || !isCurrentUser) && isCurrentUserAdmin &&
-                    !isMemberGroupOwner && */}
+
                     {showArrow && (
                         <>
                             <div

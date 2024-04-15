@@ -2,6 +2,7 @@ import prisma from '@/app/lib/prismadb';
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/app/actions/getUser';
 import { User } from '@prisma/client';
+import { pusherServer } from '@/app/lib/pusher';
 
 interface UserRequestBody {
     user: User;
@@ -48,6 +49,15 @@ export async function POST(request: Request) {
             },
         });
 
+        newConversation.members.forEach((member) => {
+            if (member.email) {
+                pusherServer.trigger(
+                    member.email,
+                    'conversation:new',
+                    newConversation
+                );
+            }
+        });
         return NextResponse.json(newConversation);
     } catch (error: any) {
         console.log(error, 'ERROR_MESSAGES_SINGLE_CHAT');

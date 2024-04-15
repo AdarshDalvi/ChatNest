@@ -45,9 +45,7 @@ const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
             const data = await axios.delete(
                 `/api/single-chat/${conversation.id}`
             );
-            console.log(data);
             router.replace('/');
-            router.refresh();
         } catch (error) {
             toast.error('Something went wrong!');
         } finally {
@@ -78,11 +76,11 @@ const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
             </ModalWrapper>
             <DrawerChildrenWrapper>
                 <ViewOnlyImage
-                    imageSrc={otherUser.image}
+                    imageSrc={otherUser?.image}
                     fallbackImage="/user.png"
                 />
                 <p className="text-xl smallMobiles:text-2xl midPhones:text-3xl lg:text-4xl mt-6">
-                    {otherUser.name}
+                    {otherUser?.name}
                 </p>
                 <button
                     className="flex flex-col items-center mt-4 gap-2 hover:opacity-80"
@@ -99,7 +97,7 @@ const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
                             Email
                         </p>
                         <p className="text-base smallMobiles:text-lg midPhones:text-xl lg:text-2xl">
-                            {otherUser.email}
+                            {otherUser?.email}
                         </p>
                     </div>
                     <div className="w-full h-0.5 bg-cardBorder"></div>
@@ -107,9 +105,11 @@ const ContactInfoDrawer: React.FC<ContactInfoDrawerProps> = ({
                         <p className="text-gray-400 text-sm smallMobiles:text-base midPhones:text-lg lg:text-xl">
                             Joined
                         </p>
-                        <p className="text-base smallMobiles:text-lg midPhones:text-xl lg:text-2xl">
-                            {format(new Date(otherUser.createdAt), 'PP')}
-                        </p>
+                        {otherUser?.createdAt && (
+                            <p className="text-base smallMobiles:text-lg midPhones:text-xl lg:text-2xl">
+                                {format(new Date(otherUser.createdAt), 'PP')}
+                            </p>
+                        )}
                     </div>
                 </div>
             </DrawerChildrenWrapper>

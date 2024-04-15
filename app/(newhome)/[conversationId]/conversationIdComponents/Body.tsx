@@ -4,11 +4,11 @@ import {
     FullConversationType,
     FullMessageType,
 } from '@/app/types/conversation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import MessageBox from './BodyComponents/MessageBox';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
-import getUnseenMessages from '@/app/actions/getUnseenMessages';
+import { pusherClient } from '@/app/lib/pusher';
+import { find } from 'lodash';
 
 interface ConversationScreenBodyProps {
     isGroup: boolean | null;
@@ -21,27 +21,61 @@ const ConversationScreenBody: React.FC<ConversationScreenBodyProps> = ({
     conversation,
     conversationId,
 }) => {
-    const [messages, setMessages] = useState<FullMessageType[] | []>([]);
-    const session = useSession();
+    const [messages, setMessages] = useState<FullMessageType[] | []>(
+        conversation.messages
+    );
 
-    const cuurentUserEmail = useMemo(() => {
-        return session.data?.user.email;
-    }, [session.data?.user.email]);
+    const bottomRef = useRef<HTMLDivElement>(null);
 
-    const unseenMessages = getUnseenMessages(cuurentUserEmail, conversation);
     useEffect(() => {
-        const markMessagesAsSeen = () => {
-            if (cuurentUserEmail && unseenMessages.length > 0) {
-                axios.post(`/api/single-chat/${conversationId}/seen`);
-            }
-        };
-        setMessages(conversation.messages);
-
-        markMessagesAsSeen();
+        axios.post(`/api/messages/${conversationId}/seen`);
     }, [conversationId]);
 
+    useEffect(() => {
+        pusherClient.subscribe(conversationId);
+        bottomRef?.current?.scrollIntoView();
+
+        const newMessageHandler = (message: FullMessageType) => {
+            axios.post(`/api/messages/${conversationId}/seen`);
+            setMessages((prevData) => {
+                if (find(prevData, { id: message.id })) {
+                    return prevData;
+                }
+                return [...prevData, message];
+            });
+            bottomRef?.current?.scrollIntoView();
+        };
+
+        const updateMessagesHandler = (
+            updatedUnseenMessages: FullMessageType[]
+        ) => {
+            setMessages((currentMessages) => {
+                const updatedMessages = currentMessages.map(
+                    (currentMessage) => {
+                        const foundUpdatedMessage = updatedUnseenMessages?.find(
+                            (message) => message.id === currentMessage.id
+                        );
+                        return foundUpdatedMessage
+                            ? foundUpdatedMessage
+                            : currentMessage;
+                    }
+                );
+                return updatedMessages;
+            });
+        };
+
+        pusherClient.bind('messages:new', newMessageHandler);
+        pusherClient.bind('messages:update', updateMessagesHandler);
+
+        return () => {
+            pusherClient.unsubscribe(conversationId);
+            pusherClient.unbind('messages:new', newMessageHandler);
+            pusherClient.unbind('messages:update', updateMessagesHandler);
+        };
+    }, []);
+
     return (
-        <div className="flex-1 w-full z-10 py-2 overflow-y-auto">
+        <div className="flex-1 w-full  py-2 overflow-y-auto">
             <div
                 id="messages"
                 className="w-full h-full flex flex-col overflow-y-auto px-4 midPhones:px-8"
@@ -56,8 +90,10 @@ const ConversationScreenBody: React.FC<ConversationScreenBodyProps> = ({
                         }
                         isGroup={isGroup!}
                         isFirstMessage={index === 0}
+                        conversation={conversation}
                     />
                 ))}
+                <div ref={bottomRef} className="pt-12"></div>
             </div>
         </div>
     );

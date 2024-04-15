@@ -5,11 +5,10 @@ import ToastContext from './context/ToastContext';
 import AuthContext from './context/AuthContext';
 import clsx from 'clsx';
 import { ConnversationContextProvider } from './context/ConversationContext';
-import ReactQueryProvider from './ReactQueryProvider';
 
 export const metadata: Metadata = {
-    title: 'ChatNest',
-    description: 'ChatNest Messenger App',
+    title: 'Chatnest',
+    description: 'Chatnest Messenger App',
 };
 
 const roboto = Roboto({
@@ -106,12 +105,10 @@ async function RootLayout({ children }: { children: React.ReactNode }) {
                 )}
             >
                 <AuthContext>
-                    <ReactQueryProvider>
-                        <ConnversationContextProvider>
-                            <ToastContext />
-                            {children}
-                        </ConnversationContextProvider>
-                    </ReactQueryProvider>
+                    <ConnversationContextProvider>
+                        <ToastContext />
+                        {children}
+                    </ConnversationContextProvider>
                 </AuthContext>
             </body>
         </html>

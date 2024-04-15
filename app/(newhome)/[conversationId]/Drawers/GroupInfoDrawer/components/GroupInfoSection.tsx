@@ -9,6 +9,7 @@ import {
     UseFormTrigger,
     UseFormGetValues,
     SubmitHandler,
+    UseFormWatch,
 } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { FaCheck } from 'react-icons/fa6';
@@ -24,6 +25,7 @@ type GroupInfoSectionProps = {
     trigger: UseFormTrigger<FieldValues>;
     getValues: UseFormGetValues<FieldValues>;
     updateGroup: SubmitHandler<FieldValues>;
+    watch: UseFormWatch<FieldValues>;
 };
 
 const GroupInfoSection: React.FC<GroupInfoSectionProps> = ({
@@ -34,6 +36,7 @@ const GroupInfoSection: React.FC<GroupInfoSectionProps> = ({
     trigger,
     getValues,
     updateGroup,
+    watch,
 }) => {
     const [editname, setEditname] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -67,12 +70,14 @@ const GroupInfoSection: React.FC<GroupInfoSectionProps> = ({
             }
         }
     };
+
+    const groupName = watch('groupName');
     return (
         <>
             {!editname ? (
                 <div className="flex justify-center w-full text-3xl midPhones:text-[2rem] mt-2">
                     <div className="relative flex items-center">
-                        <p>{conversation.groupName}</p>
+                        <p>{groupName}</p>
                         {isCurrentUserAdmin && (
                             <button
                                 className="absolute -right-12 bottom-1"

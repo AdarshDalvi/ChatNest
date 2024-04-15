@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, Dispatch, SetStateAction } from 'react';
+import { useState, useMemo, Dispatch, SetStateAction, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import axios from 'axios';
@@ -26,8 +26,14 @@ import { Conversation, User } from '@prisma/client';
 import { Option } from '@/app/(newhome)/components/OptionsMenu';
 import { useRouter } from 'next/navigation';
 import ConfirmationDialog from '@/app/(newhome)/components/DialogComponents/ConfirmationDialog';
+import { pusherClient } from '@/app/lib/pusher';
+import { FullConversationType } from '@/app/types/conversation';
+import createSecureUrl from '@/app/lib/secureUrl';
 
 export type Action = 'connect' | 'disconnect';
+type NewConversationType = Conversation & {
+    members: User[];
+};
 
 interface GroupInfoDrawerProps {
     conversation: Conversation & {
@@ -36,6 +42,7 @@ interface GroupInfoDrawerProps {
     showGroupInfoDrawer: boolean;
     setShowGroupInfoDrawer: Dispatch<SetStateAction<boolean>>;
     users: User[];
+    setConversation: Dispatch<SetStateAction<NewConversationType>>;
 }
 
 const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
@@ -43,6 +50,7 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
     showGroupInfoDrawer,
     setShowGroupInfoDrawer,
     users,
+    setConversation,
 }) => {
     const session = useSession();
     const [loading, setLoading] = useState(false);
@@ -64,7 +72,8 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
         formState: { errors },
         getValues,
         trigger,
-        reset,
+        setValue,
+        watch,
     } = useForm<FieldValues>({
         defaultValues: {
             groupName: conversation.groupName,
@@ -72,6 +81,35 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
             groupDescription: conversation.groupDescription,
         },
     });
+
+    useEffect(() => {
+        const conversationUpdatehandler = (
+            newConversation: FullConversationType
+        ) => {
+            setConversation((prevConversation) => ({
+                ...prevConversation,
+                groupName: newConversation.groupName,
+                groupDescription: newConversation.groupDescription,
+                groupIcon: newConversation.groupIcon,
+            }));
+            setValue('groupName', newConversation.groupName);
+            setValue('groupDescription', newConversation.groupDescription);
+            setValue('groupIcon', newConversation.groupIcon);
+        };
+        pusherClient.subscribe(conversation.id);
+        pusherClient.bind(
+            'conversation:group-update',
+            conversationUpdatehandler
+        );
+
+        return () => {
+            pusherClient.unsubscribe(conversation.id);
+            pusherClient.unbind(
+                'conversation:group-update',
+                conversationUpdatehandler
+            );
+        };
+    }, []);
 
     const currentUser = useMemo(() => {
         return session.data?.user;
@@ -115,7 +153,9 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
     }, [currentUser, conversation.members]);
 
     const closeGroupInfoDrawer = () => {
-        reset();
+        setValue('groupName', conversation.groupName);
+        setValue('groupDescription', conversation.groupDescription);
+        setValue('groupIcon', conversation.groupIcon);
         setShowGroupInfoDrawer(false);
     };
 
@@ -131,6 +171,38 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
         } catch (error) {
             console.log(error);
             return false;
+        }
+    };
+
+    const updateGroupIcon = async (
+        updatedImage: string,
+        afterUpdateFunction: Dispatch<SetStateAction<string | null>>
+    ) => {
+        setLoading(true);
+        const loadingToast = toast.loading('Updating group icon...', {
+            position: 'bottom-center',
+        });
+
+        try {
+            const secureUrl = await createSecureUrl(updatedImage);
+            if (secureUrl) {
+                setValue('groupIcon', secureUrl);
+                const data = getValues();
+                const success = await updateGroup(data);
+                if (success) {
+                    toast.dismiss(loadingToast);
+                    toast.success('Group icon updated!', {
+                        position: 'bottom-center',
+                    });
+                    afterUpdateFunction((prevData) => secureUrl);
+                }
+            }
+        } catch (error: any) {
+            toast.dismiss(loadingToast);
+            toast.error('Something went wrong!', { position: 'bottom-center' });
+            console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -228,6 +300,7 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
     };
 
     const exitGroup = async () => {
+        setLoading(true);
         try {
             const response = await axios.delete(
                 `/api/group-chat/${conversation.id}`,
@@ -239,12 +312,16 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                 }
             );
             router.replace('/');
-            router.refresh();
         } catch (error: any) {
             toast.error('Something went wrong! Please try again later.');
             console.log('', error);
+        } finally {
+            setLoading(false);
+            closeGroupLeave();
         }
     };
+
+    const groupIcon: string | null = watch('groupIcon');
 
     return (
         <>
@@ -269,10 +346,7 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                     confirmText="Leave"
                     isLoading={loading}
                     modalHeading="Confirm group exit"
-                    confirmAction={() => {
-                        exitGroup();
-                        closeGroupLeave();
-                    }}
+                    confirmAction={exitGroup}
                 />
             </ModalWrapper>
             <ModalWrapper ref={modalDialogRef}>
@@ -304,7 +378,9 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                 <DrawerChildrenWrapper>
                     <GroupIconSection
                         isCurrentUserAdmin={isCurrentUserAdmin}
-                        initialGroupIcon={conversation.groupIcon}
+                        initialGroupIcon={groupIcon}
+                        updateGroupIcon={updateGroupIcon}
+                        loading={loading}
                     />
                     <GroupInfoSection
                         isCurrentUserAdmin={isCurrentUserAdmin}
@@ -314,6 +390,7 @@ const GroupInfoDrawer: React.FC<GroupInfoDrawerProps> = ({
                         trigger={trigger}
                         getValues={getValues}
                         updateGroup={updateGroup}
+                        watch={watch}
                     />
                     {isCurrentUserAdmin && (
                         <div className="px-8 w-full mt-16">

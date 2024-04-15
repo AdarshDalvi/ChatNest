@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/app/actions/getUser';
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prismadb';
+import { pusherServer } from '@/app/lib/pusher';
 
 interface IParamas {
     conversationId: string;
@@ -17,7 +18,7 @@ export async function DELETE(
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        const existingChat = await prisma.conversation.findUnique({
+        const existingConversation = await prisma.conversation.findUnique({
             where: {
                 id: conversationId,
             },
@@ -26,11 +27,11 @@ export async function DELETE(
             },
         });
 
-        if (!existingChat) {
+        if (!existingConversation) {
             return new NextResponse('Invalid ID', { status: 400 });
         }
 
-        const deletedChat = await prisma.conversation.deleteMany({
+        const deletedConversation = await prisma.conversation.deleteMany({
             where: {
                 id: conversationId,
                 memberIds: {
@@ -39,7 +40,17 @@ export async function DELETE(
             },
         });
 
-        return NextResponse.json(deletedChat);
+        existingConversation.members.forEach((member) => {
+            if (member.email) {
+                pusherServer.trigger(
+                    member.email,
+                    'conversation:remove',
+                    existingConversation
+                );
+            }
+        });
+
+        return NextResponse.json(deletedConversation);
     } catch (error: any) {
         console.log(error, 'ERROR_DELETE_CHAT');
         return new NextResponse('Internal Error', { status: 500 });

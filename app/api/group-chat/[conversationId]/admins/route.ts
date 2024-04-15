@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/app/actions/getUser';
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prismadb';
+import { pusherServer } from '@/app/lib/pusher';
 
 interface IParamas {
     conversationId: string;
@@ -49,6 +50,11 @@ export async function PATCH(
             include: {
                 admins: true,
             },
+        });
+
+        await pusherServer.trigger(conversationId, 'conversation:admins', {
+            id: conversationId,
+            adminsIds: updatedConversation.adminsIds,
         });
 
         return NextResponse.json(updatedConversation);

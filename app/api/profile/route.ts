@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/app/actions/getUser';
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prismadb';
+import { pusherServer } from '@/app/lib/pusher';
 
 export async function POST(request: Request) {
     try {
@@ -22,6 +23,20 @@ export async function POST(request: Request) {
                 about: about,
             },
         });
+
+        for (const userConversationId of updatedUser.conversationIds) {
+            pusherServer.trigger(
+                userConversationId,
+                'member:update',
+                updatedUser
+            );
+        }
+
+        await pusherServer.trigger(
+            currentUser.email!,
+            'profile:update',
+            updatedUser
+        );
 
         return NextResponse.json(updatedUser);
     } catch (error: any) {

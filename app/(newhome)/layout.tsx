@@ -16,7 +16,7 @@ const ChatLayout: React.FC<WrapperProps> = async ({ children }) => {
         <main className="flex relative w-full h-full max-w-[1600px] text-white">
             <PageWrapper>
                 <Header
-                    currentUser={currentUser!}
+                    initialCurrentUser={currentUser!}
                     users={users}
                     conversations={conversations}
                 />

@@ -1,4 +1,11 @@
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 
 import capitalizeString from '@/app/lib/capitaliseString';
 import getToastPosition from '@/app/lib/getToastPosition';
@@ -21,16 +28,20 @@ import toast from 'react-hot-toast';
 
 import { MdClear, MdOutlineModeEditOutline } from 'react-icons/md';
 import { FaCheck } from 'react-icons/fa6';
+import { useSession } from 'next-auth/react';
+import { pusherClient } from '@/app/lib/pusher';
 
 type ProfileInfoDrawerProps = {
     currentUser: User;
     showProfileDrawer: boolean;
     setShowProfileDrawer: Dispatch<SetStateAction<boolean>>;
+    setCurrentUser: Dispatch<SetStateAction<User>>;
 };
 const ProfileInfoDrawer: React.FC<ProfileInfoDrawerProps> = ({
     currentUser,
     showProfileDrawer,
     setShowProfileDrawer,
+    setCurrentUser,
 }) => {
     const {
         register,
@@ -38,7 +49,6 @@ const ProfileInfoDrawer: React.FC<ProfileInfoDrawerProps> = ({
         formState: { errors },
         getValues,
         trigger,
-        reset,
         setValue,
     } = useForm<FieldValues>({
         defaultValues: {
@@ -48,16 +58,55 @@ const ProfileInfoDrawer: React.FC<ProfileInfoDrawerProps> = ({
         },
     });
 
+    const session = useSession();
+
+    const pusherKey = useMemo(() => {
+        return session.data?.user.email;
+    }, [session.data?.user.email]);
+
     const [aboutDisabled, setAboutDisabled] = useState(true);
     const [loading, setLoading] = useState(false);
     const [userImage, setUserImage] = useState<string | null>(
         currentUser?.image
     );
 
+    useEffect(() => {
+        if (!pusherKey) {
+            return;
+        }
+        const updateProfileHandler = (currentUpdatedUser: User) => {
+            setCurrentUser((prevData) => {
+                return {
+                    ...currentUser,
+                    name: currentUpdatedUser.name,
+                    image: currentUpdatedUser.image,
+                    about: currentUpdatedUser.about,
+                };
+            });
+
+            setValue('name', currentUpdatedUser.name);
+            setValue('image', currentUpdatedUser.image);
+            setValue('about', currentUpdatedUser.about);
+        };
+
+        pusherClient.subscribe(pusherKey);
+        pusherClient.bind('profile:update', updateProfileHandler);
+
+        return () => {
+            if (pusherKey) {
+                pusherClient.unsubscribe(pusherKey);
+
+                pusherClient.unbind('profile:update', updateProfileHandler);
+            }
+        };
+    }, [pusherKey]);
+
     const toastPosition = getToastPosition();
 
     const closeProfileDrawer = () => {
-        reset();
+        setValue('name', currentUser.name);
+        setValue('image', currentUser.image);
+        setValue('about', currentUser.about);
         setAboutDisabled(true);
         setShowProfileDrawer(false);
     };
@@ -92,6 +141,7 @@ const ProfileInfoDrawer: React.FC<ProfileInfoDrawerProps> = ({
                     toast.success('Image updated!', {
                         position: toastPosition,
                     });
+                    setUserImage(secureUrl); // Update userImage state with the new image
                 }
             }
         } catch (error: any) {
@@ -157,6 +207,7 @@ const ProfileInfoDrawer: React.FC<ProfileInfoDrawerProps> = ({
                     )}
                     {currentUser.image !== userImage && (
                         <SaveCancelButtons
+                            loading={loading}
                             cancelUpdate={undoEditImage}
                             saveUpdate={updateImage}
                         />

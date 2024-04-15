@@ -1,16 +1,21 @@
-import { FullMessageType } from '@/app/types/conversation';
+import {
+    FullConversationType,
+    FullMessageType,
+} from '@/app/types/conversation';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import { TbChecks } from 'react-icons/tb';
 import ImageText from './ImageMessage';
 import Avatar from '@/app/(newhome)/components/Avatar';
+import { useMemo } from 'react';
 
 interface MessageBoxProps {
     message: FullMessageType;
     previousMessage: FullMessageType | null;
     isFirstMessage: boolean;
     isGroup: boolean;
+    conversation: FullConversationType;
 }
 
 const MessageBox: React.FC<MessageBoxProps> = ({
@@ -18,11 +23,16 @@ const MessageBox: React.FC<MessageBoxProps> = ({
     previousMessage,
     isFirstMessage,
     isGroup,
+    conversation,
 }) => {
     const session = useSession();
-    const isOwn = session?.data?.user?.email === message?.sender?.email;
-    const previousMessageSameUser =
-        previousMessage?.sender?.email === message.sender.email;
+    const isOwn = useMemo(() => {
+        return session.data?.user.email === message.sender?.email;
+    }, [session.data?.user.email]);
+
+    const previousMessageSameUser = useMemo(() => {
+        return previousMessage?.sender?.email === message.sender?.email;
+    }, [previousMessage?.sender?.email]);
 
     let alignment;
 
@@ -66,6 +76,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({
     const seenList = (message.seen || [])
         .filter((user) => user.email !== message?.sender?.email)
         .map((user) => user.name);
+
+    console.log(seenList);
 
     if (isGroup) {
         return (
@@ -113,7 +125,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                                 message.image && 'pl-2.5 pt-1.5'
                             )}
                         >
-                            {message.sender.name}
+                            {message.sender?.name}
                         </p>
                     )}
                     {message.image ? (
@@ -134,7 +146,17 @@ const MessageBox: React.FC<MessageBoxProps> = ({
                                 <p className=" text-gray-400">
                                     {format(new Date(message.createdAt), 'p')}
                                 </p>
-                                {isOwn && <TbChecks className="text-2xl" />}
+                                {isOwn && (
+                                    <TbChecks
+                                        className={clsx(
+                                            'text-2xl',
+                                            seenList.length ===
+                                                conversation.members.length - 1
+                                                ? 'text-cyan-600'
+                                                : 'text-gray-400'
+                                        )}
+                                    />
+                                )}
                             </div>
                         </>
                     )}

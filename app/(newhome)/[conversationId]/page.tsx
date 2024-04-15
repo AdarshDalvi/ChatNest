@@ -15,10 +15,10 @@ const ConversationId = async ({ params }: { params: ConversationIdParams }) => {
         redirect('/');
     }
     return (
-        <main className="flex-1 flex flex-col h-dvh min-w-[250px] bg-secondary relative">
-            <div className="bg-chatBody bg-fixed h-full w-full opacity-5 absolute left-0 top-0 z-0"></div>
+        <main className="flex-1 flex flex-col h-dvh min-w-[250px] bg-secondary relative z-10">
+            <div className="bg-chatBody bg-fixed h-full w-full opacity-5 absolute left-0 top-0 -z-10"></div>
             <ConversationScreenHeader
-                conversation={conversation}
+                initialConversation={conversation}
                 users={users}
             />
             <ConversationScreenBody

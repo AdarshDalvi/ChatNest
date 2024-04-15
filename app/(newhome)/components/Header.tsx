@@ -4,7 +4,7 @@ import { User } from '@prisma/client';
 import { GoKebabHorizontal } from 'react-icons/go';
 import { MdOutlineGroupAdd } from 'react-icons/md';
 import Avatar from './Avatar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NewConversationDrawer from '../NewConversation/NewConversationDrawer';
 import { FullConversationType } from '@/app/types/conversation';
 import ListWrapper from './WrapperComponents/ListWrapper';
@@ -16,14 +16,16 @@ import useOptionsMenu from '@/app/hooks/useOptionsMenu';
 import ConfirmationDialog from './DialogComponents/ConfirmationDialog';
 import ModalWrapper from './WrapperComponents/ModalWrapper';
 import useModalDialog from '@/app/hooks/useModalDialog';
+import { pusherClient } from '@/app/lib/pusher';
+import { find } from 'lodash';
 
 type HeaderProps = {
-    currentUser: User;
+    initialCurrentUser: User;
     users: User[];
     conversations: FullConversationType[];
 };
 const Header: React.FC<HeaderProps> = ({
-    currentUser,
+    initialCurrentUser,
     users,
     conversations,
 }) => {
@@ -34,6 +36,8 @@ const Header: React.FC<HeaderProps> = ({
     const { ref, showOptionsMenu, toggleOptionsMenu } = useOptionsMenu();
 
     const [modalDialogRef, openDialog, closeDialog] = useModalDialog();
+
+    const [currentUser, setCurrentUser] = useState<User>(initialCurrentUser);
 
     const optionsList: Option[] = [
         {
@@ -51,6 +55,37 @@ const Header: React.FC<HeaderProps> = ({
     ];
 
     const filteredUsers = users.filter((user) => user.id !== currentUser.id);
+
+    const [conversationList, setConversationList] =
+        useState<FullConversationType[]>(conversations);
+
+    useEffect(() => {
+        if (!initialCurrentUser?.email) {
+            return;
+        }
+
+        const removeConversationHandler = (
+            conversation: FullConversationType
+        ) => {
+            setConversationList((currentConversationList) =>
+                currentConversationList.filter(
+                    (currentConversation) =>
+                        currentConversation.id !== conversation.id
+                )
+            );
+        };
+        pusherClient.subscribe(initialCurrentUser.email);
+        // pusherClient.bind('conversation:new', newConversationHandler);
+        pusherClient.bind('conversation:remove', removeConversationHandler);
+
+        return () => {
+            if (initialCurrentUser.email)
+                pusherClient.unsubscribe(initialCurrentUser.email);
+            // pusherClient.bind('conversation:new', newConversationHandler);
+            pusherClient.bind('conversation:remove', removeConversationHandler);
+        };
+    }, [initialCurrentUser?.email]);
+
     return (
         <>
             <NewConversationDrawer
@@ -61,6 +96,7 @@ const Header: React.FC<HeaderProps> = ({
             <ProfileInfoDrawer
                 currentUser={currentUser}
                 showProfileDrawer={showProfileDrawer}
+                setCurrentUser={setCurrentUser}
                 setShowProfileDrawer={setShowProfileDrawer}
             />
             <ModalWrapper ref={modalDialogRef}>
@@ -105,7 +141,7 @@ const Header: React.FC<HeaderProps> = ({
                     </div>
                 </div>
             </header>
-            {conversations.length < 1 ? (
+            {conversationList.length < 1 ? (
                 <div
                     className="flex flex-col justify-center items-center gap-4"
                     style={{ height: 'calc(100dvh - 60px)' }}
@@ -123,7 +159,7 @@ const Header: React.FC<HeaderProps> = ({
             ) : (
                 <ListWrapper height={'calc(100dvh - 60px)'}>
                     <ConversationList
-                        initialConversation={conversations}
+                        conversationList={conversationList}
                         currentUser={currentUser}
                         users={users}
                     />

@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/app/actions/getUser';
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prismadb';
+import { pusherServer } from '@/app/lib/pusher';
 
 interface IParamas {
     conversationId: string;
@@ -20,6 +21,16 @@ export async function PATCH(
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
+        const existingConversation = await prisma.conversation.findUnique({
+            where: {
+                id: conversationId,
+            },
+        });
+
+        if (!existingConversation) {
+            return new NextResponse('Invalid ID', { status: 400 });
+        }
+
         const updatedConversation = await prisma.conversation.update({
             where: {
                 id: conversationId,
@@ -34,7 +45,33 @@ export async function PATCH(
             },
         });
 
-        return NextResponse.json(updatedConversation, { status: 200 });
+        await pusherServer.trigger(
+            conversationId,
+            'conversation:group-update',
+            {
+                id: conversationId,
+                groupName: updatedConversation.groupName,
+                groupDescription: updatedConversation.groupDescription,
+                groupIcon: updatedConversation.groupIcon,
+            }
+        );
+
+        for (const member of updatedConversation.members) {
+            if (member.email) {
+                pusherServer.trigger(
+                    member.email,
+                    'conversation:group-update',
+                    {
+                        id: conversationId,
+                        groupName: updatedConversation.groupName,
+                        groupDescription: updatedConversation.groupDescription,
+                        groupIcon: updatedConversation.groupIcon,
+                    }
+                );
+            }
+        }
+
+        return NextResponse.json(updatedConversation);
     } catch (error: any) {
         console.log(error, 'ERROR_GROUP_CONVERSATION_UPDATE');
         return new NextResponse(`Internal Error ${error}`, { status: 500 });

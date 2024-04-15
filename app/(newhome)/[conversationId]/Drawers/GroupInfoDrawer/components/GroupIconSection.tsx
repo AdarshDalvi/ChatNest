@@ -1,17 +1,24 @@
 import EditableNoImage from '@/app/(newhome)/components/ImageComponents/EditableNoImage';
 import InfoImage from '@/app/(newhome)/components/ImageComponents/InfoImage';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import ViewOnlyImage from '../../components/ViewOnlyImage';
-import SaveCancelButtons from '@/app/(home)/components/ImageComponents/SaveCancelButtons';
+import SaveCancelButtons from '@/app/(newhome)/components/SaveCancelButtons';
 
 type GroupIconSectionProps = {
     isCurrentUserAdmin: boolean;
     initialGroupIcon: string | null;
+    updateGroupIcon: (
+        updatedImage: string,
+        afterUpdateFunction: Dispatch<SetStateAction<string | null>>
+    ) => void;
+    loading: boolean;
 };
 
 const GroupIconSection: React.FC<GroupIconSectionProps> = ({
     isCurrentUserAdmin,
     initialGroupIcon,
+    updateGroupIcon,
+    loading,
 }) => {
     const [conversationImage, setConversationImage] = useState<string | null>(
         initialGroupIcon
@@ -43,7 +50,13 @@ const GroupIconSection: React.FC<GroupIconSectionProps> = ({
             )}
             {isCurrentUserAdmin && conversationImage !== initialGroupIcon && (
                 <SaveCancelButtons
-                    saveUpdate={() => {}}
+                    loading={loading}
+                    saveUpdate={() =>
+                        updateGroupIcon(
+                            conversationImage!,
+                            setConversationImage
+                        )
+                    }
                     cancelUpdate={() =>
                         setConversationImage((prevImage) => initialGroupIcon)
                     }

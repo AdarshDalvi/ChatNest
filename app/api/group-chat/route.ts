@@ -1,6 +1,7 @@
 import prisma from '@/app/lib/prismadb';
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/app/actions/getUser';
+import { pusherServer } from '@/app/lib/pusher';
 
 export async function POST(request: Request) {
     try {
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        const newGroupConversation = await prisma.conversation.create({
+        const newConversation = await prisma.conversation.create({
             data: {
                 isGroup: true,
                 groupName: name,
@@ -42,7 +43,17 @@ export async function POST(request: Request) {
                 admins: true,
             },
         });
-        return NextResponse.json(newGroupConversation, { status: 200 });
+
+        newConversation.members.forEach((member) => {
+            if (member.email) {
+                pusherServer.trigger(
+                    member.email,
+                    'conversation:new',
+                    newConversation
+                );
+            }
+        });
+        return NextResponse.json(newConversation);
     } catch (error: any) {
         console.log(error, 'ERROR_MESSAGES_GROUP_CHAT');
         return new NextResponse(`Internal Error ${error}`, { status: 500 });

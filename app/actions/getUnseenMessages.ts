@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
-import { FullConversationType } from '../types/conversation';
+import { FullMessageType } from '../types/conversation';
 
 const getUnseenMessages = (
     currentUserEmail: string | null | undefined,
-    conversation: FullConversationType
+    messages: FullMessageType[]
 ) => {
     const unseenMessages = useMemo(() => {
-        if (!currentUserEmail || conversation.messages.length < 1) return [];
+        if (!currentUserEmail || messages?.length < 1) return [];
 
-        const unseenMesages = conversation.messages.filter((message) => {
+        const unseenMesages = messages?.filter((message) => {
             const isMessageSeen = message.seen.some(
                 (seenUser) => seenUser.email === currentUserEmail
             );
@@ -16,7 +16,7 @@ const getUnseenMessages = (
         });
 
         return unseenMesages;
-    }, [currentUserEmail, conversation.messages]);
+    }, [currentUserEmail, messages]);
 
     return unseenMessages;
 };
