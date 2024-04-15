@@ -56,10 +56,9 @@ const EditInfoInput = <T extends FieldValues>({
     customWidth,
     ...props
 }: EditInfoInputProps<T>) => {
+    const [editable, setEditable] = useState(true);
     if (saveButton) {
         const { trigger, saveFunction, disabled } = props as SaveButtonProps;
-
-        const [editable, setEditable] = useState(true);
 
         const toggleEditMode = () => {
             if (editable) {
