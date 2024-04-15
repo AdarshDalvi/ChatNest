@@ -110,11 +110,9 @@ export default function page() {
                 disabled={isFormSubmitted}
                 passwordToggle
             />
-            <Button
-                children="Register"
-                type="submit"
-                disabled={isFormSubmitted}
-            />
+            <Button type="submit" disabled={isFormSubmitted}>
+                Register
+            </Button>
         </form>
     );
 }

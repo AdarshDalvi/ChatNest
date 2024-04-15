@@ -36,26 +36,18 @@ export default function page() {
 
     const renderLoginOptions = () => (
         <>
-            <Button
-                children={
-                    <>
-                        <MdEmail className="text-2xl text-gray-700 mt-0.5" />
-                        <p>Email Login</p>
-                    </>
-                }
-                iconButton
-                onClick={() => setLoginWith('EMAIL')}
-            />
-            <Button
-                children={
-                    <>
-                        <MdPhone className="text-xl text-gray-700 mt-0.5" />
-                        <p>Phone Login</p>
-                    </>
-                }
-                onClick={() => setLoginWith('PHONE')}
-                iconButton
-            />
+            <Button iconButton onClick={() => setLoginWith('EMAIL')}>
+                <>
+                    <MdEmail className="text-2xl text-gray-700 mt-0.5" />
+                    <p>Email Login</p>
+                </>
+            </Button>
+            <Button onClick={() => setLoginWith('PHONE')} iconButton>
+                <>
+                    <MdPhone className="text-xl text-gray-700 mt-0.5" />
+                    <p>Phone Login</p>
+                </>
+            </Button>
         </>
     );
 
@@ -129,11 +121,9 @@ export default function page() {
             className="flex flex-col gap-6"
         >
             {loginWith !== 'NONE' && (
-                <Button
-                    children={'Switch Login Method'}
-                    onClick={setLoginMethod}
-                    iconButton
-                />
+                <Button onClick={setLoginMethod} iconButton>
+                    Switch Login Method
+                </Button>
             )}
             {renderLoginForm()}
             {loginWith !== 'NONE' && (
@@ -153,11 +143,9 @@ export default function page() {
                         disabled={isFormSubmitted}
                         passwordToggle
                     />
-                    <Button
-                        children="Login"
-                        type="submit"
-                        disabled={isFormSubmitted}
-                    />
+                    <Button type="submit" disabled={isFormSubmitted}>
+                        Login
+                    </Button>
                 </>
             )}
         </form>
