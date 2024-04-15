@@ -61,15 +61,17 @@ model Conversation {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt     DateTime @default(now())
   lastMesasgeAt DateTime @default(now())
-  name          String?
+  name String?
   isGroup       Boolean?
-  image         String?
+  groupName          String?
+  groupIcon         String?
+  groupDescription String?
 
   messagesIds String[]  @db.ObjectId
   messages    Message[]
 
-  userIds String[] @db.ObjectId
-  users   User[]   @relation("Members", fields: [userIds], references: [id])
+  memberIds String[] @db.ObjectId
+  members   User[]   @relation("Members", fields: [memberIds], references: [id])
 
   adminsIds String[] @db.ObjectId
   admins    User[]   @relation("Admins", fields: [adminsIds], references: [id])

@@ -108,7 +108,7 @@ export default function page() {
             });
             if (callback?.ok && !callback?.error) {
                 toast.success('Logged in successfully!');
-                router.push('/chats');
+                router.push('/');
             }
             if (callback?.error) {
                 toast.error(callback.error, {

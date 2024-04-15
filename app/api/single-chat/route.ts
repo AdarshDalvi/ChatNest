@@ -1,12 +1,18 @@
 import prisma from '@/app/lib/prismadb';
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/app/actions/getUser';
+import { User } from '@prisma/client';
+import { pusherServer } from '@/app/lib/pusher';
+
+interface UserRequestBody {
+    user: User;
+}
 
 export async function POST(request: Request) {
     try {
         const currentUser = await getCurrentUser();
-        const body = await request.json();
-        const { userId } = body;
+        const body: UserRequestBody = await request.json();
+        const { user } = body;
 
         if (!currentUser?.id || !currentUser.email) {
             return new NextResponse('Unauthorized', { status: 401 });
@@ -16,13 +22,13 @@ export async function POST(request: Request) {
             where: {
                 OR: [
                     {
-                        userIds: {
-                            equals: [currentUser.id, userId],
+                        memberIds: {
+                            equals: [currentUser.id, user.id],
                         },
                     },
                     {
-                        userIds: {
-                            equals: [userId, currentUser.id],
+                        memberIds: {
+                            equals: [user.id, currentUser.id],
                         },
                     },
                 ],
@@ -34,15 +40,24 @@ export async function POST(request: Request) {
 
         const newConversation = await prisma.conversation.create({
             data: {
-                users: {
-                    connect: [{ id: currentUser.id }, { id: userId }],
+                members: {
+                    connect: [{ id: currentUser.id }, { id: user.id }],
                 },
             },
             include: {
-                users: true,
+                members: true,
             },
         });
 
+        newConversation.members.forEach((member) => {
+            if (member.email) {
+                pusherServer.trigger(
+                    member.email,
+                    'conversation:new',
+                    newConversation
+                );
+            }
+        });
         return NextResponse.json(newConversation);
     } catch (error: any) {
         console.log(error, 'ERROR_MESSAGES_SINGLE_CHAT');

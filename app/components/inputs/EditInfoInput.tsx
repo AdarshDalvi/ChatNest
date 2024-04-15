@@ -7,67 +7,72 @@ import { FaCheck } from 'react-icons/fa6';
 import {
     FieldErrors,
     FieldValues,
+    Path,
     RegisterOptions,
     UseFormRegister,
-    UseFormSetFocus,
     UseFormTrigger,
 } from 'react-hook-form';
 
 type SaveButtonProps = RequiredProps & {
-    saveButton: true;
+    saveButton?: true;
     saveFunction: () => void;
     trigger: UseFormTrigger<FieldValues>;
-    setFocus: UseFormSetFocus<FieldValues>;
-    loading: boolean;
+    disabled: boolean;
 };
 
 type WithoutSaveButtonProps = RequiredProps & {
     saveButton?: never;
-    loading: boolean;
+    disabled: boolean;
 };
 
 type RequiredProps = {
-    id: string;
-    label: string;
+    label?: string;
     placeHolder: string;
     maxLength?: number;
-    validationSchema: RegisterOptions<FieldValues, string> | undefined | {};
-    register: UseFormRegister<FieldValues>;
-    errors: FieldErrors;
+    fullWidth?: boolean;
+    customWidth?: string;
 };
 
-type EditInfoInputProps = SaveButtonProps | WithoutSaveButtonProps;
+type FormProps<T extends FieldValues> = {
+    id: Path<T>;
+    register: UseFormRegister<T>;
+    errors: FieldErrors<T>;
+    validationSchema: RegisterOptions<T, Path<T>> | undefined | {};
+};
 
-const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
-    const {
-        id,
-        label,
-        errors,
-        register,
-        placeHolder,
-        maxLength,
-        validationSchema,
-    } = props as RequiredProps;
+type EditInfoInputProps<T extends FieldValues> = FormProps<T> &
+    (SaveButtonProps | WithoutSaveButtonProps);
 
+const EditInfoInput = <T extends FieldValues>({
+    saveButton,
+    id,
+    label,
+    placeHolder,
+    validationSchema,
+    errors,
+    register,
+    maxLength,
+    fullWidth = true,
+    customWidth,
+    ...props
+}: EditInfoInputProps<T>) => {
     if (saveButton) {
-        const { setFocus, trigger, saveFunction, loading } =
-            props as SaveButtonProps;
+        const { trigger, saveFunction, disabled } = props as SaveButtonProps;
 
-        const [disabled, setDisabled] = useState(true);
+        const [editable, setEditable] = useState(true);
 
         const toggleEditMode = () => {
-            if (disabled) {
-                setDisabled(false);
-                setFocus(id);
+            if (editable) {
+                setEditable(false);
             } else {
-                setDisabled(true);
+                setEditable(true);
             }
         };
 
         const updateInput = async () => {
             const isValid = await trigger(id, { shouldFocus: true });
             if (isValid) {
-                setDisabled(true);
+                setEditable(true);
                 if (saveFunction) {
                     saveFunction();
                 }
@@ -75,16 +80,23 @@ const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
         };
 
         return (
-            <div className="w-full flex flex-col">
-                <label htmlFor={id} className="text-cyan-500 text-xl">
-                    {label}
-                </label>
+            <div
+                className={clsx(
+                    'flex flex-col',
+                    fullWidth ? 'w-full' : customWidth
+                )}
+            >
+                {label && (
+                    <label htmlFor={id} className="text-cyan-500 text-xl">
+                        {label}
+                    </label>
+                )}
                 <div className="relative w-full mt-6">
                     <input
                         autoComplete="off"
                         type="text"
                         id={id}
-                        disabled={disabled || loading}
+                        disabled={editable || disabled}
                         {...register(id, validationSchema ?? {})}
                         placeholder={placeHolder}
                         maxLength={maxLength}
@@ -99,15 +111,15 @@ const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
                         border-b-2
                         border-b-gray-400
                         focus:border-cyan-500`,
-                            disabled && 'border-none',
+                            editable && 'border-none',
                             errors && errors[id] && ' focus:border-red-500'
                         )}
                     />
-                    {disabled ? (
+                    {editable ? (
                         <button
                             onClick={toggleEditMode}
-                            disabled={loading}
-                            className="absolute bottom-3.5 midPhones:bottom-2.5  cursor-pointer right-0 text-3xl midPhones:text-4xl "
+                            disabled={disabled}
+                            className="absolute bottom-3.5 midPhones:bottom-2.5  right-0 text-3xl midPhones:text-4xl "
                         >
                             <MdOutlineModeEditOutline />
                         </button>
@@ -115,7 +127,7 @@ const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
                         <button
                             type="button"
                             onClick={updateInput}
-                            disabled={loading}
+                            disabled={disabled}
                             className="absolute bottom-3.5 midPhones:bottom-2.5   cursor-pointer right-0 text-3xl midPhones:text-4xl"
                         >
                             <FaCheck />
@@ -130,7 +142,7 @@ const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
             </div>
         );
     } else {
-        const { loading } = props as WithoutSaveButtonProps;
+        const { disabled } = props as WithoutSaveButtonProps;
 
         return (
             <div className="w-full flex flex-col">
@@ -142,7 +154,7 @@ const EditInfoInput = ({ saveButton, ...props }: EditInfoInputProps) => {
                         autoComplete="off"
                         type="text"
                         id={id}
-                        disabled={loading}
+                        disabled={disabled}
                         {...register(id, validationSchema)}
                         placeholder={placeHolder}
                         maxLength={maxLength}

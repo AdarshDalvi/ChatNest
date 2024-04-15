@@ -12,6 +12,7 @@ interface MultilineInputProps extends InputHTMLAttributes<HTMLTextAreaElement> {
     maxLength?: number;
     shouldReset?: boolean;
     className?: string | undefined;
+    onEnterEvent?: () => void;
 }
 
 const MultilineInput: React.FC<MultilineInputProps> = ({
@@ -23,6 +24,7 @@ const MultilineInput: React.FC<MultilineInputProps> = ({
     maxHeight,
     className,
     shouldReset,
+    onEnterEvent,
     ...rest
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -79,6 +81,16 @@ const MultilineInput: React.FC<MultilineInputProps> = ({
         }
     }, [shouldReset, registerMethod]);
 
+    const handleEnterKeyPressed = (
+        event: React.KeyboardEvent<HTMLTextAreaElement>
+    ) => {
+        if (event.key === 'Enter' && !event.shiftKey && textAreaRef.current) {
+            event.preventDefault();
+            onEnterEvent!();
+            textAreaRef.current.style.height = 'auto';
+        }
+    };
+
     return (
         <textarea
             {...registerMethod}
@@ -92,6 +104,7 @@ const MultilineInput: React.FC<MultilineInputProps> = ({
             placeholder={placeHolder}
             style={{ scrollbarGutter: 'stable' }}
             className={`multiline-input resize-none outline-none overflow-y-hidden ${className}`}
+            onKeyDown={onEnterEvent ? handleEnterKeyPressed : undefined}
         />
     );
 };

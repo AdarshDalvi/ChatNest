@@ -8,17 +8,14 @@ export default withAuth(
 
         //Manage route protection
         const isAuth = await getToken({ req });
-        const isLoginPage = pathName.startsWith('/login');
-        const isRegisterPage = pathName.startsWith('/register');
+        const isLoginPage = pathName === '/login';
+        const isRegisterPage = pathName === '/register';
 
-        const sensitiveRoutes = ['/chats', '/people'];
-        const isAccessingSensitiveRoute = sensitiveRoutes.some((route) =>
-            pathName.startsWith(route)
-        );
+        const isAccessingSensitiveRoute = pathName.includes('/');
 
         if (isLoginPage || isRegisterPage) {
             if (isAuth) {
-                return NextResponse.redirect(new URL('/chats', req.url));
+                return NextResponse.redirect(new URL('/', req.url));
             }
 
             return NextResponse.next();
@@ -27,13 +24,10 @@ export default withAuth(
         if (!isAuth && isAccessingSensitiveRoute) {
             return NextResponse.redirect(new URL('/login', req.url));
         }
-        if (pathName === '/') {
-            return NextResponse.redirect(new URL('/login', req.url));
-        }
 
         if (pathName === '/error') {
             if (isAuth) {
-                return NextResponse.redirect(new URL('/chats', req.url));
+                return NextResponse.redirect(new URL('/', req.url));
             }
             return NextResponse.next();
         }
@@ -48,12 +42,5 @@ export default withAuth(
 );
 
 export const config = {
-    matcher: [
-        '/',
-        '/login',
-        '/register',
-        '/chats/:path*',
-        '/people/:path*',
-        '/error',
-    ],
+    matcher: ['/', '/:conversationId', '/login', '/register', '/error'],
 };
