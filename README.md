@@ -29,7 +29,3 @@ Chatnest is a feature-rich real-time chat application that allows users to creat
 2. Install dependencies using `npm install`.
 3. Start the development server using `npm run dev`.
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
